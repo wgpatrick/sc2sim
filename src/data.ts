@@ -123,8 +123,19 @@ export const PROTOSS: GameData = {
     mineralRateFirstWorker: 0.925, // ~55/min
     mineralRateSecondWorker: 0.925, // ~55/min (equal to 1st, per the treatise)
     mineralRateThirdWorker: 0.33, // ~20/min, 3rd worker (oversaturation)
-    miningMicro: 1.0, // 1.0 = pro hand-mining; ~0.9 = a-move ladder play
-    gasRatePerWorker: 0.63, // ~38/min, up to 3 per assimilator (not yet calibrated)
+    // tools/mining_rate.py measured ~52/min steady-state across 4 real 5.0.16
+    // replays (n=40 gas-free samples) — below this 55.5/min figure, consistent
+    // with 55.5 modeling THEORETICAL-PERFECT hand-mining and real pro play
+    // landing at miningMicro ≈ 52/55.5 ≈ 0.94. Tried lowering the base rate
+    // itself instead: it made the fit to the hand-transcribed builds below
+    // WORSE (5.0s → 9.2s MAE) and barely changed replay-diff timing, because
+    // early Probe cadence turns out to be Nexus-QUEUE-limited (one probe
+    // every buildTime, back to back) not income-limited — the bank never
+    // runs dry that early regardless of which of these two rates is used.
+    // So: keep 1.0 as "theoretical perfect", and use ~0.94 (not the older
+    // ~0.9 guess) if you want a "real pro game" miningMicro preset.
+    miningMicro: 1.0, // 1.0 = pro hand-mining; ~0.9 = a-move ladder play; ~0.94 = replay-measured avg pro game
+    gasRatePerWorker: 0.63, // ~38/min; replay-measured steady-state median ~37/min, matches closely
 
     // Chrono Boost / Nexus energy (confirmed LotV):
     nexusStartEnergy: 50,
