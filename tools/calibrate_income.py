@@ -18,6 +18,14 @@ sample across all replays passed in, using each sample's ACTUAL nexus count
 
 Usage:
     .venv/bin/python tools/calibrate_income.py replays/parsed/*.json [--window 240]
+    .venv/bin/python tools/calibrate_income.py --townhall CommandCenter --gas Refinery replays/parsed/*.T*.json
+    .venv/bin/python tools/calibrate_income.py --townhall Hatchery --gas Extractor replays/parsed/*.Z*.json
+
+--townhall/--gas default to Protoss's Nexus/Assimilator; pass the race-specific
+names to fit Terran (CommandCenter/Refinery) or Zerg (Hatchery/Extractor)
+replays instead -- mineral patches per base (8) and the 3-worker gas cap are
+map/mechanic constants shared across all three races, only the townhall/gas
+structure NAMES (used to detect expansions in the build order) differ.
 """
 import argparse
 import json
@@ -26,26 +34,26 @@ import json
 RAMP_SECONDS = 25
 
 
-def nexus_count_at(build_order, t):
-    n = 1  # start with the initial Nexus
+def nexus_count_at(build_order, t, townhall):
+    n = 1  # start with the initial townhall
     for e in build_order:
-        if e["name"] == "Nexus" and e["event"] == "done" and e["t"] <= t:
+        if e["name"] == townhall and e["event"] == "done" and e["t"] <= t:
             n += 1
     return n
 
 
-def assimilator_done_times(build_order):
-    return sorted(e["t"] for e in build_order if e["name"] == "Assimilator" and e["event"] == "done")
+def assimilator_done_times(build_order, gas):
+    return sorted(e["t"] for e in build_order if e["name"] == gas and e["event"] == "done")
 
 
-def collect_samples(paths, window):
+def collect_samples(paths, window, townhall, gas):
     mineral_rows = []  # (t1, t2, t3, observed_mineral_rate)
     gas_rows = []  # (gas_workers, observed_gas_rate)
     for path in paths:
         replay = json.load(open(path))
         bo = replay["buildOrder"]
-        done_times = assimilator_done_times(bo)
-        nexus_done = sorted(e["t"] for e in bo if e["name"] == "Nexus" and e["event"] == "done")
+        done_times = assimilator_done_times(bo, gas)
+        nexus_done = sorted(e["t"] for e in bo if e["name"] == townhall and e["event"] == "done")
         for e in replay["economy"]:
             t = e["t"]
             if t <= 0 or t > window:
@@ -101,9 +109,11 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("replays", nargs="+")
     ap.add_argument("--window", type=int, default=240)
+    ap.add_argument("--townhall", default="Nexus", help="Townhall structure name (default: Nexus)")
+    ap.add_argument("--gas", default="Assimilator", help="Gas structure name (default: Assimilator)")
     args = ap.parse_args()
 
-    mineral_rows, gas_rows = collect_samples(args.replays, args.window)
+    mineral_rows, gas_rows = collect_samples(args.replays, args.window, args.townhall, args.gas)
     print(f"{len(mineral_rows)} mineral samples, {len(gas_rows)} gas samples (steady-state, t<={args.window}s)\n")
 
     # Mineral: combine t1+t2 into one column (rate1==rate2, per data.ts / the treatise)

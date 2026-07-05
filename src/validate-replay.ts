@@ -17,19 +17,28 @@
  * it's what the sim's economy model is actually for.
  */
 import * as fs from "fs";
-import { simulate, fmt } from "./engine.js";
+import { simulate, fmt, type GameData } from "./engine.js";
 import { PROTOSS } from "./data.js";
+import { TERRAN } from "./data-terran.js";
+import { ZERG } from "./data-zerg.js";
 import { MAPS } from "./maps.js";
 import { sequenceFromReplay, type ParsedReplay } from "./replay.js";
 
 const DEFAULT_HORIZON = 180; // 3 minutes — before scouting/harassment decisions diverge the two timelines
 
+/** Pick the race-specific GameData for a parsed replay's player (data.ts is not the only race anymore). */
+function gameDataForRace(race: string): GameData {
+  if (race === "Terran") return TERRAN;
+  if (race === "Zerg") return ZERG;
+  return PROTOSS;
+}
+
 /** Real completion time for the n-th occurrence of each entity, from the replay. */
-function realFinishTimes(replay: ParsedReplay, horizon: number): Map<string, number[]> {
+function realFinishTimes(replay: ParsedReplay, horizon: number, gameData: GameData): Map<string, number[]> {
   const done = new Map<string, number[]>();
   for (const e of replay.buildOrder) {
-    if (e.t <= 0 || e.t > horizon) continue; // t=0 is the shared starting state (8 probes, 1 Nexus)
-    const ent = PROTOSS.entities[e.name];
+    if (e.t <= 0 || e.t > horizon) continue; // t=0 is the shared starting state (8 workers, 1 townhall)
+    const ent = gameData.entities[e.name];
     if (!ent) continue;
     const wantEvent = ent.morphFrom ? "morph" : ent.isUpgrade ? "upgrade" : ent.isStructure ? "done" : "born";
     if (e.event !== wantEvent) continue;
@@ -70,8 +79,9 @@ function snapshotAt(snapshots: { t: number; minerals: number; gas: number; suppl
 
 function runOne(path: string, horizon: number) {
   const replay: ParsedReplay = JSON.parse(fs.readFileSync(path, "utf8"));
-  const actions = sequenceFromReplay(replay, PROTOSS, horizon);
-  const result = simulate(PROTOSS, actions, MAPS.standard);
+  const gameData = gameDataForRace(replay.player.race);
+  const actions = sequenceFromReplay(replay, gameData, horizon);
+  const result = simulate(gameData, actions, MAPS.standard);
 
   console.log(`\n${"=".repeat(76)}`);
   console.log(`${replay.source}  —  ${replay.player.name} (${replay.player.race}), ${replay.map}`);
@@ -83,7 +93,7 @@ function runOne(path: string, horizon: number) {
     console.log("   (showing partial results up to the point of divergence)");
   }
 
-  const real = realFinishTimes(replay, horizon);
+  const real = realFinishTimes(replay, horizon, gameData);
   const sim = simFinishTimes(result.actions);
 
   console.log("\n  entity                sim      real     delta   n");

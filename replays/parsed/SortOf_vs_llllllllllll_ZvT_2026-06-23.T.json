@@ -1,0 +1,2866 @@
+{
+  "source": "SortOf_vs_llllllllllll_ZvT_2026-06-23.SC2Replay",
+  "map": "Fear and Faith LE",
+  "length": 679.5982142857143,
+  "patch": "5.0.16.97364",
+  "speed": "Faster",
+  "player": {
+    "name": "llllllllllll",
+    "race": "Terran",
+    "result": "Loss"
+  },
+  "buildOrder": [
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 12.5,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 24.59821428571429,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 28.080357142857146,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 36.69642857142858,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 48.79464285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 49.50892857142858,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 52.63392857142858,
+      "event": "start",
+      "name": "Barracks"
+    },
+    {
+      "t": 59.776785714285715,
+      "event": "start",
+      "name": "Refinery"
+    },
+    {
+      "t": 60.892857142857146,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 76.33928571428572,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 81.20535714285715,
+      "event": "done",
+      "name": "Refinery"
+    },
+    {
+      "t": 88.4375,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 98.30357142857143,
+      "event": "morph",
+      "name": "SupplyDepotLowered"
+    },
+    {
+      "t": 99.0625,
+      "event": "done",
+      "name": "Barracks"
+    },
+    {
+      "t": 100.53571428571429,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 125.98214285714286,
+      "event": "morph",
+      "name": "OrbitalCommand"
+    },
+    {
+      "t": 126.47321428571429,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 134.50892857142858,
+      "event": "born",
+      "name": "Reaper"
+    },
+    {
+      "t": 136.1607142857143,
+      "event": "start",
+      "name": "CommandCenter"
+    },
+    {
+      "t": 138.6607142857143,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 143.3482142857143,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 157.36607142857144,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 159.01785714285714,
+      "event": "start",
+      "name": "Factory"
+    },
+    {
+      "t": 164.77678571428572,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 166.60714285714286,
+      "event": "born",
+      "name": "Reaper"
+    },
+    {
+      "t": 169.46428571428572,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 177.14285714285717,
+      "event": "morph",
+      "name": "SupplyDepotLowered"
+    },
+    {
+      "t": 177.45535714285717,
+      "event": "start",
+      "name": "BarracksReactor"
+    },
+    {
+      "t": 181.5625,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 181.74107142857144,
+      "event": "born",
+      "name": "KD8Charge"
+    },
+    {
+      "t": 193.6607142857143,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 194.6875,
+      "event": "start",
+      "name": "CommandCenter"
+    },
+    {
+      "t": 196.25,
+      "event": "born",
+      "name": "KD8Charge"
+    },
+    {
+      "t": 197.27678571428572,
+      "event": "born",
+      "name": "KD8Charge"
+    },
+    {
+      "t": 201.875,
+      "event": "done",
+      "name": "Factory"
+    },
+    {
+      "t": 204.64285714285717,
+      "event": "morph",
+      "name": "FactoryFlying"
+    },
+    {
+      "t": 207.14285714285717,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 210.04464285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 213.16964285714286,
+      "event": "done",
+      "name": "BarracksReactor"
+    },
+    {
+      "t": 213.21428571428572,
+      "event": "start",
+      "name": "Starport"
+    },
+    {
+      "t": 213.52678571428572,
+      "event": "morph",
+      "name": "BarracksFlying"
+    },
+    {
+      "t": 213.57142857142858,
+      "event": "morph",
+      "name": "Reactor"
+    },
+    {
+      "t": 216.20535714285717,
+      "event": "morph",
+      "name": "Factory"
+    },
+    {
+      "t": 216.20535714285717,
+      "event": "morph",
+      "name": "FactoryReactor"
+    },
+    {
+      "t": 220.44642857142858,
+      "event": "start",
+      "name": "Refinery"
+    },
+    {
+      "t": 222.14285714285717,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 231.74107142857144,
+      "event": "done",
+      "name": "CommandCenter"
+    },
+    {
+      "t": 234.24107142857144,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 239.06250000000003,
+      "event": "morph",
+      "name": "Barracks"
+    },
+    {
+      "t": 241.87500000000003,
+      "event": "done",
+      "name": "Refinery"
+    },
+    {
+      "t": 246.33928571428572,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 248.92857142857144,
+      "event": "done",
+      "name": "Starport"
+    },
+    {
+      "t": 252.45535714285717,
+      "event": "born",
+      "name": "Hellion"
+    },
+    {
+      "t": 253.21428571428572,
+      "event": "born",
+      "name": "Hellion"
+    },
+    {
+      "t": 258.4375,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 259.4642857142857,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 263.4375,
+      "event": "morph",
+      "name": "OrbitalCommand"
+    },
+    {
+      "t": 263.8392857142857,
+      "event": "born",
+      "name": "KD8Charge"
+    },
+    {
+      "t": 264.7767857142857,
+      "event": "born",
+      "name": "KD8Charge"
+    },
+    {
+      "t": 266.11607142857144,
+      "event": "done",
+      "name": "CommandCenter"
+    },
+    {
+      "t": 270.6696428571429,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 273.8839285714286,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 275.4017857142857,
+      "event": "start",
+      "name": "BarracksTechLab"
+    },
+    {
+      "t": 282.76785714285717,
+      "event": "born",
+      "name": "Hellion"
+    },
+    {
+      "t": 283.0357142857143,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 284.5089285714286,
+      "event": "born",
+      "name": "Hellion"
+    },
+    {
+      "t": 286.3839285714286,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 288.70535714285717,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 293.2589285714286,
+      "event": "done",
+      "name": "BarracksTechLab"
+    },
+    {
+      "t": 295.1339285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 295.26785714285717,
+      "event": "morph",
+      "name": "OrbitalCommand"
+    },
+    {
+      "t": 295.3125,
+      "event": "born",
+      "name": "Liberator"
+    },
+    {
+      "t": 302.9017857142857,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 307.8125,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 310.80357142857144,
+      "event": "born",
+      "name": "Hellion"
+    },
+    {
+      "t": 310.89285714285717,
+      "event": "born",
+      "name": "Hellion"
+    },
+    {
+      "t": 320.84821428571433,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 320.9821428571429,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 324.8214285714286,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 324.95535714285717,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 326.6071428571429,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 329.4642857142857,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 332.67857142857144,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 332.9464285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 334.0625,
+      "event": "born",
+      "name": "Hellion"
+    },
+    {
+      "t": 334.1964285714286,
+      "event": "born",
+      "name": "Hellion"
+    },
+    {
+      "t": 334.86607142857144,
+      "event": "morph",
+      "name": "FactoryFlying"
+    },
+    {
+      "t": 334.91071428571433,
+      "event": "morph",
+      "name": "Reactor"
+    },
+    {
+      "t": 336.51785714285717,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 340.0446428571429,
+      "event": "start",
+      "name": "Barracks"
+    },
+    {
+      "t": 340.49107142857144,
+      "event": "start",
+      "name": "Barracks"
+    },
+    {
+      "t": 341.5625,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 342.5892857142857,
+      "event": "morph",
+      "name": "Factory"
+    },
+    {
+      "t": 342.5892857142857,
+      "event": "start",
+      "name": "FactoryReactor"
+    },
+    {
+      "t": 345.0446428571429,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 348.03571428571433,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 348.61607142857144,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 349.0625,
+      "event": "start",
+      "name": "EngineeringBay"
+    },
+    {
+      "t": 350.26785714285717,
+      "event": "start",
+      "name": "EngineeringBay"
+    },
+    {
+      "t": 353.66071428571433,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 354.86607142857144,
+      "event": "start",
+      "name": "Refinery"
+    },
+    {
+      "t": 356.74107142857144,
+      "event": "start",
+      "name": "Refinery"
+    },
+    {
+      "t": 357.14285714285717,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 360.7142857142857,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 360.7589285714286,
+      "event": "morph",
+      "name": "LiberatorAG"
+    },
+    {
+      "t": 362.8125,
+      "event": "born",
+      "name": "LiberatorAG"
+    },
+    {
+      "t": 363.61607142857144,
+      "event": "morph",
+      "name": "Liberator"
+    },
+    {
+      "t": 365.17857142857144,
+      "event": "start",
+      "name": "StarportReactor"
+    },
+    {
+      "t": 365.7589285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 369.24107142857144,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 369.64285714285717,
+      "event": "morph",
+      "name": "LiberatorAG"
+    },
+    {
+      "t": 372.09821428571433,
+      "event": "start",
+      "name": "Barracks"
+    },
+    {
+      "t": 372.9017857142857,
+      "event": "start",
+      "name": "Barracks"
+    },
+    {
+      "t": 374.0625,
+      "event": "done",
+      "name": "EngineeringBay"
+    },
+    {
+      "t": 375.26785714285717,
+      "event": "done",
+      "name": "EngineeringBay"
+    },
+    {
+      "t": 376.2946428571429,
+      "event": "done",
+      "name": "Refinery"
+    },
+    {
+      "t": 378.1696428571429,
+      "event": "done",
+      "name": "Refinery"
+    },
+    {
+      "t": 378.30357142857144,
+      "event": "done",
+      "name": "FactoryReactor"
+    },
+    {
+      "t": 379.95535714285717,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 380.0446428571429,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 386.47321428571433,
+      "event": "done",
+      "name": "Barracks"
+    },
+    {
+      "t": 386.51785714285717,
+      "event": "morph",
+      "name": "BarracksReactor"
+    },
+    {
+      "t": 386.83035714285717,
+      "event": "morph",
+      "name": "Liberator"
+    },
+    {
+      "t": 386.9196428571429,
+      "event": "done",
+      "name": "Barracks"
+    },
+    {
+      "t": 390.17857142857144,
+      "event": "morph",
+      "name": "FactoryFlying"
+    },
+    {
+      "t": 390.22321428571433,
+      "event": "morph",
+      "name": "Reactor"
+    },
+    {
+      "t": 390.3125,
+      "event": "morph",
+      "name": "BarracksFlying"
+    },
+    {
+      "t": 392.5,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 392.5446428571429,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 394.24107142857144,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 394.375,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 397.2767857142857,
+      "event": "morph",
+      "name": "Barracks"
+    },
+    {
+      "t": 397.3214285714286,
+      "event": "morph",
+      "name": "BarracksReactor"
+    },
+    {
+      "t": 400.89285714285717,
+      "event": "done",
+      "name": "StarportReactor"
+    },
+    {
+      "t": 402.2767857142857,
+      "event": "morph",
+      "name": "Factory"
+    },
+    {
+      "t": 402.2767857142857,
+      "event": "start",
+      "name": "FactoryTechLab"
+    },
+    {
+      "t": 402.5,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 404.33035714285717,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 406.3392857142857,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 407.5446428571429,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 407.72321428571433,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 407.8571428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 407.9017857142857,
+      "event": "start",
+      "name": "Barracks"
+    },
+    {
+      "t": 408.03571428571433,
+      "event": "start",
+      "name": "Barracks"
+    },
+    {
+      "t": 408.75,
+      "event": "start",
+      "name": "Barracks"
+    },
+    {
+      "t": 412.0089285714286,
+      "event": "morph",
+      "name": "OrbitalCommandFlying"
+    },
+    {
+      "t": 417.09821428571433,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 417.8125,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 418.5267857142857,
+      "event": "done",
+      "name": "Barracks"
+    },
+    {
+      "t": 418.8392857142857,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 418.97321428571433,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 419.33035714285717,
+      "event": "done",
+      "name": "Barracks"
+    },
+    {
+      "t": 420.1339285714286,
+      "event": "done",
+      "name": "FactoryTechLab"
+    },
+    {
+      "t": 420.3125,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 420.4017857142857,
+      "event": "start",
+      "name": "BarracksReactor"
+    },
+    {
+      "t": 420.49107142857144,
+      "event": "start",
+      "name": "BarracksReactor"
+    },
+    {
+      "t": 422.5446428571429,
+      "event": "morph",
+      "name": "LiberatorAG"
+    },
+    {
+      "t": 422.76785714285717,
+      "event": "upgrade",
+      "name": "Stimpack"
+    },
+    {
+      "t": 422.9017857142857,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 423.03571428571433,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 425.53571428571433,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 425.6696428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 434.64285714285717,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 438.5267857142857,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 439.24107142857144,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 439.7321428571429,
+      "event": "born",
+      "name": "Medivac"
+    },
+    {
+      "t": 439.7767857142857,
+      "event": "born",
+      "name": "Medivac"
+    },
+    {
+      "t": 440.0892857142857,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 440.3571428571429,
+      "event": "morph",
+      "name": "SupplyDepotLowered"
+    },
+    {
+      "t": 440.49107142857144,
+      "event": "morph",
+      "name": "SupplyDepotLowered"
+    },
+    {
+      "t": 440.6696428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 440.80357142857144,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 440.9375,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 441.78571428571433,
+      "event": "morph",
+      "name": "SupplyDepotLowered"
+    },
+    {
+      "t": 442.2321428571429,
+      "event": "morph",
+      "name": "Liberator"
+    },
+    {
+      "t": 446.25,
+      "event": "morph",
+      "name": "LiberatorAG"
+    },
+    {
+      "t": 447.36607142857144,
+      "event": "morph",
+      "name": "OrbitalCommand"
+    },
+    {
+      "t": 450.6696428571429,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 452.5892857142857,
+      "event": "start",
+      "name": "Armory"
+    },
+    {
+      "t": 454.33035714285717,
+      "event": "done",
+      "name": "Barracks"
+    },
+    {
+      "t": 454.4642857142857,
+      "event": "done",
+      "name": "Barracks"
+    },
+    {
+      "t": 455.17857142857144,
+      "event": "done",
+      "name": "Barracks"
+    },
+    {
+      "t": 456.0714285714286,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 456.11607142857144,
+      "event": "done",
+      "name": "BarracksReactor"
+    },
+    {
+      "t": 456.20535714285717,
+      "event": "done",
+      "name": "BarracksReactor"
+    },
+    {
+      "t": 456.42857142857144,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 456.42857142857144,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 458.4821428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 467.8571428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 467.99107142857144,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 470.7142857142857,
+      "event": "born",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 474.24107142857144,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 474.24107142857144,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 476.3392857142857,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 476.47321428571433,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 476.6071428571429,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 480.4464285714286,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 480.58035714285717,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 483.8839285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 485.58035714285717,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 485.7142857142857,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 485.84821428571433,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 485.9821428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 486.6517857142857,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 486.87500000000006,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 486.9642857142857,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 486.9642857142857,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 492.05357142857144,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 492.05357142857144,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 492.81250000000006,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 498.1696428571429,
+      "event": "upgrade",
+      "name": "TerranInfantryWeaponsLevel1"
+    },
+    {
+      "t": 498.2589285714286,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 498.30357142857144,
+      "event": "upgrade",
+      "name": "TerranInfantryArmorsLevel1"
+    },
+    {
+      "t": 498.39285714285717,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 499.01785714285717,
+      "event": "done",
+      "name": "Armory"
+    },
+    {
+      "t": 500.7589285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 502.81250000000006,
+      "event": "born",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 503.39285714285717,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 503.5267857142857,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 503.66071428571433,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 503.7946428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 504.4642857142857,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 507.76785714285717,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 512.2767857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 512.5446428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 512.5446428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 512.5892857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 512.6339285714286,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 516.0714285714286,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 516.0714285714286,
+      "event": "morph",
+      "name": "OrbitalCommandFlying"
+    },
+    {
+      "t": 516.2053571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 530.9821428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 531.1160714285714,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 532.9017857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 533.0357142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 533.125,
+      "event": "morph",
+      "name": "OrbitalCommand"
+    },
+    {
+      "t": 533.1696428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 536.875,
+      "event": "morph",
+      "name": "SiegeTankSieged"
+    },
+    {
+      "t": 538.3035714285714,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 538.4821428571429,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 540.9375,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 541.0714285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 543.7946428571429,
+      "event": "morph",
+      "name": "SiegeTankSieged"
+    },
+    {
+      "t": 543.8392857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 543.9732142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 549.8214285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 550.0446428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 550.1785714285714,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 550.1785714285714,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 553.0357142857143,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 553.1696428571429,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 556.7857142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 556.9642857142858,
+      "event": "upgrade",
+      "name": "ShieldWall"
+    },
+    {
+      "t": 557.0535714285714,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 557.1428571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 557.1428571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 557.1875,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 557.1875,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 557.2321428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 557.2321428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 557.6785714285714,
+      "event": "morph",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 559.8214285714286,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 560.3125,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 560.4017857142858,
+      "event": "morph",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 561.6517857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 561.7857142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 567.8125,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 568.6160714285714,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 569.4196428571429,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 570.0892857142858,
+      "event": "morph",
+      "name": "SiegeTankSieged"
+    },
+    {
+      "t": 571.0714285714286,
+      "event": "morph",
+      "name": "SiegeTankSieged"
+    },
+    {
+      "t": 580.1339285714286,
+      "event": "born",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 581.25,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 581.7410714285714,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 582.9017857142858,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 583.9285714285714,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 589.2410714285714,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 590.0446428571429,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 590.8482142857143,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 593.7946428571429,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 593.8839285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 593.8839285714286,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 593.9285714285714,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 595.7589285714286,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 599.1071428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 599.1517857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 599.1517857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 599.1517857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 599.1517857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 599.1517857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 599.1517857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 599.1517857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 599.5982142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 599.6428571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 599.6428571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 603.9285714285714,
+      "event": "morph",
+      "name": "SiegeTankSieged"
+    },
+    {
+      "t": 604.3303571428572,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 605.3571428571429,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 605.9821428571429,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 605.9821428571429,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 607.1428571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 611.7857142857143,
+      "event": "born",
+      "name": "Medivac"
+    },
+    {
+      "t": 613.75,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 613.9285714285714,
+      "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 615.2232142857143,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 616.2053571428572,
+      "event": "start",
+      "name": "Bunker"
+    },
+    {
+      "t": 616.9196428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 616.9642857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 617.1875,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 619.2857142857143,
+      "event": "born",
+      "name": "Medivac"
+    },
+    {
+      "t": 620.4910714285714,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 620.6696428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 621.4285714285714,
+      "event": "born",
+      "name": "SiegeTankSieged"
+    },
+    {
+      "t": 622.0535714285714,
+      "event": "start",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 626.9196428571429,
+      "event": "morph",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 626.9642857142858,
+      "event": "morph",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 627.2321428571429,
+      "event": "morph",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 627.9910714285714,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 628.125,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 628.7053571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 628.9732142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 628.9732142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 629.0178571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 629.0178571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 629.1071428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 634.7321428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 634.7767857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 638.3035714285714,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 638.4821428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 638.7946428571429,
+      "event": "upgrade",
+      "name": "TerranInfantryWeaponsLevel2"
+    },
+    {
+      "t": 639.2410714285714,
+      "event": "morph",
+      "name": "SiegeTankSieged"
+    },
+    {
+      "t": 639.375,
+      "event": "morph",
+      "name": "SiegeTankSieged"
+    },
+    {
+      "t": 639.4196428571429,
+      "event": "morph",
+      "name": "SiegeTankSieged"
+    },
+    {
+      "t": 641.7410714285714,
+      "event": "upgrade",
+      "name": "TerranInfantryArmorsLevel2"
+    },
+    {
+      "t": 643.4821428571429,
+      "event": "done",
+      "name": "SupplyDepot"
+    },
+    {
+      "t": 644.7767857142858,
+      "event": "done",
+      "name": "Bunker"
+    },
+    {
+      "t": 645.8035714285714,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 649.1964285714287,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 649.3303571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 649.4642857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 649.5982142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 649.7767857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 649.8214285714287,
+      "event": "morph",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 649.8214285714287,
+      "event": "morph",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 649.9107142857143,
+      "event": "morph",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 649.9107142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 650.0446428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 652.5446428571429,
+      "event": "born",
+      "name": "Medivac"
+    },
+    {
+      "t": 652.5446428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 652.6785714285714,
+      "event": "born",
+      "name": "Medivac"
+    },
+    {
+      "t": 657.0089285714287,
+      "event": "born",
+      "name": "SiegeTank"
+    },
+    {
+      "t": 663.9732142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 664.2410714285714,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 664.3303571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 664.3303571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 667.0089285714287,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 667.1428571428572,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 667.2767857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 667.4107142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 667.5892857142858,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 667.7232142857143,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 667.8571428571429,
+      "event": "born",
+      "name": "Marine"
+    },
+    {
+      "t": 667.8571428571429,
+      "event": "morph",
+      "name": "SiegeTankSieged"
+    },
+    {
+      "t": 669.0625,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 669.1964285714287,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 670.1785714285714,
+      "event": "born",
+      "name": "SCV"
+    },
+    {
+      "t": 671.3392857142858,
+      "event": "start",
+      "name": "BarracksTechLab"
+    },
+    {
+      "t": 671.4732142857143,
+      "event": "start",
+      "name": "BarracksTechLab"
+    }
+  ],
+  "economy": [
+    {
+      "t": 0.044642857142857144,
+      "minerals": 50,
+      "gas": 0,
+      "mineralRate": 0,
+      "gasRate": 0,
+      "supplyUsed": 8.0,
+      "supplyCap": 13.0,
+      "workers": 8
+    },
+    {
+      "t": 7.142857142857143,
+      "minerals": 40,
+      "gas": 0,
+      "mineralRate": 335,
+      "gasRate": 0,
+      "supplyUsed": 9.0,
+      "supplyCap": 13.0,
+      "workers": 8
+    },
+    {
+      "t": 14.285714285714286,
+      "minerals": 30,
+      "gas": 0,
+      "mineralRate": 447,
+      "gasRate": 0,
+      "supplyUsed": 10.0,
+      "supplyCap": 13.0,
+      "workers": 9
+    },
+    {
+      "t": 21.42857142857143,
+      "minerals": 45,
+      "gas": 0,
+      "mineralRate": 475,
+      "gasRate": 0,
+      "supplyUsed": 10.0,
+      "supplyCap": 13.0,
+      "workers": 9
+    },
+    {
+      "t": 28.571428571428573,
+      "minerals": 10,
+      "gas": 0,
+      "mineralRate": 503,
+      "gasRate": 0,
+      "supplyUsed": 11.0,
+      "supplyCap": 13.0,
+      "workers": 10
+    },
+    {
+      "t": 35.714285714285715,
+      "minerals": 30,
+      "gas": 0,
+      "mineralRate": 531,
+      "gasRate": 0,
+      "supplyUsed": 11.0,
+      "supplyCap": 13.0,
+      "workers": 10
+    },
+    {
+      "t": 42.85714285714286,
+      "minerals": 55,
+      "gas": 0,
+      "mineralRate": 587,
+      "gasRate": 0,
+      "supplyUsed": 12.0,
+      "supplyCap": 13.0,
+      "workers": 11
+    },
+    {
+      "t": 50.0,
+      "minerals": 120,
+      "gas": 0,
+      "mineralRate": 615,
+      "gasRate": 0,
+      "supplyUsed": 13.0,
+      "supplyCap": 21.0,
+      "workers": 12
+    },
+    {
+      "t": 57.142857142857146,
+      "minerals": 55,
+      "gas": 0,
+      "mineralRate": 671,
+      "gasRate": 0,
+      "supplyUsed": 13.0,
+      "supplyCap": 21.0,
+      "workers": 12
+    },
+    {
+      "t": 64.28571428571429,
+      "minerals": 0,
+      "gas": 0,
+      "mineralRate": 643,
+      "gasRate": 0,
+      "supplyUsed": 14.0,
+      "supplyCap": 21.0,
+      "workers": 13
+    },
+    {
+      "t": 71.42857142857143,
+      "minerals": 85,
+      "gas": 0,
+      "mineralRate": 699,
+      "gasRate": 0,
+      "supplyUsed": 14.0,
+      "supplyCap": 21.0,
+      "workers": 13
+    },
+    {
+      "t": 78.57142857142857,
+      "minerals": 65,
+      "gas": 0,
+      "mineralRate": 699,
+      "gasRate": 0,
+      "supplyUsed": 15.0,
+      "supplyCap": 21.0,
+      "workers": 14
+    },
+    {
+      "t": 85.71428571428572,
+      "minerals": 135,
+      "gas": 4,
+      "mineralRate": 699,
+      "gasRate": 22,
+      "supplyUsed": 15.0,
+      "supplyCap": 21.0,
+      "workers": 14
+    },
+    {
+      "t": 92.85714285714286,
+      "minerals": 205,
+      "gas": 24,
+      "mineralRate": 615,
+      "gasRate": 134,
+      "supplyUsed": 16.0,
+      "supplyCap": 21.0,
+      "workers": 15
+    },
+    {
+      "t": 100.0,
+      "minerals": 285,
+      "gas": 44,
+      "mineralRate": 615,
+      "gasRate": 156,
+      "supplyUsed": 16.0,
+      "supplyCap": 21.0,
+      "workers": 15
+    },
+    {
+      "t": 107.14285714285715,
+      "minerals": 165,
+      "gas": 14,
+      "mineralRate": 671,
+      "gasRate": 156,
+      "supplyUsed": 17.0,
+      "supplyCap": 21.0,
+      "workers": 16
+    },
+    {
+      "t": 114.28571428571429,
+      "minerals": 255,
+      "gas": 34,
+      "mineralRate": 727,
+      "gasRate": 179,
+      "supplyUsed": 17.0,
+      "supplyCap": 21.0,
+      "workers": 16
+    },
+    {
+      "t": 121.42857142857143,
+      "minerals": 340,
+      "gas": 54,
+      "mineralRate": 755,
+      "gasRate": 179,
+      "supplyUsed": 17.0,
+      "supplyCap": 21.0,
+      "workers": 16
+    },
+    {
+      "t": 128.57142857142858,
+      "minerals": 365,
+      "gas": 70,
+      "mineralRate": 671,
+      "gasRate": 156,
+      "supplyUsed": 18.0,
+      "supplyCap": 21.0,
+      "workers": 16
+    },
+    {
+      "t": 135.71428571428572,
+      "minerals": 420,
+      "gas": 40,
+      "mineralRate": 839,
+      "gasRate": 156,
+      "supplyUsed": 19.0,
+      "supplyCap": 21.0,
+      "workers": 16
+    },
+    {
+      "t": 142.85714285714286,
+      "minerals": 130,
+      "gas": 60,
+      "mineralRate": 951,
+      "gasRate": 156,
+      "supplyUsed": 19.0,
+      "supplyCap": 21.0,
+      "workers": 17
+    },
+    {
+      "t": 150.0,
+      "minerals": 80,
+      "gas": 80,
+      "mineralRate": 951,
+      "gasRate": 156,
+      "supplyUsed": 20.0,
+      "supplyCap": 21.0,
+      "workers": 17
+    },
+    {
+      "t": 157.14285714285714,
+      "minerals": 125,
+      "gas": 100,
+      "mineralRate": 895,
+      "gasRate": 179,
+      "supplyUsed": 20.0,
+      "supplyCap": 21.0,
+      "workers": 17
+    },
+    {
+      "t": 164.2857142857143,
+      "minerals": 35,
+      "gas": 20,
+      "mineralRate": 923,
+      "gasRate": 179,
+      "supplyUsed": 21.0,
+      "supplyCap": 21.0,
+      "workers": 18
+    },
+    {
+      "t": 171.42857142857144,
+      "minerals": 145,
+      "gas": 36,
+      "mineralRate": 951,
+      "gasRate": 156,
+      "supplyUsed": 22.0,
+      "supplyCap": 29.0,
+      "workers": 19
+    },
+    {
+      "t": 178.57142857142858,
+      "minerals": 215,
+      "gas": 6,
+      "mineralRate": 1007,
+      "gasRate": 156,
+      "supplyUsed": 22.0,
+      "supplyCap": 29.0,
+      "workers": 19
+    },
+    {
+      "t": 185.71428571428572,
+      "minerals": 280,
+      "gas": 26,
+      "mineralRate": 923,
+      "gasRate": 156,
+      "supplyUsed": 23.0,
+      "supplyCap": 29.0,
+      "workers": 20
+    },
+    {
+      "t": 192.85714285714286,
+      "minerals": 20,
+      "gas": 46,
+      "mineralRate": 951,
+      "gasRate": 156,
+      "supplyUsed": 23.0,
+      "supplyCap": 29.0,
+      "workers": 20
+    },
+    {
+      "t": 200.0,
+      "minerals": 65,
+      "gas": 66,
+      "mineralRate": 811,
+      "gasRate": 156,
+      "supplyUsed": 24.0,
+      "supplyCap": 29.0,
+      "workers": 21
+    },
+    {
+      "t": 207.14285714285717,
+      "minerals": 170,
+      "gas": 86,
+      "mineralRate": 839,
+      "gasRate": 179,
+      "supplyUsed": 24.0,
+      "supplyCap": 29.0,
+      "workers": 21
+    },
+    {
+      "t": 214.2857142857143,
+      "minerals": 80,
+      "gas": 6,
+      "mineralRate": 895,
+      "gasRate": 179,
+      "supplyUsed": 25.0,
+      "supplyCap": 29.0,
+      "workers": 22
+    },
+    {
+      "t": 221.42857142857144,
+      "minerals": 85,
+      "gas": 22,
+      "mineralRate": 1035,
+      "gasRate": 156,
+      "supplyUsed": 25.0,
+      "supplyCap": 29.0,
+      "workers": 22
+    },
+    {
+      "t": 228.57142857142858,
+      "minerals": 200,
+      "gas": 42,
+      "mineralRate": 951,
+      "gasRate": 156,
+      "supplyUsed": 26.0,
+      "supplyCap": 29.0,
+      "workers": 23
+    },
+    {
+      "t": 235.71428571428572,
+      "minerals": 55,
+      "gas": 37,
+      "mineralRate": 1147,
+      "gasRate": 156,
+      "supplyUsed": 31.0,
+      "supplyCap": 42.0,
+      "workers": 24
+    },
+    {
+      "t": 242.85714285714286,
+      "minerals": 50,
+      "gas": 82,
+      "mineralRate": 1203,
+      "gasRate": 156,
+      "supplyUsed": 31.0,
+      "supplyCap": 42.0,
+      "workers": 24
+    },
+    {
+      "t": 250.00000000000003,
+      "minerals": 180,
+      "gas": 114,
+      "mineralRate": 1203,
+      "gasRate": 223,
+      "supplyUsed": 32.0,
+      "supplyCap": 42.0,
+      "workers": 25
+    },
+    {
+      "t": 257.14285714285717,
+      "minerals": 170,
+      "gas": 29,
+      "mineralRate": 1231,
+      "gasRate": 335,
+      "supplyUsed": 35.0,
+      "supplyCap": 42.0,
+      "workers": 25
+    },
+    {
+      "t": 264.2857142857143,
+      "minerals": 65,
+      "gas": 65,
+      "mineralRate": 1315,
+      "gasRate": 335,
+      "supplyUsed": 40.0,
+      "supplyCap": 42.0,
+      "workers": 26
+    },
+    {
+      "t": 271.42857142857144,
+      "minerals": 50,
+      "gas": 101,
+      "mineralRate": 1539,
+      "gasRate": 313,
+      "supplyUsed": 40.0,
+      "supplyCap": 55.0,
+      "workers": 27
+    },
+    {
+      "t": 278.5714285714286,
+      "minerals": 60,
+      "gas": 116,
+      "mineralRate": 1567,
+      "gasRate": 313,
+      "supplyUsed": 40.0,
+      "supplyCap": 55.0,
+      "workers": 27
+    },
+    {
+      "t": 285.7142857142857,
+      "minerals": 160,
+      "gas": 156,
+      "mineralRate": 1539,
+      "gasRate": 313,
+      "supplyUsed": 41.0,
+      "supplyCap": 55.0,
+      "workers": 28
+    },
+    {
+      "t": 292.8571428571429,
+      "minerals": 85,
+      "gas": 196,
+      "mineralRate": 1567,
+      "gasRate": 313,
+      "supplyUsed": 46.0,
+      "supplyCap": 55.0,
+      "workers": 29
+    },
+    {
+      "t": 300.0,
+      "minerals": 300,
+      "gas": 236,
+      "mineralRate": 1679,
+      "gasRate": 335,
+      "supplyUsed": 44.0,
+      "supplyCap": 55.0,
+      "workers": 30
+    },
+    {
+      "t": 307.14285714285717,
+      "minerals": 490,
+      "gas": 276,
+      "mineralRate": 1623,
+      "gasRate": 358,
+      "supplyUsed": 44.0,
+      "supplyCap": 55.0,
+      "workers": 31
+    },
+    {
+      "t": 314.2857142857143,
+      "minerals": 445,
+      "gas": 312,
+      "mineralRate": 1959,
+      "gasRate": 335,
+      "supplyUsed": 48.0,
+      "supplyCap": 63.0,
+      "workers": 31
+    },
+    {
+      "t": 321.42857142857144,
+      "minerals": 395,
+      "gas": 223,
+      "mineralRate": 1875,
+      "gasRate": 313,
+      "supplyUsed": 51.0,
+      "supplyCap": 63.0,
+      "workers": 33
+    },
+    {
+      "t": 328.5714285714286,
+      "minerals": 235,
+      "gas": 163,
+      "mineralRate": 1623,
+      "gasRate": 313,
+      "supplyUsed": 52.0,
+      "supplyCap": 63.0,
+      "workers": 33
+    },
+    {
+      "t": 335.7142857142857,
+      "minerals": 266,
+      "gas": 153,
+      "mineralRate": 1735,
+      "gasRate": 313,
+      "supplyUsed": 54.0,
+      "supplyCap": 63.0,
+      "workers": 35
+    },
+    {
+      "t": 342.8571428571429,
+      "minerals": 170,
+      "gas": 193,
+      "mineralRate": 2211,
+      "gasRate": 313,
+      "supplyUsed": 56.0,
+      "supplyCap": 63.0,
+      "workers": 37
+    },
+    {
+      "t": 350.0,
+      "minerals": 175,
+      "gas": 233,
+      "mineralRate": 2323,
+      "gasRate": 335,
+      "supplyUsed": 58.0,
+      "supplyCap": 71.0,
+      "workers": 39
+    },
+    {
+      "t": 357.14285714285717,
+      "minerals": 160,
+      "gas": 269,
+      "mineralRate": 2155,
+      "gasRate": 335,
+      "supplyUsed": 59.0,
+      "supplyCap": 71.0,
+      "workers": 40
+    },
+    {
+      "t": 364.28571428571433,
+      "minerals": 415,
+      "gas": 305,
+      "mineralRate": 2211,
+      "gasRate": 313,
+      "supplyUsed": 60.0,
+      "supplyCap": 71.0,
+      "workers": 42
+    },
+    {
+      "t": 371.42857142857144,
+      "minerals": 240,
+      "gas": 295,
+      "mineralRate": 2323,
+      "gasRate": 313,
+      "supplyUsed": 62.0,
+      "supplyCap": 71.0,
+      "workers": 44
+    },
+    {
+      "t": 378.5714285714286,
+      "minerals": 490,
+      "gas": 335,
+      "mineralRate": 2239,
+      "gasRate": 313,
+      "supplyUsed": 60.0,
+      "supplyCap": 71.0,
+      "workers": 44
+    },
+    {
+      "t": 385.7142857142857,
+      "minerals": 370,
+      "gas": 187,
+      "mineralRate": 2183,
+      "gasRate": 380,
+      "supplyUsed": 57.0,
+      "supplyCap": 71.0,
+      "workers": 46
+    },
+    {
+      "t": 392.8571428571429,
+      "minerals": 390,
+      "gas": 218,
+      "mineralRate": 2155,
+      "gasRate": 470,
+      "supplyUsed": 55.0,
+      "supplyCap": 71.0,
+      "workers": 46
+    },
+    {
+      "t": 400.0,
+      "minerals": 635,
+      "gas": 282,
+      "mineralRate": 1875,
+      "gasRate": 537,
+      "supplyUsed": 56.0,
+      "supplyCap": 71.0,
+      "workers": 48
+    },
+    {
+      "t": 407.14285714285717,
+      "minerals": 235,
+      "gas": 358,
+      "mineralRate": 2015,
+      "gasRate": 649,
+      "supplyUsed": 59.0,
+      "supplyCap": 71.0,
+      "workers": 50
+    },
+    {
+      "t": 414.28571428571433,
+      "minerals": 75,
+      "gas": 230,
+      "mineralRate": 1903,
+      "gasRate": 649,
+      "supplyUsed": 67.0,
+      "supplyCap": 71.0,
+      "workers": 50
+    },
+    {
+      "t": 421.42857142857144,
+      "minerals": 160,
+      "gas": 210,
+      "mineralRate": 2155,
+      "gasRate": 649,
+      "supplyUsed": 67.0,
+      "supplyCap": 71.0,
+      "workers": 50
+    },
+    {
+      "t": 428.5714285714286,
+      "minerals": 30,
+      "gas": 161,
+      "mineralRate": 2351,
+      "gasRate": 627,
+      "supplyUsed": 71.0,
+      "supplyCap": 71.0,
+      "workers": 52
+    },
+    {
+      "t": 435.7142857142857,
+      "minerals": 225,
+      "gas": 241,
+      "mineralRate": 2491,
+      "gasRate": 627,
+      "supplyUsed": 71.0,
+      "supplyCap": 71.0,
+      "workers": 52
+    },
+    {
+      "t": 442.8571428571429,
+      "minerals": 375,
+      "gas": 321,
+      "mineralRate": 2519,
+      "gasRate": 671,
+      "supplyUsed": 78.0,
+      "supplyCap": 87.0,
+      "workers": 53
+    },
+    {
+      "t": 450.00000000000006,
+      "minerals": 660,
+      "gas": 401,
+      "mineralRate": 2491,
+      "gasRate": 694,
+      "supplyUsed": 78.0,
+      "supplyCap": 87.0,
+      "workers": 53
+    },
+    {
+      "t": 457.14285714285717,
+      "minerals": 430,
+      "gas": 298,
+      "mineralRate": 2295,
+      "gasRate": 649,
+      "supplyUsed": 78.0,
+      "supplyCap": 95.0,
+      "workers": 54
+    },
+    {
+      "t": 464.28571428571433,
+      "minerals": 585,
+      "gas": 374,
+      "mineralRate": 2267,
+      "gasRate": 649,
+      "supplyUsed": 72.0,
+      "supplyCap": 95.0,
+      "workers": 54
+    },
+    {
+      "t": 471.42857142857144,
+      "minerals": 70,
+      "gas": 446,
+      "mineralRate": 2155,
+      "gasRate": 604,
+      "supplyUsed": 77.0,
+      "supplyCap": 95.0,
+      "workers": 53
+    },
+    {
+      "t": 478.5714285714286,
+      "minerals": 145,
+      "gas": 386,
+      "mineralRate": 2043,
+      "gasRate": 403,
+      "supplyUsed": 77.0,
+      "supplyCap": 95.0,
+      "workers": 52
+    },
+    {
+      "t": 485.7142857142857,
+      "minerals": 240,
+      "gas": 426,
+      "mineralRate": 1679,
+      "gasRate": 313,
+      "supplyUsed": 74.0,
+      "supplyCap": 95.0,
+      "workers": 49
+    },
+    {
+      "t": 492.8571428571429,
+      "minerals": 356,
+      "gas": 457,
+      "mineralRate": 1483,
+      "gasRate": 358,
+      "supplyUsed": 78.0,
+      "supplyCap": 95.0,
+      "workers": 48
+    },
+    {
+      "t": 500.00000000000006,
+      "minerals": 156,
+      "gas": 488,
+      "mineralRate": 1679,
+      "gasRate": 335,
+      "supplyUsed": 85.0,
+      "supplyCap": 95.0,
+      "workers": 47
+    },
+    {
+      "t": 507.14285714285717,
+      "minerals": 76,
+      "gas": 232,
+      "mineralRate": 1819,
+      "gasRate": 358,
+      "supplyUsed": 85.0,
+      "supplyCap": 95.0,
+      "workers": 48
+    },
+    {
+      "t": 514.2857142857143,
+      "minerals": 281,
+      "gas": 312,
+      "mineralRate": 2407,
+      "gasRate": 582,
+      "supplyUsed": 80.0,
+      "supplyCap": 95.0,
+      "workers": 49
+    },
+    {
+      "t": 521.4285714285714,
+      "minerals": 441,
+      "gas": 392,
+      "mineralRate": 2519,
+      "gasRate": 649,
+      "supplyUsed": 76.0,
+      "supplyCap": 95.0,
+      "workers": 49
+    },
+    {
+      "t": 528.5714285714286,
+      "minerals": 686,
+      "gas": 468,
+      "mineralRate": 2771,
+      "gasRate": 627,
+      "supplyUsed": 76.0,
+      "supplyCap": 95.0,
+      "workers": 49
+    },
+    {
+      "t": 535.7142857142858,
+      "minerals": 666,
+      "gas": 548,
+      "mineralRate": 2771,
+      "gasRate": 649,
+      "supplyUsed": 79.0,
+      "supplyCap": 95.0,
+      "workers": 49
+    },
+    {
+      "t": 542.8571428571429,
+      "minerals": 104,
+      "gas": 616,
+      "mineralRate": 2687,
+      "gasRate": 694,
+      "supplyUsed": 90.0,
+      "supplyCap": 95.0,
+      "workers": 51
+    },
+    {
+      "t": 550.0,
+      "minerals": 192,
+      "gas": 546,
+      "mineralRate": 2547,
+      "gasRate": 671,
+      "supplyUsed": 95.0,
+      "supplyCap": 95.0,
+      "workers": 52
+    },
+    {
+      "t": 557.1428571428572,
+      "minerals": 162,
+      "gas": 396,
+      "mineralRate": 2659,
+      "gasRate": 627,
+      "supplyUsed": 95.0,
+      "supplyCap": 95.0,
+      "workers": 54
+    },
+    {
+      "t": 564.2857142857143,
+      "minerals": 255,
+      "gas": 468,
+      "mineralRate": 2771,
+      "gasRate": 649,
+      "supplyUsed": 95.0,
+      "supplyCap": 95.0,
+      "workers": 54
+    },
+    {
+      "t": 571.4285714285714,
+      "minerals": 204,
+      "gas": 544,
+      "mineralRate": 2211,
+      "gasRate": 627,
+      "supplyUsed": 95.0,
+      "supplyCap": 95.0,
+      "workers": 54
+    },
+    {
+      "t": 578.5714285714286,
+      "minerals": 109,
+      "gas": 624,
+      "mineralRate": 2295,
+      "gasRate": 627,
+      "supplyUsed": 95.0,
+      "supplyCap": 95.0,
+      "workers": 54
+    },
+    {
+      "t": 585.7142857142858,
+      "minerals": 228,
+      "gas": 704,
+      "mineralRate": 2407,
+      "gasRate": 649,
+      "supplyUsed": 111.0,
+      "supplyCap": 111.0,
+      "workers": 54
+    },
+    {
+      "t": 592.8571428571429,
+      "minerals": 153,
+      "gas": 559,
+      "mineralRate": 2379,
+      "gasRate": 694,
+      "supplyUsed": 117.0,
+      "supplyCap": 135.0,
+      "workers": 54
+    },
+    {
+      "t": 600.0,
+      "minerals": 312,
+      "gas": 627,
+      "mineralRate": 2519,
+      "gasRate": 627,
+      "supplyUsed": 121.0,
+      "supplyCap": 135.0,
+      "workers": 57
+    },
+    {
+      "t": 607.1428571428572,
+      "minerals": 532,
+      "gas": 707,
+      "mineralRate": 2743,
+      "gasRate": 649,
+      "supplyUsed": 121.0,
+      "supplyCap": 151.0,
+      "workers": 59
+    },
+    {
+      "t": 614.2857142857143,
+      "minerals": 162,
+      "gas": 787,
+      "mineralRate": 2519,
+      "gasRate": 649,
+      "supplyUsed": 118.0,
+      "supplyCap": 151.0,
+      "workers": 59
+    },
+    {
+      "t": 621.4285714285714,
+      "minerals": 235,
+      "gas": 863,
+      "mineralRate": 2547,
+      "gasRate": 627,
+      "supplyUsed": 122.0,
+      "supplyCap": 167.0,
+      "workers": 59
+    },
+    {
+      "t": 628.5714285714286,
+      "minerals": 215,
+      "gas": 618,
+      "mineralRate": 2659,
+      "gasRate": 649,
+      "supplyUsed": 130.0,
+      "supplyCap": 167.0,
+      "workers": 59
+    },
+    {
+      "t": 635.7142857142858,
+      "minerals": 155,
+      "gas": 698,
+      "mineralRate": 2799,
+      "gasRate": 694,
+      "supplyUsed": 138.0,
+      "supplyCap": 167.0,
+      "workers": 59
+    },
+    {
+      "t": 642.8571428571429,
+      "minerals": 510,
+      "gas": 774,
+      "mineralRate": 2799,
+      "gasRate": 671,
+      "supplyUsed": 138.0,
+      "supplyCap": 167.0,
+      "workers": 59
+    },
+    {
+      "t": 650.0,
+      "minerals": 120,
+      "gas": 846,
+      "mineralRate": 2211,
+      "gasRate": 627,
+      "supplyUsed": 137.0,
+      "supplyCap": 175.0,
+      "workers": 52
+    },
+    {
+      "t": 657.1428571428572,
+      "minerals": 56,
+      "gas": 926,
+      "mineralRate": 1595,
+      "gasRate": 649,
+      "supplyUsed": 138.0,
+      "supplyCap": 175.0,
+      "workers": 50
+    },
+    {
+      "t": 664.2857142857143,
+      "minerals": 131,
+      "gas": 1006,
+      "mineralRate": 1735,
+      "gasRate": 649,
+      "supplyUsed": 141.0,
+      "supplyCap": 167.0,
+      "workers": 50
+    },
+    {
+      "t": 671.4285714285714,
+      "minerals": 211,
+      "gas": 932,
+      "mineralRate": 1987,
+      "gasRate": 627,
+      "supplyUsed": 141.0,
+      "supplyCap": 167.0,
+      "workers": 53
+    },
+    {
+      "t": 678.0803571428572,
+      "minerals": 376,
+      "gas": 983,
+      "mineralRate": 1987,
+      "gasRate": 627,
+      "supplyUsed": 112.0,
+      "supplyCap": 167.0,
+      "workers": 53
+    },
+    {
+      "t": 678.0803571428572,
+      "minerals": 376,
+      "gas": 983,
+      "mineralRate": 1987,
+      "gasRate": 627,
+      "supplyUsed": 112.0,
+      "supplyCap": 167.0,
+      "workers": 53
+    }
+  ]
+}

@@ -19,16 +19,26 @@
 import * as fs from "fs";
 import { simulate, fmt } from "./engine.js";
 import { PROTOSS } from "./data.js";
+import { TERRAN } from "./data-terran.js";
+import { ZERG } from "./data-zerg.js";
 import { MAPS } from "./maps.js";
 import { sequenceFromReplay } from "./replay.js";
 const DEFAULT_HORIZON = 180; // 3 minutes — before scouting/harassment decisions diverge the two timelines
+/** Pick the race-specific GameData for a parsed replay's player (data.ts is not the only race anymore). */
+function gameDataForRace(race) {
+    if (race === "Terran")
+        return TERRAN;
+    if (race === "Zerg")
+        return ZERG;
+    return PROTOSS;
+}
 /** Real completion time for the n-th occurrence of each entity, from the replay. */
-function realFinishTimes(replay, horizon) {
+function realFinishTimes(replay, horizon, gameData) {
     const done = new Map();
     for (const e of replay.buildOrder) {
         if (e.t <= 0 || e.t > horizon)
-            continue; // t=0 is the shared starting state (8 probes, 1 Nexus)
-        const ent = PROTOSS.entities[e.name];
+            continue; // t=0 is the shared starting state (8 workers, 1 townhall)
+        const ent = gameData.entities[e.name];
         if (!ent)
             continue;
         const wantEvent = ent.morphFrom ? "morph" : ent.isUpgrade ? "upgrade" : ent.isStructure ? "done" : "born";
@@ -72,8 +82,9 @@ function snapshotAt(snapshots, t) {
 }
 function runOne(path, horizon) {
     const replay = JSON.parse(fs.readFileSync(path, "utf8"));
-    const actions = sequenceFromReplay(replay, PROTOSS, horizon);
-    const result = simulate(PROTOSS, actions, MAPS.standard);
+    const gameData = gameDataForRace(replay.player.race);
+    const actions = sequenceFromReplay(replay, gameData, horizon);
+    const result = simulate(gameData, actions, MAPS.standard);
     console.log(`\n${"=".repeat(76)}`);
     console.log(`${replay.source}  —  ${replay.player.name} (${replay.player.race}), ${replay.map}`);
     console.log(`horizon: ${fmt(horizon)}, ${actions.length} actions replayed`);
@@ -82,7 +93,7 @@ function runOne(path, horizon) {
         console.log(`⚠️  sim diverged from the real sequence: ${result.error}`);
         console.log("   (showing partial results up to the point of divergence)");
     }
-    const real = realFinishTimes(replay, horizon);
+    const real = realFinishTimes(replay, horizon, gameData);
     const sim = simFinishTimes(result.actions);
     console.log("\n  entity                sim      real     delta   n");
     console.log("  " + "-".repeat(52));

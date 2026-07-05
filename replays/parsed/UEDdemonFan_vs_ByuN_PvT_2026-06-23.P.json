@@ -1,0 +1,2356 @@
+{
+  "source": "UEDdemonFan_vs_ByuN_PvT_2026-06-23.SC2Replay",
+  "map": "Lockdown LE",
+  "length": 662.8571428571429,
+  "patch": "5.0.16.97364",
+  "speed": "Faster",
+  "player": {
+    "name": "UED\u0434\u0435\u043c\u043e\u043dFan",
+    "race": "Protoss",
+    "result": "Loss"
+  },
+  "buildOrder": [
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 11.517857142857144,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 19.59821428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 27.67857142857143,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 32.5,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 38.88392857142858,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 50.35714285714286,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 50.98214285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 54.330357142857146,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 63.080357142857146,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 64.41964285714286,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 71.38392857142857,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 79.46428571428572,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 85.84821428571429,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 89.41964285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 100.75892857142858,
+      "event": "done",
+      "name": "Gateway"
+    },
+    {
+      "t": 101.51785714285715,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 102.76785714285715,
+      "event": "start",
+      "name": "CyberneticsCore"
+    },
+    {
+      "t": 113.61607142857143,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 119.15178571428572,
+      "event": "start",
+      "name": "Nexus"
+    },
+    {
+      "t": 127.36607142857143,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 138.48214285714286,
+      "event": "done",
+      "name": "CyberneticsCore"
+    },
+    {
+      "t": 142.8125,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 145.2232142857143,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 155.98214285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 160.2232142857143,
+      "event": "born",
+      "name": "Adept"
+    },
+    {
+      "t": 164.24107142857144,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 168.08035714285717,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 177.00892857142858,
+      "event": "start",
+      "name": "TwilightCouncil"
+    },
+    {
+      "t": 180.17857142857144,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 187.1875,
+      "event": "born",
+      "name": "Stalker"
+    },
+    {
+      "t": 190.35714285714286,
+      "event": "born",
+      "name": "AdeptPhaseShift"
+    },
+    {
+      "t": 190.58035714285717,
+      "event": "done",
+      "name": "Nexus"
+    },
+    {
+      "t": 192.27678571428572,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 203.125,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 203.9732142857143,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 211.20535714285717,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 212.05357142857144,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 212.7232142857143,
+      "event": "done",
+      "name": "TwilightCouncil"
+    },
+    {
+      "t": 214.2857142857143,
+      "event": "born",
+      "name": "Stalker"
+    },
+    {
+      "t": 219.2857142857143,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 220.13392857142858,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 230.17857142857144,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 230.71428571428572,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 231.25000000000003,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 239.19642857142858,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 242.27678571428572,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 242.81250000000003,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 247.36607142857144,
+      "event": "upgrade",
+      "name": "WarpGateResearch"
+    },
+    {
+      "t": 249.10714285714286,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 254.37500000000003,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 254.9107142857143,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 258.1696428571429,
+      "event": "start",
+      "name": "RoboticsFacility"
+    },
+    {
+      "t": 262.99107142857144,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 264.2857142857143,
+      "event": "born",
+      "name": "Stalker"
+    },
+    {
+      "t": 266.4732142857143,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 267.0089285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 274.5089285714286,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 278.5714285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 279.1071428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 280.8482142857143,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 283.8392857142857,
+      "event": "born",
+      "name": "Stalker"
+    },
+    {
+      "t": 285.625,
+      "event": "done",
+      "name": "Gateway"
+    },
+    {
+      "t": 286.20535714285717,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 290.6696428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 291.20535714285717,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 295.6696428571429,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 295.9375,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 300.0892857142857,
+      "event": "born",
+      "name": "Stalker"
+    },
+    {
+      "t": 302.76785714285717,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 303.0357142857143,
+      "event": "born",
+      "name": "Stalker"
+    },
+    {
+      "t": 303.30357142857144,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 304.0625,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 304.5982142857143,
+      "event": "done",
+      "name": "RoboticsFacility"
+    },
+    {
+      "t": 309.8214285714286,
+      "event": "start",
+      "name": "RoboticsBay"
+    },
+    {
+      "t": 311.74107142857144,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 315.2232142857143,
+      "event": "upgrade",
+      "name": "BlinkTech"
+    },
+    {
+      "t": 316.3392857142857,
+      "event": "born",
+      "name": "Stalker"
+    },
+    {
+      "t": 317.0982142857143,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 317.45535714285717,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 319.6875,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 320.3571428571429,
+      "event": "born",
+      "name": "Stalker"
+    },
+    {
+      "t": 329.55357142857144,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 329.59821428571433,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 331.78571428571433,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 341.6517857142857,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 343.1696428571429,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 343.30357142857144,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 343.8839285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 344.1964285714286,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 344.33035714285717,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 348.2142857142857,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 348.34821428571433,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 351.2946428571429,
+      "event": "start",
+      "name": "Nexus"
+    },
+    {
+      "t": 353.125,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 356.25,
+      "event": "done",
+      "name": "RoboticsBay"
+    },
+    {
+      "t": 370.9821428571429,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 380.0446428571429,
+      "event": "born",
+      "name": "AdeptPhaseShift"
+    },
+    {
+      "t": 381.6964285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 381.83035714285717,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 383.4821428571429,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 393.7946428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 393.92857142857144,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 395.9821428571429,
+      "event": "start",
+      "name": "Forge"
+    },
+    {
+      "t": 397.5446428571429,
+      "event": "born",
+      "name": "Colossus"
+    },
+    {
+      "t": 401.3392857142857,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 404.0625,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 405.89285714285717,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 405.9821428571429,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 417.5892857142857,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 419.55357142857144,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 419.91071428571433,
+      "event": "start",
+      "name": "Sentry"
+    },
+    {
+      "t": 422.72321428571433,
+      "event": "done",
+      "name": "Nexus"
+    },
+    {
+      "t": 423.03571428571433,
+      "event": "start",
+      "name": "ShieldBattery"
+    },
+    {
+      "t": 423.5714285714286,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 423.92857142857144,
+      "event": "done",
+      "name": "Sentry"
+    },
+    {
+      "t": 424.8214285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 428.125,
+      "event": "done",
+      "name": "Forge"
+    },
+    {
+      "t": 429.95535714285717,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 435.7589285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 436.9196428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 438.2142857142857,
+      "event": "born",
+      "name": "Colossus"
+    },
+    {
+      "t": 443.34821428571433,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 447.2767857142857,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 447.5,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 447.8571428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 450.3571428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 450.49107142857144,
+      "event": "done",
+      "name": "Gateway"
+    },
+    {
+      "t": 451.2946428571429,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 451.51785714285717,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 451.6071428571429,
+      "event": "done",
+      "name": "ShieldBattery"
+    },
+    {
+      "t": 451.9196428571429,
+      "event": "start",
+      "name": "ShieldBattery"
+    },
+    {
+      "t": 452.41071428571433,
+      "event": "done",
+      "name": "Gateway"
+    },
+    {
+      "t": 455.4464285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 459.4196428571429,
+      "event": "start",
+      "name": "ShieldBattery"
+    },
+    {
+      "t": 461.25000000000006,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 466.6071428571429,
+      "event": "upgrade",
+      "name": "ExtendedThermalLance"
+    },
+    {
+      "t": 468.66071428571433,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 475.58035714285717,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 475.7142857142857,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 476.42857142857144,
+      "event": "born",
+      "name": "Colossus"
+    },
+    {
+      "t": 477.5892857142857,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 477.6339285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 478.4821428571429,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 480.49107142857144,
+      "event": "done",
+      "name": "ShieldBattery"
+    },
+    {
+      "t": 481.3839285714286,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 482.50000000000006,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 486.51785714285717,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 487.99107142857144,
+      "event": "done",
+      "name": "ShieldBattery"
+    },
+    {
+      "t": 489.4196428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 490.4017857142857,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 490.4017857142857,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 490.4464285714286,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 492.81250000000006,
+      "event": "start",
+      "name": "Nexus"
+    },
+    {
+      "t": 494.4196428571429,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 494.4196428571429,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 494.4642857142857,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 499.24107142857144,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 499.33035714285717,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 501.56250000000006,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 503.61607142857144,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 503.7946428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 507.6339285714286,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 511.3839285714286,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 511.42857142857144,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 515.8928571428572,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 518.8392857142858,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 520.7589285714286,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 522.8571428571429,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 522.9910714285714,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 523.4821428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 530.9821428571429,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 531.9642857142858,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 533.5714285714286,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 535.9375,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 536.9642857142858,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 537.5,
+      "event": "start",
+      "name": "Nexus"
+    },
+    {
+      "t": 538.5267857142858,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 539.7321428571429,
+      "event": "upgrade",
+      "name": "ProtossGroundWeaponsLevel1"
+    },
+    {
+      "t": 541.4285714285714,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 543.6160714285714,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 544.0625,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 546.0267857142858,
+      "event": "born",
+      "name": "Colossus"
+    },
+    {
+      "t": 546.3392857142858,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 548.125,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 548.8392857142858,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 551.4285714285714,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 554.6875,
+      "event": "upgrade",
+      "name": "Charge"
+    },
+    {
+      "t": 554.9107142857143,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 555.5357142857143,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 555.625,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 556.3839285714286,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 557.6785714285714,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 559.5535714285714,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 559.6428571428572,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 559.6875,
+      "event": "start",
+      "name": "RoboticsFacility"
+    },
+    {
+      "t": 562.8125,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 570.0446428571429,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 572.5892857142858,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 572.8125,
+      "event": "start",
+      "name": "Sentry"
+    },
+    {
+      "t": 573.0803571428572,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 573.1696428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 576.8303571428572,
+      "event": "done",
+      "name": "Sentry"
+    },
+    {
+      "t": 577.0982142857143,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 578.4375,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 578.4821428571429,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 579.6428571428572,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 582.1428571428572,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 582.4553571428572,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 582.5,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 583.4821428571429,
+      "event": "born",
+      "name": "WarpPrism"
+    },
+    {
+      "t": 587.8571428571429,
+      "event": "done",
+      "name": "Gateway"
+    },
+    {
+      "t": 587.9017857142858,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 590.0446428571429,
+      "event": "done",
+      "name": "Gateway"
+    },
+    {
+      "t": 590.3125,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 590.5357142857143,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 592.7678571428572,
+      "event": "done",
+      "name": "Gateway"
+    },
+    {
+      "t": 593.7053571428572,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 594.5535714285714,
+      "event": "done",
+      "name": "Gateway"
+    },
+    {
+      "t": 594.8660714285714,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 597.6785714285714,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 599.7767857142858,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 600.0,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 600.2232142857143,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 601.4732142857143,
+      "event": "start",
+      "name": "Sentry"
+    },
+    {
+      "t": 603.5267857142858,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 603.7946428571429,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 604.9553571428572,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 605.4910714285714,
+      "event": "done",
+      "name": "Sentry"
+    },
+    {
+      "t": 605.8035714285714,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 605.8482142857143,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 606.0267857142858,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 606.0267857142858,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 606.1160714285714,
+      "event": "done",
+      "name": "RoboticsFacility"
+    },
+    {
+      "t": 607.5446428571429,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 608.1696428571429,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 608.9285714285714,
+      "event": "done",
+      "name": "Nexus"
+    },
+    {
+      "t": 610.7589285714286,
+      "event": "born",
+      "name": "Disruptor"
+    },
+    {
+      "t": 610.8928571428572,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 610.9375,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 614.9107142857143,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 614.9553571428572,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 618.0803571428572,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 630.8035714285714,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 630.8482142857143,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 630.9375,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 634.8214285714286,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 634.8660714285714,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 634.9553571428572,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 636.9196428571429,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 636.9642857142858,
+      "event": "done",
+      "name": "Gateway"
+    },
+    {
+      "t": 636.9642857142858,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 637.0089285714286,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 637.0982142857143,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 637.2321428571429,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 640.9375,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 640.9821428571429,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 641.0267857142858,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 641.1160714285714,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 641.25,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 646.3839285714287,
+      "event": "born",
+      "name": "Disruptor"
+    },
+    {
+      "t": 649.0625,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 649.8660714285714,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 650.0446428571429,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 650.2678571428572,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 650.625,
+      "event": "born",
+      "name": "Disruptor"
+    },
+    {
+      "t": 654.1071428571429,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 655.5803571428572,
+      "event": "born",
+      "name": "DisruptorPhased"
+    },
+    {
+      "t": 659.1964285714287,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 659.375,
+      "event": "morph",
+      "name": "WarpPrismPhasing"
+    },
+    {
+      "t": 660.4464285714287,
+      "event": "morph",
+      "name": "WarpPrism"
+    }
+  ],
+  "economy": [
+    {
+      "t": 0.044642857142857144,
+      "minerals": 50,
+      "gas": 0,
+      "mineralRate": 0,
+      "gasRate": 0,
+      "supplyUsed": 8.0,
+      "supplyCap": 13.0,
+      "workers": 8
+    },
+    {
+      "t": 7.142857142857143,
+      "minerals": 40,
+      "gas": 0,
+      "mineralRate": 335,
+      "gasRate": 0,
+      "supplyUsed": 9.0,
+      "supplyCap": 13.0,
+      "workers": 8
+    },
+    {
+      "t": 14.285714285714286,
+      "minerals": 30,
+      "gas": 0,
+      "mineralRate": 447,
+      "gasRate": 0,
+      "supplyUsed": 10.0,
+      "supplyCap": 13.0,
+      "workers": 9
+    },
+    {
+      "t": 21.42857142857143,
+      "minerals": 50,
+      "gas": 0,
+      "mineralRate": 531,
+      "gasRate": 0,
+      "supplyUsed": 11.0,
+      "supplyCap": 13.0,
+      "workers": 10
+    },
+    {
+      "t": 28.571428571428573,
+      "minerals": 75,
+      "gas": 0,
+      "mineralRate": 559,
+      "gasRate": 0,
+      "supplyUsed": 12.0,
+      "supplyCap": 13.0,
+      "workers": 11
+    },
+    {
+      "t": 35.714285714285715,
+      "minerals": 40,
+      "gas": 0,
+      "mineralRate": 587,
+      "gasRate": 0,
+      "supplyUsed": 12.0,
+      "supplyCap": 13.0,
+      "workers": 11
+    },
+    {
+      "t": 42.85714285714286,
+      "minerals": 20,
+      "gas": 0,
+      "mineralRate": 643,
+      "gasRate": 0,
+      "supplyUsed": 13.0,
+      "supplyCap": 13.0,
+      "workers": 12
+    },
+    {
+      "t": 50.0,
+      "minerals": 110,
+      "gas": 0,
+      "mineralRate": 727,
+      "gasRate": 0,
+      "supplyUsed": 13.0,
+      "supplyCap": 13.0,
+      "workers": 12
+    },
+    {
+      "t": 57.142857142857146,
+      "minerals": 45,
+      "gas": 0,
+      "mineralRate": 755,
+      "gasRate": 0,
+      "supplyUsed": 14.0,
+      "supplyCap": 21.0,
+      "workers": 13
+    },
+    {
+      "t": 64.28571428571429,
+      "minerals": 85,
+      "gas": 0,
+      "mineralRate": 811,
+      "gasRate": 0,
+      "supplyUsed": 15.0,
+      "supplyCap": 21.0,
+      "workers": 14
+    },
+    {
+      "t": 71.42857142857143,
+      "minerals": 50,
+      "gas": 0,
+      "mineralRate": 811,
+      "gasRate": 0,
+      "supplyUsed": 16.0,
+      "supplyCap": 21.0,
+      "workers": 15
+    },
+    {
+      "t": 78.57142857142857,
+      "minerals": 95,
+      "gas": 0,
+      "mineralRate": 839,
+      "gasRate": 0,
+      "supplyUsed": 16.0,
+      "supplyCap": 21.0,
+      "workers": 15
+    },
+    {
+      "t": 85.71428571428572,
+      "minerals": 150,
+      "gas": 0,
+      "mineralRate": 895,
+      "gasRate": 0,
+      "supplyUsed": 17.0,
+      "supplyCap": 21.0,
+      "workers": 16
+    },
+    {
+      "t": 92.85714285714286,
+      "minerals": 245,
+      "gas": 8,
+      "mineralRate": 895,
+      "gasRate": 44,
+      "supplyUsed": 18.0,
+      "supplyCap": 21.0,
+      "workers": 17
+    },
+    {
+      "t": 100.0,
+      "minerals": 285,
+      "gas": 20,
+      "mineralRate": 811,
+      "gasRate": 111,
+      "supplyUsed": 18.0,
+      "supplyCap": 21.0,
+      "workers": 17
+    },
+    {
+      "t": 107.14285714285715,
+      "minerals": 235,
+      "gas": 36,
+      "mineralRate": 811,
+      "gasRate": 134,
+      "supplyUsed": 19.0,
+      "supplyCap": 21.0,
+      "workers": 18
+    },
+    {
+      "t": 114.28571428571429,
+      "minerals": 345,
+      "gas": 52,
+      "mineralRate": 839,
+      "gasRate": 134,
+      "supplyUsed": 19.0,
+      "supplyCap": 21.0,
+      "workers": 19
+    },
+    {
+      "t": 121.42857142857143,
+      "minerals": 30,
+      "gas": 68,
+      "mineralRate": 811,
+      "gasRate": 134,
+      "supplyUsed": 19.0,
+      "supplyCap": 21.0,
+      "workers": 19
+    },
+    {
+      "t": 128.57142857142858,
+      "minerals": 35,
+      "gas": 88,
+      "mineralRate": 811,
+      "gasRate": 156,
+      "supplyUsed": 19.0,
+      "supplyCap": 21.0,
+      "workers": 19
+    },
+    {
+      "t": 135.71428571428572,
+      "minerals": 85,
+      "gas": 108,
+      "mineralRate": 783,
+      "gasRate": 179,
+      "supplyUsed": 20.0,
+      "supplyCap": 21.0,
+      "workers": 19
+    },
+    {
+      "t": 142.85714285714286,
+      "minerals": 55,
+      "gas": 103,
+      "mineralRate": 811,
+      "gasRate": 179,
+      "supplyUsed": 21.0,
+      "supplyCap": 21.0,
+      "workers": 19
+    },
+    {
+      "t": 150.0,
+      "minerals": 55,
+      "gas": 69,
+      "mineralRate": 783,
+      "gasRate": 156,
+      "supplyUsed": 21.0,
+      "supplyCap": 29.0,
+      "workers": 18
+    },
+    {
+      "t": 157.14285714285714,
+      "minerals": 110,
+      "gas": 89,
+      "mineralRate": 839,
+      "gasRate": 156,
+      "supplyUsed": 22.0,
+      "supplyCap": 29.0,
+      "workers": 19
+    },
+    {
+      "t": 164.2857142857143,
+      "minerals": 100,
+      "gas": 59,
+      "mineralRate": 923,
+      "gasRate": 156,
+      "supplyUsed": 24.0,
+      "supplyCap": 29.0,
+      "workers": 19
+    },
+    {
+      "t": 171.42857142857144,
+      "minerals": 160,
+      "gas": 83,
+      "mineralRate": 979,
+      "gasRate": 179,
+      "supplyUsed": 25.0,
+      "supplyCap": 29.0,
+      "workers": 20
+    },
+    {
+      "t": 178.57142857142858,
+      "minerals": 70,
+      "gas": 15,
+      "mineralRate": 923,
+      "gasRate": 246,
+      "supplyUsed": 25.0,
+      "supplyCap": 29.0,
+      "workers": 20
+    },
+    {
+      "t": 185.71428571428572,
+      "minerals": 125,
+      "gas": 51,
+      "mineralRate": 923,
+      "gasRate": 313,
+      "supplyUsed": 26.0,
+      "supplyCap": 29.0,
+      "workers": 21
+    },
+    {
+      "t": 192.85714285714286,
+      "minerals": 50,
+      "gas": 33,
+      "mineralRate": 923,
+      "gasRate": 291,
+      "supplyUsed": 30.0,
+      "supplyCap": 42.0,
+      "workers": 22
+    },
+    {
+      "t": 200.0,
+      "minerals": 60,
+      "gas": 73,
+      "mineralRate": 951,
+      "gasRate": 313,
+      "supplyUsed": 30.0,
+      "supplyCap": 42.0,
+      "workers": 22
+    },
+    {
+      "t": 207.14285714285717,
+      "minerals": 65,
+      "gas": 113,
+      "mineralRate": 951,
+      "gasRate": 313,
+      "supplyUsed": 32.0,
+      "supplyCap": 42.0,
+      "workers": 24
+    },
+    {
+      "t": 214.2857142857143,
+      "minerals": 45,
+      "gas": 3,
+      "mineralRate": 1035,
+      "gasRate": 313,
+      "supplyUsed": 34.0,
+      "supplyCap": 42.0,
+      "workers": 26
+    },
+    {
+      "t": 221.42857142857144,
+      "minerals": 70,
+      "gas": 43,
+      "mineralRate": 1091,
+      "gasRate": 335,
+      "supplyUsed": 36.0,
+      "supplyCap": 42.0,
+      "workers": 28
+    },
+    {
+      "t": 228.57142857142858,
+      "minerals": 120,
+      "gas": 83,
+      "mineralRate": 1175,
+      "gasRate": 358,
+      "supplyUsed": 36.0,
+      "supplyCap": 42.0,
+      "workers": 28
+    },
+    {
+      "t": 235.71428571428572,
+      "minerals": 175,
+      "gas": 119,
+      "mineralRate": 1259,
+      "gasRate": 335,
+      "supplyUsed": 38.0,
+      "supplyCap": 42.0,
+      "workers": 30
+    },
+    {
+      "t": 242.85714285714286,
+      "minerals": 90,
+      "gas": 155,
+      "mineralRate": 1343,
+      "gasRate": 313,
+      "supplyUsed": 40.0,
+      "supplyCap": 42.0,
+      "workers": 32
+    },
+    {
+      "t": 250.00000000000003,
+      "minerals": 30,
+      "gas": 145,
+      "mineralRate": 1399,
+      "gasRate": 313,
+      "supplyUsed": 42.0,
+      "supplyCap": 50.0,
+      "workers": 32
+    },
+    {
+      "t": 257.14285714285717,
+      "minerals": 65,
+      "gas": 81,
+      "mineralRate": 1511,
+      "gasRate": 313,
+      "supplyUsed": 44.0,
+      "supplyCap": 50.0,
+      "workers": 34
+    },
+    {
+      "t": 264.2857142857143,
+      "minerals": 45,
+      "gas": 121,
+      "mineralRate": 1455,
+      "gasRate": 313,
+      "supplyUsed": 44.0,
+      "supplyCap": 50.0,
+      "workers": 34
+    },
+    {
+      "t": 271.42857142857144,
+      "minerals": 125,
+      "gas": 111,
+      "mineralRate": 1651,
+      "gasRate": 335,
+      "supplyUsed": 48.0,
+      "supplyCap": 50.0,
+      "workers": 36
+    },
+    {
+      "t": 278.5714285714286,
+      "minerals": 145,
+      "gas": 151,
+      "mineralRate": 1651,
+      "gasRate": 335,
+      "supplyUsed": 48.0,
+      "supplyCap": 50.0,
+      "workers": 36
+    },
+    {
+      "t": 285.7142857142857,
+      "minerals": 130,
+      "gas": 137,
+      "mineralRate": 1735,
+      "gasRate": 313,
+      "supplyUsed": 52.0,
+      "supplyCap": 58.0,
+      "workers": 38
+    },
+    {
+      "t": 292.8571428571429,
+      "minerals": 120,
+      "gas": 127,
+      "mineralRate": 1819,
+      "gasRate": 335,
+      "supplyUsed": 56.0,
+      "supplyCap": 58.0,
+      "workers": 40
+    },
+    {
+      "t": 300.0,
+      "minerals": 130,
+      "gas": 121,
+      "mineralRate": 1819,
+      "gasRate": 358,
+      "supplyUsed": 56.0,
+      "supplyCap": 58.0,
+      "workers": 40
+    },
+    {
+      "t": 307.14285714285717,
+      "minerals": 165,
+      "gas": 127,
+      "mineralRate": 1791,
+      "gasRate": 447,
+      "supplyUsed": 61.0,
+      "supplyCap": 66.0,
+      "workers": 42
+    },
+    {
+      "t": 314.2857142857143,
+      "minerals": 50,
+      "gas": 37,
+      "mineralRate": 1903,
+      "gasRate": 470,
+      "supplyUsed": 62.0,
+      "supplyCap": 66.0,
+      "workers": 42
+    },
+    {
+      "t": 321.42857142857144,
+      "minerals": 80,
+      "gas": 89,
+      "mineralRate": 1399,
+      "gasRate": 470,
+      "supplyUsed": 61.0,
+      "supplyCap": 66.0,
+      "workers": 43
+    },
+    {
+      "t": 328.5714285714286,
+      "minerals": 35,
+      "gas": 133,
+      "mineralRate": 1007,
+      "gasRate": 403,
+      "supplyUsed": 59.0,
+      "supplyCap": 66.0,
+      "workers": 41
+    },
+    {
+      "t": 335.7142857142857,
+      "minerals": 200,
+      "gas": 189,
+      "mineralRate": 1483,
+      "gasRate": 425,
+      "supplyUsed": 61.0,
+      "supplyCap": 74.0,
+      "workers": 43
+    },
+    {
+      "t": 342.8571428571429,
+      "minerals": 360,
+      "gas": 211,
+      "mineralRate": 1735,
+      "gasRate": 559,
+      "supplyUsed": 62.0,
+      "supplyCap": 74.0,
+      "workers": 44
+    },
+    {
+      "t": 350.0,
+      "minerals": 430,
+      "gas": 183,
+      "mineralRate": 1847,
+      "gasRate": 604,
+      "supplyUsed": 66.0,
+      "supplyCap": 74.0,
+      "workers": 45
+    },
+    {
+      "t": 357.14285714285717,
+      "minerals": 180,
+      "gas": 251,
+      "mineralRate": 1791,
+      "gasRate": 582,
+      "supplyUsed": 65.0,
+      "supplyCap": 74.0,
+      "workers": 45
+    },
+    {
+      "t": 364.28571428571433,
+      "minerals": 120,
+      "gas": 127,
+      "mineralRate": 1903,
+      "gasRate": 604,
+      "supplyUsed": 71.0,
+      "supplyCap": 74.0,
+      "workers": 45
+    },
+    {
+      "t": 371.42857142857144,
+      "minerals": 85,
+      "gas": 57,
+      "mineralRate": 1875,
+      "gasRate": 671,
+      "supplyUsed": 73.0,
+      "supplyCap": 82.0,
+      "workers": 45
+    },
+    {
+      "t": 378.5714285714286,
+      "minerals": 200,
+      "gas": 129,
+      "mineralRate": 1903,
+      "gasRate": 649,
+      "supplyUsed": 73.0,
+      "supplyCap": 82.0,
+      "workers": 45
+    },
+    {
+      "t": 385.7142857142857,
+      "minerals": 280,
+      "gas": 205,
+      "mineralRate": 1903,
+      "gasRate": 649,
+      "supplyUsed": 75.0,
+      "supplyCap": 82.0,
+      "workers": 47
+    },
+    {
+      "t": 392.8571428571429,
+      "minerals": 195,
+      "gas": 77,
+      "mineralRate": 1847,
+      "gasRate": 604,
+      "supplyUsed": 75.0,
+      "supplyCap": 82.0,
+      "workers": 47
+    },
+    {
+      "t": 400.0,
+      "minerals": 165,
+      "gas": 53,
+      "mineralRate": 1875,
+      "gasRate": 604,
+      "supplyUsed": 82.0,
+      "supplyCap": 82.0,
+      "workers": 49
+    },
+    {
+      "t": 407.14285714285717,
+      "minerals": 40,
+      "gas": 133,
+      "mineralRate": 1875,
+      "gasRate": 627,
+      "supplyUsed": 83.0,
+      "supplyCap": 90.0,
+      "workers": 50
+    },
+    {
+      "t": 414.28571428571433,
+      "minerals": 225,
+      "gas": 213,
+      "mineralRate": 1875,
+      "gasRate": 694,
+      "supplyUsed": 84.0,
+      "supplyCap": 90.0,
+      "workers": 50
+    },
+    {
+      "t": 421.42857142857144,
+      "minerals": 245,
+      "gas": 193,
+      "mineralRate": 1847,
+      "gasRate": 694,
+      "supplyUsed": 89.0,
+      "supplyCap": 90.0,
+      "workers": 51
+    },
+    {
+      "t": 428.5714285714286,
+      "minerals": 190,
+      "gas": 161,
+      "mineralRate": 1959,
+      "gasRate": 627,
+      "supplyUsed": 91.0,
+      "supplyCap": 103.0,
+      "workers": 52
+    },
+    {
+      "t": 435.7142857142857,
+      "minerals": 40,
+      "gas": 41,
+      "mineralRate": 2015,
+      "gasRate": 649,
+      "supplyUsed": 92.0,
+      "supplyCap": 103.0,
+      "workers": 53
+    },
+    {
+      "t": 442.8571428571429,
+      "minerals": 180,
+      "gas": 121,
+      "mineralRate": 2211,
+      "gasRate": 649,
+      "supplyUsed": 100.0,
+      "supplyCap": 103.0,
+      "workers": 55
+    },
+    {
+      "t": 450.00000000000006,
+      "minerals": 230,
+      "gas": 147,
+      "mineralRate": 2407,
+      "gasRate": 627,
+      "supplyUsed": 103.0,
+      "supplyCap": 103.0,
+      "workers": 56
+    },
+    {
+      "t": 457.14285714285717,
+      "minerals": 225,
+      "gas": 207,
+      "mineralRate": 1819,
+      "gasRate": 559,
+      "supplyUsed": 103.0,
+      "supplyCap": 103.0,
+      "workers": 58
+    },
+    {
+      "t": 464.28571428571433,
+      "minerals": 325,
+      "gas": 251,
+      "mineralRate": 1707,
+      "gasRate": 403,
+      "supplyUsed": 103.0,
+      "supplyCap": 103.0,
+      "workers": 59
+    },
+    {
+      "t": 471.42857142857144,
+      "minerals": 430,
+      "gas": 245,
+      "mineralRate": 2099,
+      "gasRate": 380,
+      "supplyUsed": 100.0,
+      "supplyCap": 103.0,
+      "workers": 58
+    },
+    {
+      "t": 478.5714285714286,
+      "minerals": 500,
+      "gas": 301,
+      "mineralRate": 1903,
+      "gasRate": 425,
+      "supplyUsed": 102.0,
+      "supplyCap": 103.0,
+      "workers": 59
+    },
+    {
+      "t": 485.7142857142857,
+      "minerals": 295,
+      "gas": 353,
+      "mineralRate": 2351,
+      "gasRate": 425,
+      "supplyUsed": 102.0,
+      "supplyCap": 103.0,
+      "workers": 59
+    },
+    {
+      "t": 492.8571428571429,
+      "minerals": 140,
+      "gas": 243,
+      "mineralRate": 2435,
+      "gasRate": 358,
+      "supplyUsed": 103.0,
+      "supplyCap": 103.0,
+      "workers": 58
+    },
+    {
+      "t": 500.00000000000006,
+      "minerals": 140,
+      "gas": 263,
+      "mineralRate": 2379,
+      "gasRate": 179,
+      "supplyUsed": 105.0,
+      "supplyCap": 111.0,
+      "workers": 58
+    },
+    {
+      "t": 507.14285714285717,
+      "minerals": 285,
+      "gas": 283,
+      "mineralRate": 2547,
+      "gasRate": 156,
+      "supplyUsed": 106.0,
+      "supplyCap": 111.0,
+      "workers": 59
+    },
+    {
+      "t": 514.2857142857143,
+      "minerals": 330,
+      "gas": 103,
+      "mineralRate": 2603,
+      "gasRate": 179,
+      "supplyUsed": 108.0,
+      "supplyCap": 111.0,
+      "workers": 60
+    },
+    {
+      "t": 521.4285714285714,
+      "minerals": 500,
+      "gas": 73,
+      "mineralRate": 2827,
+      "gasRate": 179,
+      "supplyUsed": 104.0,
+      "supplyCap": 111.0,
+      "workers": 60
+    },
+    {
+      "t": 528.5714285714286,
+      "minerals": 730,
+      "gas": 101,
+      "mineralRate": 2827,
+      "gasRate": 201,
+      "supplyUsed": 106.0,
+      "supplyCap": 111.0,
+      "workers": 61
+    },
+    {
+      "t": 535.7142857142858,
+      "minerals": 810,
+      "gas": 157,
+      "mineralRate": 2659,
+      "gasRate": 425,
+      "supplyUsed": 107.0,
+      "supplyCap": 111.0,
+      "workers": 62
+    },
+    {
+      "t": 542.8571428571429,
+      "minerals": 245,
+      "gas": 253,
+      "mineralRate": 2435,
+      "gasRate": 694,
+      "supplyUsed": 108.0,
+      "supplyCap": 111.0,
+      "workers": 64
+    },
+    {
+      "t": 550.0,
+      "minerals": 245,
+      "gas": 345,
+      "mineralRate": 2491,
+      "gasRate": 739,
+      "supplyUsed": 111.0,
+      "supplyCap": 119.0,
+      "workers": 65
+    },
+    {
+      "t": 557.1428571428572,
+      "minerals": 135,
+      "gas": 299,
+      "mineralRate": 2491,
+      "gasRate": 806,
+      "supplyUsed": 116.0,
+      "supplyCap": 135.0,
+      "workers": 66
+    },
+    {
+      "t": 564.2857142857143,
+      "minerals": 195,
+      "gas": 307,
+      "mineralRate": 2575,
+      "gasRate": 918,
+      "supplyUsed": 118.0,
+      "supplyCap": 135.0,
+      "workers": 68
+    },
+    {
+      "t": 571.4285714285714,
+      "minerals": 365,
+      "gas": 415,
+      "mineralRate": 2603,
+      "gasRate": 940,
+      "supplyUsed": 119.0,
+      "supplyCap": 135.0,
+      "workers": 68
+    },
+    {
+      "t": 578.5714285714286,
+      "minerals": 140,
+      "gas": 261,
+      "mineralRate": 2575,
+      "gasRate": 873,
+      "supplyUsed": 127.0,
+      "supplyCap": 135.0,
+      "workers": 70
+    },
+    {
+      "t": 585.7142857142858,
+      "minerals": 230,
+      "gas": 215,
+      "mineralRate": 2659,
+      "gasRate": 873,
+      "supplyUsed": 133.0,
+      "supplyCap": 135.0,
+      "workers": 71
+    },
+    {
+      "t": 592.8571428571429,
+      "minerals": 200,
+      "gas": 298,
+      "mineralRate": 2687,
+      "gasRate": 873,
+      "supplyUsed": 134.0,
+      "supplyCap": 143.0,
+      "workers": 71
+    },
+    {
+      "t": 600.0,
+      "minerals": 45,
+      "gas": 135,
+      "mineralRate": 2687,
+      "gasRate": 895,
+      "supplyUsed": 137.0,
+      "supplyCap": 143.0,
+      "workers": 73
+    },
+    {
+      "t": 607.1428571428572,
+      "minerals": 205,
+      "gas": 97,
+      "mineralRate": 2771,
+      "gasRate": 918,
+      "supplyUsed": 141.0,
+      "supplyCap": 151.0,
+      "workers": 75
+    },
+    {
+      "t": 614.2857142857143,
+      "minerals": 270,
+      "gas": 105,
+      "mineralRate": 2715,
+      "gasRate": 963,
+      "supplyUsed": 149.0,
+      "supplyCap": 172.0,
+      "workers": 75
+    },
+    {
+      "t": 621.4285714285714,
+      "minerals": 500,
+      "gas": 63,
+      "mineralRate": 3051,
+      "gasRate": 918,
+      "supplyUsed": 153.0,
+      "supplyCap": 172.0,
+      "workers": 75
+    },
+    {
+      "t": 628.5714285714286,
+      "minerals": 860,
+      "gas": 171,
+      "mineralRate": 2995,
+      "gasRate": 895,
+      "supplyUsed": 139.0,
+      "supplyCap": 172.0,
+      "workers": 75
+    },
+    {
+      "t": 635.7142857142858,
+      "minerals": 875,
+      "gas": 117,
+      "mineralRate": 3303,
+      "gasRate": 806,
+      "supplyUsed": 129.0,
+      "supplyCap": 172.0,
+      "workers": 75
+    },
+    {
+      "t": 642.8571428571429,
+      "minerals": 685,
+      "gas": 209,
+      "mineralRate": 3359,
+      "gasRate": 761,
+      "supplyUsed": 134.0,
+      "supplyCap": 172.0,
+      "workers": 72
+    },
+    {
+      "t": 650.0,
+      "minerals": 615,
+      "gas": 151,
+      "mineralRate": 3359,
+      "gasRate": 761,
+      "supplyUsed": 137.0,
+      "supplyCap": 172.0,
+      "workers": 73
+    },
+    {
+      "t": 657.1428571428572,
+      "minerals": 1000,
+      "gas": 243,
+      "mineralRate": 3219,
+      "gasRate": 783,
+      "supplyUsed": 119.0,
+      "supplyCap": 172.0,
+      "workers": 74
+    },
+    {
+      "t": 662.8571428571429,
+      "minerals": 1280,
+      "gas": 319,
+      "mineralRate": 3051,
+      "gasRate": 806,
+      "supplyUsed": 89.0,
+      "supplyCap": 172.0,
+      "workers": 75
+    },
+    {
+      "t": 662.8571428571429,
+      "minerals": 1280,
+      "gas": 319,
+      "mineralRate": 3051,
+      "gasRate": 806,
+      "supplyUsed": 89.0,
+      "supplyCap": 172.0,
+      "workers": 75
+    }
+  ]
+}

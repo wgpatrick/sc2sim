@@ -1,0 +1,3011 @@
+{
+  "source": "Fjant_vs_Lambo_ZvZ_2026-06-23.SC2Replay",
+  "map": "Rainfall LE",
+  "length": 421.9196428571429,
+  "patch": "5.0.16.97364",
+  "speed": "Faster",
+  "player": {
+    "name": "Lambo",
+    "race": "Zerg",
+    "result": "Win"
+  },
+  "buildOrder": [
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 0.0,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 0.4910714285714286,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 10.0,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 10.892857142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 12.633928571428573,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 12.633928571428573,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 16.071428571428573,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 20.401785714285715,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 20.892857142857146,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 23.03571428571429,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 23.03571428571429,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 28.214285714285715,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 28.214285714285715,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 29.91071428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 32.589285714285715,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 33.035714285714285,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 33.035714285714285,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 39.41964285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 39.642857142857146,
+      "event": "start",
+      "name": "Extractor"
+    },
+    {
+      "t": 39.6875,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 48.92857142857143,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 50.44642857142858,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 50.44642857142858,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 50.49107142857143,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 50.49107142857143,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 51.830357142857146,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 51.830357142857146,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 58.43750000000001,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 58.48214285714286,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 62.63392857142858,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 62.63392857142858,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 62.63392857142858,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 62.63392857142858,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 66.51785714285715,
+      "event": "start",
+      "name": "SpawningPool"
+    },
+    {
+      "t": 67.94642857142857,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 70.49107142857143,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 70.625,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 70.625,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 77.45535714285715,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 78.125,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 82.63392857142858,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 82.63392857142858,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 86.96428571428572,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 90.26785714285715,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 90.26785714285715,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 94.59821428571429,
+      "event": "start",
+      "name": "Hatchery"
+    },
+    {
+      "t": 96.47321428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 97.8125,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 100.75892857142858,
+      "event": "start",
+      "name": "Extractor"
+    },
+    {
+      "t": 102.09821428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 105.98214285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 109.95535714285715,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 109.95535714285715,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 112.94642857142858,
+      "event": "done",
+      "name": "SpawningPool"
+    },
+    {
+      "t": 114.24107142857143,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 114.24107142857143,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 115.49107142857143,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 120.62500000000001,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 122.18750000000001,
+      "event": "done",
+      "name": "Extractor"
+    },
+    {
+      "t": 125.00000000000001,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 125.75892857142858,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 129.19642857142858,
+      "event": "start",
+      "name": "Extractor"
+    },
+    {
+      "t": 129.19642857142858,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 134.50892857142858,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 137.90178571428572,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 137.90178571428572,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 138.48214285714286,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 138.48214285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 141.33928571428572,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 141.33928571428572,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 142.14285714285714,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 144.01785714285714,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 147.90178571428572,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 151.25,
+      "event": "born",
+      "name": "Queen"
+    },
+    {
+      "t": 153.52678571428572,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 153.75,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 159.2857142857143,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 159.2857142857143,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 159.2857142857143,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 160.04464285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 160.04464285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 163.0357142857143,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 163.21428571428572,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 165.89285714285717,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 165.89285714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 166.02678571428572,
+      "event": "done",
+      "name": "Hatchery"
+    },
+    {
+      "t": 166.02678571428572,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 166.69642857142858,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 172.54464285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 174.82142857142858,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 175.35714285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 175.35714285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 175.5357142857143,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 178.125,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 178.83928571428572,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 178.83928571428572,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 180.49107142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 180.66964285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 180.8482142857143,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 182.27678571428572,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 182.27678571428572,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 182.27678571428572,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 183.48214285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 185.04464285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 186.91964285714286,
+      "event": "born",
+      "name": "Queen"
+    },
+    {
+      "t": 191.96428571428572,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 191.96428571428572,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 191.96428571428572,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 192.94642857142858,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 192.99107142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 194.41964285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 194.41964285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 194.41964285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 194.41964285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 194.41964285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 194.41964285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 194.55357142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 195.98214285714286,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 195.98214285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 197.1875,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 197.27678571428572,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 197.27678571428572,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 202.5,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 204.0625,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 205.08928571428572,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 205.08928571428572,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 207.8125,
+      "event": "start",
+      "name": "Hatchery"
+    },
+    {
+      "t": 209.33035714285717,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 209.33035714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 209.41964285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 209.41964285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 209.41964285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 209.41964285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 212.00892857142858,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 212.14285714285717,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 212.32142857142858,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 212.5,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 214.46428571428572,
+      "event": "start",
+      "name": "BanelingNest"
+    },
+    {
+      "t": 214.55357142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 217.8125,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 217.94642857142858,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 221.11607142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 221.51785714285717,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 222.36607142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 222.99107142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 223.16964285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 223.3482142857143,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 223.88392857142858,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 226.51785714285717,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 231.11607142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 231.25000000000003,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 231.69642857142858,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 231.69642857142858,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 231.69642857142858,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 233.39285714285717,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 234.95535714285717,
+      "event": "born",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 234.95535714285717,
+      "event": "born",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 234.95535714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 235.00000000000003,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 235.08928571428572,
+      "event": "born",
+      "name": "Baneling"
+    },
+    {
+      "t": 235.08928571428572,
+      "event": "born",
+      "name": "Baneling"
+    },
+    {
+      "t": 235.08928571428572,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 238.25892857142858,
+      "event": "born",
+      "name": "Baneling"
+    },
+    {
+      "t": 238.25892857142858,
+      "event": "born",
+      "name": "Baneling"
+    },
+    {
+      "t": 238.25892857142858,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 239.37500000000003,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 241.29464285714286,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 241.74107142857144,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 241.74107142857144,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 242.90178571428572,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 243.6607142857143,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 243.6607142857143,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 243.6607142857143,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 244.41964285714286,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 246.91964285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 247.0982142857143,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 247.23214285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 247.27678571428572,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 247.90178571428572,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 248.0357142857143,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 248.25892857142858,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 248.25892857142858,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 248.25892857142858,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 248.39285714285717,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 248.39285714285717,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 248.39285714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 251.60714285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 251.7857142857143,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 251.87500000000003,
+      "event": "upgrade",
+      "name": "zerglingmovementspeed"
+    },
+    {
+      "t": 251.96428571428572,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 252.14285714285717,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 252.14285714285717,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 252.14285714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 257.2321428571429,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 257.2321428571429,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 257.3214285714286,
+      "event": "done",
+      "name": "BanelingNest"
+    },
+    {
+      "t": 258.1696428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 258.1696428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 258.1696428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 259.1517857142857,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 259.1517857142857,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 259.4196428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 261.5625,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 261.5625,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 261.5625,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 263.30357142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 264.1964285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 265.0446428571429,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 265.0446428571429,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 265.0446428571429,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 265.17857142857144,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 265.17857142857144,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 265.17857142857144,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 267.36607142857144,
+      "event": "morph",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 267.76785714285717,
+      "event": "morph",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 268.61607142857144,
+      "event": "morph",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 269.0625,
+      "event": "morph",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 269.64285714285717,
+      "event": "morph",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 270.3125,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 270.3125,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 270.3125,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 270.3125,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 270.3125,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 270.3125,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 272.2767857142857,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 272.3214285714286,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 272.45535714285717,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 272.8125,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 275.49107142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 275.49107142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 276.5625,
+      "event": "born",
+      "name": "Baneling"
+    },
+    {
+      "t": 276.5625,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 276.5625,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 278.61607142857144,
+      "event": "morph",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 279.24107142857144,
+      "event": "done",
+      "name": "Hatchery"
+    },
+    {
+      "t": 279.24107142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 281.6071428571429,
+      "event": "morph",
+      "name": "Baneling"
+    },
+    {
+      "t": 281.7857142857143,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 281.7857142857143,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 282.0089285714286,
+      "event": "morph",
+      "name": "Baneling"
+    },
+    {
+      "t": 282.3214285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 282.8571428571429,
+      "event": "morph",
+      "name": "Baneling"
+    },
+    {
+      "t": 284.4642857142857,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 284.5982142857143,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 286.9196428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 287.0982142857143,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 287.2767857142857,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 287.6339285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 287.6339285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 287.6339285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 287.6339285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 288.125,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 288.2142857142857,
+      "event": "start",
+      "name": "Extractor"
+    },
+    {
+      "t": 288.75,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 289.375,
+      "event": "start",
+      "name": "RoachWarren"
+    },
+    {
+      "t": 289.4196428571429,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 289.4196428571429,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 289.4196428571429,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 289.4642857142857,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 289.4642857142857,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 289.4642857142857,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 289.5982142857143,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 289.5982142857143,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 289.5982142857143,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 291.2946428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 291.6517857142857,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 292.67857142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 292.8571428571429,
+      "event": "morph",
+      "name": "Baneling"
+    },
+    {
+      "t": 293.92857142857144,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 293.92857142857144,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 294.375,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 294.55357142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 294.7321428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 297.36607142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 297.36607142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 297.36607142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 297.36607142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 297.45535714285717,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 300.26785714285717,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 300.26785714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 301.6071428571429,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 301.6071428571429,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 301.6071428571429,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 301.74107142857144,
+      "event": "born",
+      "name": "Baneling"
+    },
+    {
+      "t": 301.74107142857144,
+      "event": "born",
+      "name": "Baneling"
+    },
+    {
+      "t": 301.74107142857144,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 303.4375,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 303.7946428571429,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 303.7946428571429,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 306.875,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 309.5089285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 309.5089285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 309.5089285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 309.5089285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 309.5089285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 309.5089285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 309.5089285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 309.5089285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 309.5982142857143,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 309.5982142857143,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 309.64285714285717,
+      "event": "done",
+      "name": "Extractor"
+    },
+    {
+      "t": 312.9464285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 314.8214285714286,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 314.9107142857143,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 314.9107142857143,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 314.9107142857143,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 316.3839285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 317.5,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 317.67857142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 317.8571428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 318.0357142857143,
+      "event": "start",
+      "name": "Hatchery"
+    },
+    {
+      "t": 319.1517857142857,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 319.24107142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 322.99107142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 323.1696428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 323.34821428571433,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 327.45535714285717,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 328.66071428571433,
+      "event": "done",
+      "name": "RoachWarren"
+    },
+    {
+      "t": 329.7767857142857,
+      "event": "morph",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 331.2946428571429,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 331.2946428571429,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 331.3839285714286,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 331.3839285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 331.9642857142857,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 331.9642857142857,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 331.9642857142857,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 332.05357142857144,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 332.05357142857144,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 332.05357142857144,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 332.05357142857144,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 332.05357142857144,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 332.05357142857144,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 332.05357142857144,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 332.05357142857144,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 332.05357142857144,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 333.8839285714286,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 334.01785714285717,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 334.01785714285717,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 334.01785714285717,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 334.01785714285717,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 334.0625,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 334.86607142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 338.75,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 340.9375,
+      "event": "start",
+      "name": "Extractor"
+    },
+    {
+      "t": 343.5267857142857,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 344.01785714285717,
+      "event": "morph",
+      "name": "Baneling"
+    },
+    {
+      "t": 344.28571428571433,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 344.375,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 347.36607142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 347.5446428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 347.72321428571433,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 350.89285714285717,
+      "event": "born",
+      "name": "Drone"
+    },
+    {
+      "t": 350.89285714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 351.0267857142857,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.0267857142857,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.0267857142857,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.16071428571433,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 351.20535714285717,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.20535714285717,
+      "event": "born",
+      "name": "Zergling"
+    },
+    {
+      "t": 351.20535714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 351.6071428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 351.78571428571433,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 351.9642857142857,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 352.9017857142857,
+      "event": "start",
+      "name": "Hatchery"
+    },
+    {
+      "t": 353.5714285714286,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 354.4642857142857,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 354.5089285714286,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 356.6071428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 358.8839285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 360.0,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 362.36607142857144,
+      "event": "done",
+      "name": "Extractor"
+    },
+    {
+      "t": 362.8571428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 363.5714285714286,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 363.5714285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 367.6339285714286,
+      "event": "morph",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 367.76785714285717,
+      "event": "morph",
+      "name": "BanelingCocoon"
+    },
+    {
+      "t": 368.5267857142857,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 369.5089285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 371.42857142857144,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 371.42857142857144,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 372.36607142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 373.66071428571433,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 373.75,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 373.75,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 373.7946428571429,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 373.7946428571429,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 373.7946428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 373.7946428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 373.7946428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 377.8571428571429,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 377.8571428571429,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 377.8571428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 380.7142857142857,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 380.7142857142857,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 381.875,
+      "event": "morph",
+      "name": "Baneling"
+    },
+    {
+      "t": 381.875,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 382.0089285714286,
+      "event": "morph",
+      "name": "Baneling"
+    },
+    {
+      "t": 383.1696428571429,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 384.7321428571429,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 385.9375,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 387.8125,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 387.8125,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 389.91071428571433,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 390.0892857142857,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 390.1339285714286,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 390.26785714285717,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 390.3125,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 390.49107142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 392.9464285714286,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 392.9464285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 393.08035714285717,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 393.08035714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 393.08035714285717,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 393.08035714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 393.08035714285717,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 393.08035714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 395.7142857142857,
+      "event": "born",
+      "name": "Overlord"
+    },
+    {
+      "t": 395.7142857142857,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 396.0267857142857,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 396.16071428571433,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 396.16071428571433,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 396.16071428571433,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 396.16071428571433,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 396.16071428571433,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 396.42857142857144,
+      "event": "morph",
+      "name": "Lair"
+    },
+    {
+      "t": 397.05357142857144,
+      "event": "born",
+      "name": "Egg"
+    },
+    {
+      "t": 398.4375,
+      "event": "born",
+      "name": "Egg"
+    },
+    {
+      "t": 402.99107142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 403.08035714285717,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 404.01785714285717,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 404.01785714285717,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 405.22321428571433,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 405.22321428571433,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 406.5625,
+      "event": "born",
+      "name": "Egg"
+    },
+    {
+      "t": 407.9464285714286,
+      "event": "born",
+      "name": "Egg"
+    },
+    {
+      "t": 408.92857142857144,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 409.0625,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 415.3125,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 415.3125,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 415.4464285714286,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 415.4464285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 415.4464285714286,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 415.4464285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 415.4464285714286,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 415.4464285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 415.4464285714286,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 415.4464285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 415.4464285714286,
+      "event": "born",
+      "name": "Roach"
+    },
+    {
+      "t": 415.4464285714286,
+      "event": "morph",
+      "name": "Larva"
+    },
+    {
+      "t": 416.0714285714286,
+      "event": "born",
+      "name": "Egg"
+    },
+    {
+      "t": 416.9642857142857,
+      "event": "born",
+      "name": "Queen"
+    },
+    {
+      "t": 417.45535714285717,
+      "event": "born",
+      "name": "Egg"
+    },
+    {
+      "t": 417.6339285714286,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 417.76785714285717,
+      "event": "morph",
+      "name": "Egg"
+    },
+    {
+      "t": 418.75,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 418.92857142857144,
+      "event": "born",
+      "name": "Larva"
+    },
+    {
+      "t": 419.1071428571429,
+      "event": "born",
+      "name": "Larva"
+    }
+  ],
+  "economy": [
+    {
+      "t": 0.044642857142857144,
+      "minerals": 50,
+      "gas": 0,
+      "mineralRate": 0,
+      "gasRate": 0,
+      "supplyUsed": 8.0,
+      "supplyCap": 12.0,
+      "workers": 8
+    },
+    {
+      "t": 7.142857142857143,
+      "minerals": 35,
+      "gas": 0,
+      "mineralRate": 293,
+      "gasRate": 0,
+      "supplyUsed": 9.0,
+      "supplyCap": 12.0,
+      "workers": 8
+    },
+    {
+      "t": 14.285714285714286,
+      "minerals": 30,
+      "gas": 0,
+      "mineralRate": 447,
+      "gasRate": 0,
+      "supplyUsed": 10.0,
+      "supplyCap": 12.0,
+      "workers": 9
+    },
+    {
+      "t": 21.42857142857143,
+      "minerals": 0,
+      "gas": 0,
+      "mineralRate": 531,
+      "gasRate": 0,
+      "supplyUsed": 12.0,
+      "supplyCap": 12.0,
+      "workers": 9
+    },
+    {
+      "t": 28.571428571428573,
+      "minerals": 60,
+      "gas": 0,
+      "mineralRate": 531,
+      "gasRate": 0,
+      "supplyUsed": 12.0,
+      "supplyCap": 12.0,
+      "workers": 11
+    },
+    {
+      "t": 35.714285714285715,
+      "minerals": 40,
+      "gas": 0,
+      "mineralRate": 615,
+      "gasRate": 0,
+      "supplyUsed": 12.0,
+      "supplyCap": 12.0,
+      "workers": 12
+    },
+    {
+      "t": 42.85714285714286,
+      "minerals": 59,
+      "gas": 0,
+      "mineralRate": 671,
+      "gasRate": 0,
+      "supplyUsed": 13.0,
+      "supplyCap": 12.0,
+      "workers": 12
+    },
+    {
+      "t": 50.0,
+      "minerals": 139,
+      "gas": 0,
+      "mineralRate": 699,
+      "gasRate": 0,
+      "supplyUsed": 13.0,
+      "supplyCap": 12.0,
+      "workers": 12
+    },
+    {
+      "t": 57.142857142857146,
+      "minerals": 134,
+      "gas": 0,
+      "mineralRate": 727,
+      "gasRate": 0,
+      "supplyUsed": 15.0,
+      "supplyCap": 20.0,
+      "workers": 13
+    },
+    {
+      "t": 64.28571428571429,
+      "minerals": 174,
+      "gas": 0,
+      "mineralRate": 783,
+      "gasRate": 0,
+      "supplyUsed": 16.0,
+      "supplyCap": 20.0,
+      "workers": 15
+    },
+    {
+      "t": 71.42857142857143,
+      "minerals": 19,
+      "gas": 0,
+      "mineralRate": 811,
+      "gasRate": 0,
+      "supplyUsed": 16.0,
+      "supplyCap": 20.0,
+      "workers": 15
+    },
+    {
+      "t": 78.57142857142857,
+      "minerals": 74,
+      "gas": 0,
+      "mineralRate": 867,
+      "gasRate": 0,
+      "supplyUsed": 17.0,
+      "supplyCap": 20.0,
+      "workers": 15
+    },
+    {
+      "t": 85.71428571428572,
+      "minerals": 184,
+      "gas": 0,
+      "mineralRate": 923,
+      "gasRate": 0,
+      "supplyUsed": 17.0,
+      "supplyCap": 20.0,
+      "workers": 16
+    },
+    {
+      "t": 92.85714285714286,
+      "minerals": 279,
+      "gas": 0,
+      "mineralRate": 895,
+      "gasRate": 0,
+      "supplyUsed": 17.0,
+      "supplyCap": 20.0,
+      "workers": 17
+    },
+    {
+      "t": 100.0,
+      "minerals": 24,
+      "gas": 0,
+      "mineralRate": 951,
+      "gasRate": 0,
+      "supplyUsed": 17.0,
+      "supplyCap": 20.0,
+      "workers": 16
+    },
+    {
+      "t": 107.14285714285715,
+      "minerals": 74,
+      "gas": 0,
+      "mineralRate": 895,
+      "gasRate": 0,
+      "supplyUsed": 17.0,
+      "supplyCap": 20.0,
+      "workers": 15
+    },
+    {
+      "t": 114.28571428571429,
+      "minerals": 179,
+      "gas": 0,
+      "mineralRate": 895,
+      "gasRate": 0,
+      "supplyUsed": 17.0,
+      "supplyCap": 20.0,
+      "workers": 17
+    },
+    {
+      "t": 121.42857142857143,
+      "minerals": 19,
+      "gas": 0,
+      "mineralRate": 923,
+      "gasRate": 0,
+      "supplyUsed": 19.0,
+      "supplyCap": 20.0,
+      "workers": 17
+    },
+    {
+      "t": 128.57142857142858,
+      "minerals": 44,
+      "gas": 4,
+      "mineralRate": 895,
+      "gasRate": 22,
+      "supplyUsed": 20.0,
+      "supplyCap": 20.0,
+      "workers": 17
+    },
+    {
+      "t": 135.71428571428572,
+      "minerals": 128,
+      "gas": 12,
+      "mineralRate": 923,
+      "gasRate": 67,
+      "supplyUsed": 21.0,
+      "supplyCap": 20.0,
+      "workers": 17
+    },
+    {
+      "t": 142.85714285714286,
+      "minerals": 188,
+      "gas": 20,
+      "mineralRate": 923,
+      "gasRate": 67,
+      "supplyUsed": 22.0,
+      "supplyCap": 28.0,
+      "workers": 19
+    },
+    {
+      "t": 150.0,
+      "minerals": 253,
+      "gas": 36,
+      "mineralRate": 951,
+      "gasRate": 111,
+      "supplyUsed": 23.0,
+      "supplyCap": 28.0,
+      "workers": 19
+    },
+    {
+      "t": 157.14285714285714,
+      "minerals": 143,
+      "gas": 56,
+      "mineralRate": 979,
+      "gasRate": 156,
+      "supplyUsed": 26.0,
+      "supplyCap": 28.0,
+      "workers": 19
+    },
+    {
+      "t": 164.2857142857143,
+      "minerals": 203,
+      "gas": 76,
+      "mineralRate": 923,
+      "gasRate": 156,
+      "supplyUsed": 27.0,
+      "supplyCap": 28.0,
+      "workers": 20
+    },
+    {
+      "t": 171.42857142857144,
+      "minerals": 268,
+      "gas": 96,
+      "mineralRate": 951,
+      "gasRate": 156,
+      "supplyUsed": 28.0,
+      "supplyCap": 32.0,
+      "workers": 21
+    },
+    {
+      "t": 178.57142857142858,
+      "minerals": 138,
+      "gas": 12,
+      "mineralRate": 1007,
+      "gasRate": 156,
+      "supplyUsed": 29.0,
+      "supplyCap": 32.0,
+      "workers": 22
+    },
+    {
+      "t": 185.71428571428572,
+      "minerals": 113,
+      "gas": 28,
+      "mineralRate": 1035,
+      "gasRate": 134,
+      "supplyUsed": 32.0,
+      "supplyCap": 32.0,
+      "workers": 23
+    },
+    {
+      "t": 192.85714285714286,
+      "minerals": 233,
+      "gas": 40,
+      "mineralRate": 1035,
+      "gasRate": 111,
+      "supplyUsed": 31.0,
+      "supplyCap": 32.0,
+      "workers": 22
+    },
+    {
+      "t": 200.0,
+      "minerals": 173,
+      "gas": 56,
+      "mineralRate": 1091,
+      "gasRate": 134,
+      "supplyUsed": 35.0,
+      "supplyCap": 40.0,
+      "workers": 25
+    },
+    {
+      "t": 207.14285714285717,
+      "minerals": 318,
+      "gas": 72,
+      "mineralRate": 1175,
+      "gasRate": 134,
+      "supplyUsed": 35.0,
+      "supplyCap": 40.0,
+      "workers": 26
+    },
+    {
+      "t": 214.2857142857143,
+      "minerals": 68,
+      "gas": 34,
+      "mineralRate": 1287,
+      "gasRate": 111,
+      "supplyUsed": 34.0,
+      "supplyCap": 40.0,
+      "workers": 28
+    },
+    {
+      "t": 221.42857142857144,
+      "minerals": 28,
+      "gas": 50,
+      "mineralRate": 1343,
+      "gasRate": 111,
+      "supplyUsed": 36.0,
+      "supplyCap": 40.0,
+      "workers": 27
+    },
+    {
+      "t": 228.57142857142858,
+      "minerals": 53,
+      "gas": 62,
+      "mineralRate": 1371,
+      "gasRate": 111,
+      "supplyUsed": 37.0,
+      "supplyCap": 40.0,
+      "workers": 27
+    },
+    {
+      "t": 235.71428571428572,
+      "minerals": 83,
+      "gas": 78,
+      "mineralRate": 1483,
+      "gasRate": 111,
+      "supplyUsed": 40.0,
+      "supplyCap": 40.0,
+      "workers": 27
+    },
+    {
+      "t": 242.85714285714286,
+      "minerals": 43,
+      "gas": 94,
+      "mineralRate": 1399,
+      "gasRate": 134,
+      "supplyUsed": 40.0,
+      "supplyCap": 48.0,
+      "workers": 27
+    },
+    {
+      "t": 250.00000000000003,
+      "minerals": 73,
+      "gas": 110,
+      "mineralRate": 1483,
+      "gasRate": 134,
+      "supplyUsed": 43.0,
+      "supplyCap": 48.0,
+      "workers": 27
+    },
+    {
+      "t": 257.14285714285717,
+      "minerals": 258,
+      "gas": 122,
+      "mineralRate": 1455,
+      "gasRate": 111,
+      "supplyUsed": 42.5,
+      "supplyCap": 48.0,
+      "workers": 27
+    },
+    {
+      "t": 264.2857142857143,
+      "minerals": 218,
+      "gas": 138,
+      "mineralRate": 1483,
+      "gasRate": 134,
+      "supplyUsed": 46.5,
+      "supplyCap": 64.0,
+      "workers": 27
+    },
+    {
+      "t": 271.42857142857144,
+      "minerals": 273,
+      "gas": 25,
+      "mineralRate": 1455,
+      "gasRate": 111,
+      "supplyUsed": 46.5,
+      "supplyCap": 64.0,
+      "workers": 30
+    },
+    {
+      "t": 278.5714285714286,
+      "minerals": 241,
+      "gas": 79,
+      "mineralRate": 1483,
+      "gasRate": 134,
+      "supplyUsed": 50.0,
+      "supplyCap": 64.0,
+      "workers": 30
+    },
+    {
+      "t": 285.7142857142857,
+      "minerals": 261,
+      "gas": 70,
+      "mineralRate": 1651,
+      "gasRate": 134,
+      "supplyUsed": 52.0,
+      "supplyCap": 68.0,
+      "workers": 30
+    },
+    {
+      "t": 292.8571428571429,
+      "minerals": 151,
+      "gas": 82,
+      "mineralRate": 1567,
+      "gasRate": 111,
+      "supplyUsed": 52.0,
+      "supplyCap": 64.0,
+      "workers": 30
+    },
+    {
+      "t": 300.0,
+      "minerals": 101,
+      "gas": 98,
+      "mineralRate": 1595,
+      "gasRate": 111,
+      "supplyUsed": 57.0,
+      "supplyCap": 64.0,
+      "workers": 31
+    },
+    {
+      "t": 307.14285714285717,
+      "minerals": 311,
+      "gas": 110,
+      "mineralRate": 1679,
+      "gasRate": 111,
+      "supplyUsed": 57.0,
+      "supplyCap": 64.0,
+      "workers": 33
+    },
+    {
+      "t": 314.2857142857143,
+      "minerals": 501,
+      "gas": 130,
+      "mineralRate": 1735,
+      "gasRate": 134,
+      "supplyUsed": 53.5,
+      "supplyCap": 64.0,
+      "workers": 38
+    },
+    {
+      "t": 321.42857142857144,
+      "minerals": 101,
+      "gas": 150,
+      "mineralRate": 1735,
+      "gasRate": 156,
+      "supplyUsed": 56.0,
+      "supplyCap": 64.0,
+      "workers": 37
+    },
+    {
+      "t": 328.5714285714286,
+      "minerals": 311,
+      "gas": 182,
+      "mineralRate": 1707,
+      "gasRate": 246,
+      "supplyUsed": 54.5,
+      "supplyCap": 64.0,
+      "workers": 37
+    },
+    {
+      "t": 335.7142857142857,
+      "minerals": 201,
+      "gas": 197,
+      "mineralRate": 1791,
+      "gasRate": 335,
+      "supplyUsed": 60.5,
+      "supplyCap": 64.0,
+      "workers": 39
+    },
+    {
+      "t": 342.8571428571429,
+      "minerals": 186,
+      "gas": 133,
+      "mineralRate": 1791,
+      "gasRate": 313,
+      "supplyUsed": 59.0,
+      "supplyCap": 64.0,
+      "workers": 38
+    },
+    {
+      "t": 350.0,
+      "minerals": 566,
+      "gas": 148,
+      "mineralRate": 1847,
+      "gasRate": 313,
+      "supplyUsed": 62.0,
+      "supplyCap": 64.0,
+      "workers": 39
+    },
+    {
+      "t": 357.14285714285717,
+      "minerals": 221,
+      "gas": 138,
+      "mineralRate": 1791,
+      "gasRate": 313,
+      "supplyUsed": 62.0,
+      "supplyCap": 64.0,
+      "workers": 39
+    },
+    {
+      "t": 364.28571428571433,
+      "minerals": 246,
+      "gas": 178,
+      "mineralRate": 1875,
+      "gasRate": 335,
+      "supplyUsed": 62.0,
+      "supplyCap": 64.0,
+      "workers": 39
+    },
+    {
+      "t": 371.42857142857144,
+      "minerals": 331,
+      "gas": 155,
+      "mineralRate": 1735,
+      "gasRate": 403,
+      "supplyUsed": 63.5,
+      "supplyCap": 64.0,
+      "workers": 39
+    },
+    {
+      "t": 378.5714285714286,
+      "minerals": 121,
+      "gas": 111,
+      "mineralRate": 1651,
+      "gasRate": 515,
+      "supplyUsed": 71.5,
+      "supplyCap": 80.0,
+      "workers": 39
+    },
+    {
+      "t": 385.7142857142857,
+      "minerals": 86,
+      "gas": 142,
+      "mineralRate": 1791,
+      "gasRate": 492,
+      "supplyUsed": 75.5,
+      "supplyCap": 88.0,
+      "workers": 39
+    },
+    {
+      "t": 392.8571428571429,
+      "minerals": 201,
+      "gas": 173,
+      "mineralRate": 1679,
+      "gasRate": 470,
+      "supplyUsed": 77.5,
+      "supplyCap": 88.0,
+      "workers": 39
+    },
+    {
+      "t": 400.0,
+      "minerals": 186,
+      "gas": 83,
+      "mineralRate": 1707,
+      "gasRate": 470,
+      "supplyUsed": 85.5,
+      "supplyCap": 96.0,
+      "workers": 39
+    },
+    {
+      "t": 407.14285714285717,
+      "minerals": 211,
+      "gas": 85,
+      "mineralRate": 1567,
+      "gasRate": 447,
+      "supplyUsed": 84.0,
+      "supplyCap": 96.0,
+      "workers": 38
+    },
+    {
+      "t": 414.28571428571433,
+      "minerals": 171,
+      "gas": 63,
+      "mineralRate": 1063,
+      "gasRate": 291,
+      "supplyUsed": 79.0,
+      "supplyCap": 96.0,
+      "workers": 35
+    },
+    {
+      "t": 420.625,
+      "minerals": 111,
+      "gas": 29,
+      "mineralRate": 923,
+      "gasRate": 179,
+      "supplyUsed": 71.0,
+      "supplyCap": 96.0,
+      "workers": 32
+    }
+  ]
+}

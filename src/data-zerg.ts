@@ -8,19 +8,25 @@ import type { GameData, EntityData } from "./engine.js";
  * the "larva" StartMode) specifically to make this race modelable at all.
  *
  * ┌───────────────────────────────────────────────────────────────────────┐
- * │  GROUNDING: structure buildTimes and the larva mechanic itself are      │
- * │  measured DIRECTLY from 3 real 5.0.16 replays (replays/parsed/           │
- * │  Krystianer_vs_Solar_..., SKillous_vs_Solar_..., Harstem_Lockdown_...    │
- * │  .opponent.json — all Zerg opponents, parsed with the timestamp fix).   │
- * │  Cross-replay-consistent start->done deltas: Hatchery 71.4, SpawningPool │
- * │  46.4, RoachWarren 39.3, EvolutionChamber 25.0, Extractor 21.4 (Faster-  │
- * │  clock seconds). Larva regen: steady-state interval measured at 9.51s   │
- * │  IDENTICALLY across all 3 replays (cap 3, confirmed by the 3 starting   │
- * │  Larva at t=0) -- this is the number used below, not a book value.      │
- * │  supplyProvided: Hatchery(4)+Overlord(8)=12 matches all 3 replays'      │
- * │  starting supplyCap of 12 (with 1 free Overlord alive at t=0) exactly.  │
- * │  Drone buildTime (12.1) matches the replays' steady birth cadence and   │
- * │  equals Probe/SCV's, as expected (worker buildTime is race-symmetric).  │
+ * │  GROUNDING: structure buildTimes and the larva mechanic itself were      │
+ * │  originally measured from 3 real 5.0.16 replays, then CROSS-CHECKED     │
+ * │  2026-07-05 against an expanded 12-replay Zerg-side corpus (replays/     │
+ * │  parsed/*.Z*.json — 6 new games covering ZvT/ZvZ/ZvP on top of the       │
+ * │  original 3). Cross-replay-consistent start->done deltas: Hatchery 71.4  │
+ * │  (36/43 samples), SpawningPool 46.4 (11/11 exact), RoachWarren 39.3      │
+ * │  (6/6 exact), EvolutionChamber 25.0 (9/11), Extractor 21.4 (8 clean),    │
+ * │  BanelingNest 42.9 (4/4 exact — NEW: corrects a 32.1 book-value guess    │
+ * │  from when the corpus had zero BanelingNest samples). Larva regen:      │
+ * │  steady-state interval measured at 9.51s IDENTICALLY across the         │
+ * │  original 3 replays (cap 3, confirmed by the 3 starting Larva at t=0);  │
+ * │  NOT re-derived from the expanded 12-replay corpus (a deliberate call — │
+ * │  cross-replay-identical results across independent games are a strong   │
+ * │  signal of a true game constant, and re-fitting risked introducing a    │
+ * │  worse number for no real gain). supplyProvided: Hatchery(4)+           │
+ * │  Overlord(8)=12 matches the original 3 replays' starting supplyCap of   │
+ * │  12 (with 1 free Overlord alive at t=0) exactly. Drone buildTime (12.1)  │
+ * │  matches the replays' steady birth cadence and equals Probe/SCV's, as    │
+ * │  expected (worker buildTime is race-symmetric).                         │
  * │                                                                         │
  * │  ⚠️ Unit costs/buildTime/combat stats NOT covered above (Overlord,       │
  * │  Zergling, Roach, Baneling, Queen) are well-established LotV-stable      │
@@ -79,8 +85,9 @@ add(ent("Extractor", 25, 0, 21.4, "Drone", { isStructure: true }));
 add(ent("SpawningPool", 200, 0, 46.4, "Drone", { isStructure: true }));
 add(ent("RoachWarren", 150, 0, 39.3, "Drone", { isStructure: true, requires: ["SpawningPool"] }));
 add(ent("EvolutionChamber", 75, 0, 25.0, "Drone", { isStructure: true }));
-// ⚠️ book value, not replay-confirmed (none of the 3 replays built one).
-add(ent("BanelingNest", 100, 50, 32.1, "Drone", { isStructure: true, requires: ["SpawningPool"] }));
+// Replay-confirmed 2026-07-05: 42.9 exactly, 4/4 samples in the expanded
+// 12-replay corpus (was a 32.1 book-value guess before this corpus existed).
+add(ent("BanelingNest", 100, 50, 42.9, "Drone", { isStructure: true, requires: ["SpawningPool"] }));
 
 // --- Drone (worker) --------------------------------------------------------
 add(ent("Drone", 50, 0, 12.1, "Larva", { supplyCost: 1, isWorker: true, moveSpeed: 2.8125 }));
@@ -109,12 +116,26 @@ export const ZERG: GameData = {
     startingTownhall: "Hatchery",
     gasStructure: "Extractor",
     startingUnits: { Overlord: 1 }, // the free starting Overlord: supply 8, not from Hatchery(4)
-    // No independent Zerg income fit yet (same reasoning as data-terran.ts) —
-    // reuse the cross-replay Protoss fit; Drone mining mechanics are the same.
-    mineralRateFirstWorker: 0.871,
-    mineralRateSecondWorker: 0.871,
-    mineralRateThirdWorker: 0.652,
+    // Independent Zerg fit (2026-07-05), via tools/calibrate_income.py
+    // --townhall Hatchery --gas Extractor, across 12 real 5.0.16 Zerg-side
+    // replays (285 mineral samples): rateAB=0.936, rateC=0.276, R²=0.878 —
+    // strong, on par with Protoss's fit, and confirms Drone/Probe mining IS
+    // close to mechanically identical (0.936 vs Protoss's 0.871, within the
+    // range of cross-game variance rather than a systematic race difference).
+    mineralRateFirstWorker: 0.936,
+    mineralRateSecondWorker: 0.936,
+    mineralRateThirdWorker: 0.276, // ~29% of tier-1/2 — lower than Protoss's ~70%; only 1 replay
+    // had enough sustained oversaturation to inform this tier, so treat as a real but low-confidence
+    // measurement rather than a confirmed Zerg/Protoss mining-behavior difference.
     miningMicro: 1.0,
+    // Gas fit attempt FAILED (R²=0.000 on 98 samples) — degenerate, not adopted.
+    // Root cause: most of these replays open with a late or "extractor trick"
+    // gas timing (first Extractor done at 124-217s in 2 of the 3 inspected),
+    // so very few samples land inside the window/ramp-filtered steady state;
+    // the ones that do appear to have gas workers pulled on/off inconsistently
+    // (idle micro, drone pulls) rather than a stable saturated rate. Keeping
+    // the Protoss-derived placeholder until a wider/longer window or Zerg
+    // replays with earlier, sustained gas mining are available.
     gasRatePerWorker: 0.871,
     // No Chrono equivalent (inert for Zerg — nothing calls castChrono here).
     nexusStartEnergy: 0,

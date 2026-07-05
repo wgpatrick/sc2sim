@@ -98,41 +98,34 @@ export const PROTOSS = {
         // Mineral rates (min/sec per worker), FIT DIRECTLY from replay income data
         // via tools/calibrate_income.py: a tiered (rate1==rate2, distinct rate3)
         // ordinary-least-squares fit against every steady-state PlayerStatsEvent
-        // sample (t <= 300s, >=25s after the last Assimilator/Nexus change) across
-        // all 4 real 5.0.16 replays in replays/parsed/ (115 mineral samples, 23 of
-        // them exercising the oversaturation tier). R² = 0.979.
-        //   This superseded an EARLIER attempt at this same fit that used
-        //   tools/parse_replay.py's raw sc2reader timestamps directly and landed on
-        //   0.925/0.33 (see git history) — those timestamps turned out to be in
-        //   sc2reader's fixed-16fps convention (Normal-speed-equivalent seconds),
-        //   ~40% too large versus the Faster-clock seconds this engine uses
-        //   everywhere else (verified: parsed Gateway start->done was 65s, a raw/
-        //   Normal nominal value, not the 46.4 Faster value it should be). Fixed in
-        //   parse_replay.py (see its module docstring); every *.json under
-        //   replays/parsed/ was regenerated afterward. The old treatise-based
-        //   starting point (tl.net/forum/legacy-of-the-void/482775, HotS-era 0.70/s
-        //   saturated average) undershoots LotV pro early-game; this fit replaces it.
+        // sample (t <= 240s, >=25s after the last Assimilator/Nexus change).
+        //   Corpus EXPANDED 2026-07-05: added Protoss-side data from 2 more real
+        //   5.0.16 games (llllllllllll in SortOf_vs_llllllllllll_ZvP, ByuN's
+        //   opponent UEDdemonFan) on top of the original 3, for 103 mineral / 58
+        //   gas samples across 5 independent replays. R² = 0.917 mineral, 0.900
+        //   gas — both essentially unchanged from the first-pass fit (0.871/0.652
+        //   mineral, 0.871 gas), which is itself a good sign: more data didn't
+        //   move the estimate, so the original 3-replay fit wasn't a fluke.
         //   ⚠️ Known open tension: npm run validate's two hand-transcribed Spawning
         //   Tool builds now show MORE deviation than before (1.9s/7.8s MAE -> 4.3s/
         //   12.9s), because 0.925 had been tuned to fit those exact two milestone
         //   lists directly (see git history) — good for those two games, but only
         //   2 data points, and circular as a calibration target. This fit instead
-        //   regresses directly against 115 real income samples across 4 INDEPENDENT
+        //   regresses directly against real income samples across independent
         //   replays, which is less overfit-prone even though it now tracks those
         //   two specific published builds a bit less tightly (plausibly because
         //   those two games individually had cleaner-than-average probe micro).
-        //   Worth another pass once more replays are available.
         mineralRateFirstWorker: 0.871, // ~52.3/min
         mineralRateSecondWorker: 0.871, // ~52.3/min (equal to 1st; fit assumes this per the treatise's structure)
-        mineralRateThirdWorker: 0.652, // ~39.1/min — oversaturated workers mine far closer to full rate than
-        // the old 0.33 guess assumed (0.652/0.871 ≈ 75%, not ~36%); only 23 real
-        // samples exercise this tier so treat it as lower-confidence than tier 1/2.
+        mineralRateThirdWorker: 0.61, // ~36.6/min — oversaturated workers mine far closer to full rate than
+        // the old 0.33 guess assumed (0.61/0.871 ≈ 70%, not ~36%); 58 real samples now exercise this tier
+        // (up from 23), landing a bit lower than the first pass's 0.652 but same ballpark.
         miningMicro: 1.0, // 1.0 = the replay-fit average pro game above; ~0.9 for scrappier a-move ladder play
         // Gas: single-tier fit (no oversaturation concept — gas workers cap at 3/geyser),
-        // same replays/methodology as above. R² = 0.918. This is a big correction:
+        // same replays/methodology as above. R² = 0.900. This is a big correction:
         // the old 0.63/s guess was ~38% too low — real gas income is nearly on par
         // with mineral income per worker, not the historically-slower-gas folk model.
-        gasRatePerWorker: 0.871, // ~52.2/min; was 0.63 (~38/min)
+        gasRatePerWorker: 0.870, // ~52.2/min; was 0.63 (~38/min)
         // Chrono Boost / Nexus energy (confirmed LotV):
         nexusStartEnergy: 50,
         nexusMaxEnergy: 200,

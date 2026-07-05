@@ -96,11 +96,31 @@ producer and scheduling its completion.
   `tools/calibrate_income.py` does an ordinary-least-squares fit of the
   engine's tiered mineral model (rate1==rate2, distinct oversaturation rate3)
   and a single-tier gas rate against every steady-state `PlayerStatsEvent`
-  sample across all 4 replays in `replays/parsed/` (115 mineral / 79 gas
-  samples). R² = 0.979 / 0.918. Result: mineral rate 0.925 → **0.871/s**,
-  oversaturation rate 0.33 → **0.652/s** (oversaturated workers mine much
-  closer to full rate than assumed), gas rate 0.63 → **0.871/s** (was ~38%
-  too low — gas and mineral income per worker turn out to be nearly on par).
+  sample. The corpus was **expanded 2026-07-05** with 9 new post-5.0.16
+  replays (13 total `.SC2Replay` games, 26 parsed player-sides) to ground all
+  three races, not just Protoss:
+  - **Protoss**: 5 replays, 103 mineral / 58 gas samples. R² = 0.917 / 0.900.
+    Mineral rate **0.871/s**, oversaturation rate **0.61/s** (~70% of
+    tier-1/2 — oversaturated workers mine much closer to full rate than
+    assumed), gas rate **0.870/s** (was ~38% too low — gas and mineral income
+    per worker turn out to be nearly on par). Essentially unchanged from the
+    original 3-replay fit, a good sign the estimate isn't a fluke.
+  - **Terran** (new race, `tools/calibrate_income.py --townhall CommandCenter
+    --gas Refinery`): 8 replays, 191 mineral / 127 gas samples. R² = 0.528 /
+    0.471 — markedly weaker than Protoss/Zerg despite SCV mining being
+    mechanically identical; the leading suspect is Orbital Command/MULEs
+    injecting mineral bursts uncorrelated with worker count, which this
+    engine doesn't model (see `src/data-terran.ts`'s header). Tier-1/2 rate
+    (0.980/s) adopted directly; the raw tier-3 fit (0.132/s, physically
+    implausible next to Protoss's/Zerg's oversaturation ratios) was rejected
+    and replaced with a derived value using Protoss's measured ratio.
+  - **Zerg** (new race, `--townhall Hatchery --gas Extractor`): 12 replays,
+    285 mineral samples, R² = 0.878 — on par with Protoss, confirming
+    Drone/Probe mining is close to mechanically identical (0.936/s vs
+    Protoss's 0.871/s). The gas fit was degenerate (R²=0.000, mostly
+    extractor-trick/late-gas openings leaving too few steady-state samples)
+    and was **not adopted** — Zerg still uses the Protoss-derived gas rate as
+    a placeholder.
   `probeBuildOccupancy` remains an uncalibrated placeholder — hard to isolate
   from bank data alone.
 - **Found and fixed a replay-timestamp unit bug along the way.**
@@ -138,8 +158,16 @@ then re-run `tools/calibrate_income.py` against fresh replays of that patch.
 - `npm run diff replays/parsed/*.json` replays the REAL build order and
   timings straight out of parsed `.SC2Replay` files (no manual transcription
   to get wrong) and compares the sim's predicted completions AND mineral/gas
-  bank against what actually happened: **~10s mean timing error across all 4
-  replays** (down from ~17s before the timestamp-unit fix above).
+  bank against what actually happened, now **race-aware** (`validate-replay.ts`
+  picks Protoss/Terran/Zerg data per replay's own player race, added
+  2026-07-05 alongside the corpus expansion — previously hardcoded to
+  Protoss, which would have silently mis-simulated the new Terran/Zerg-side
+  files): **81 minerals / 48 gas mean bank error across all 26 parsed replay
+  sides** (Protoss, Terran, and Zerg together). Individual-game timing MAE
+  ranges from ~1s to a couple minutes — real games diverge from any fixed
+  build order once scouting/tech decisions kick in, which is exactly why the
+  bank comparison (not raw timing MAE) is the metric to trust, and why the
+  default horizon is capped at 3 minutes.
 
 Published pro builds and real replays are the best ground truth available
 without a current-patch client — see the headless caveat below.
@@ -283,14 +311,20 @@ hand-authored archetype:
 
 1. **Terran and Zerg now have real data** (`src/data-terran.ts`,
    `src/data-zerg.ts`), grounded the same way Protoss was — structure
-   costs/buildTimes cross-checked against `replays/parsed/*.opponent.json`
-   (the Terran/Zerg side of this repo's PvT/PvZ replays, extracted for the
-   first time this pass — `parse_replay.py` had only ever pulled the Protoss
-   player). Zerg needed a real engine addition, not just data: production is
-   **larva-based**, not a per-building queue, so `engine.ts` gained a
-   regenerating larva-pool production mode. The regen rate (9.51s, cap 3) is
-   measured directly off the replays — consistent across all 3 Zerg games —
-   not a book value. (This also surfaced and fixed a latent bug: the engine
+   costs/buildTimes cross-checked against `replays/parsed/*.T*.json` /
+   `*.Z*.json` (`parse_replay.py` had only ever pulled the Protoss player
+   until this pass). Structure buildTimes were reconfirmed 2026-07-05 against
+   an expanded corpus (8 Terran-side, 12 Zerg-side replays) — every value
+   matched the original single/triple-replay figures exactly, except
+   BanelingNest (corrected from an unverified 32.1 book-value guess to a
+   replay-confirmed 42.9, 4/4 exact samples). Zerg needed a real engine
+   addition, not just data: production is **larva-based**, not a
+   per-building queue, so `engine.ts` gained a regenerating larva-pool
+   production mode. The regen rate (9.51s, cap 3) was measured directly off
+   the original 3 Zerg replays — identical across all 3 — and deliberately
+   NOT re-derived from the larger corpus (a cross-replay-identical result is
+   a strong signal of a true game constant; re-fitting risked a worse number
+   for no real gain). (This also surfaced and fixed a latent bug: the engine
    hardcoded `"Nexus"`/`"Assimilator"` in several places despite claiming to
    be race-agnostic, which would have silently zeroed Terran's starting
    supply cap.)
@@ -323,9 +357,12 @@ value curve the whole way through. **This is the concrete case for why
 only against each other (as the template optimizer and plain GA search do)
 misses it.
 
-Known limitations, honestly: only 4 replays exist in this corpus (1 Terran,
-3 Zerg), so "the opponent" here means 3-4 specific recorded games, not a
-statistical archetype of a matchup. Terran/Zerg data covers non-addon-gated
+Known limitations, honestly: `npm run opponent` itself still replays only 3
+specific recorded games (1 Terran, 2 Zerg), so "the opponent" here means 3
+specific games, not a statistical archetype of a matchup — even though the
+underlying Terran/Zerg economy data now draws on a much larger 8/12-replay
+corpus (see "Data accuracy" above), nobody has wired the expanded corpus into
+`npm run opponent`'s own game list yet. Terran/Zerg data covers non-addon-gated
 units only (see those files' headers for the full gap list — Orbital
 Command/MULEs and Queen larva injects are the biggest ones, meaning Terran's
 real economy and Zerg's real production throughput are both modeled as
