@@ -84,15 +84,19 @@ export const PROTOSS = {
         startingGas: 0,
         mineralPatchesPerBase: 8,
         gasGeysersPerBase: 2,
-        // Mineral rates (min/sec per worker) grounded in Liquipedia "Mining Minerals":
-        // 1st & 2nd worker per patch mine at ~the same rate; the 3rd (oversaturation)
-        // ~half. These represent pro-level hand-mining (miningMicro = 1.0); an a-move
-        // ladder player gets ~10% less. Fine-tuned so the sim matches published pro
-        // builds (`npm run validate`).
-        mineralRateFirstWorker: 0.95, // ~57/min, 1st worker on a patch
-        mineralRateSecondWorker: 0.9, // ~54/min, 2nd worker on a patch
+        // Mineral rates (min/sec per worker). STRUCTURE from the "Treatise on the
+        // Economy of SCII" (tl.net/forum/legacy-of-the-void/482775): income is linear
+        // to the 16th worker with the 1st and 2nd worker on a patch mining EQUALLY;
+        // the 3rd worker (oversaturation) is ~half.
+        //   The treatise's absolute figure is 42 min/min (0.70/s) — but that's the
+        //   HotS saturated average. LotV's economy is faster, and pro early-game
+        //   (close patches + hand-mining) is faster still: the published 5.0.16 builds
+        //   only match at ~55 min/min (at 0.70 the sim is 24s off; see git history).
+        //   So we use the ground-truth-calibrated ~0.925/s, scaled by miningMicro.
+        mineralRateFirstWorker: 0.925, // ~55/min
+        mineralRateSecondWorker: 0.925, // ~55/min (equal to 1st, per the treatise)
         mineralRateThirdWorker: 0.33, // ~20/min, 3rd worker (oversaturation)
-        miningMicro: 1.0, // 1.0 = pro hand-mining; ~0.9 = a-move
+        miningMicro: 1.0, // 1.0 = pro hand-mining; ~0.9 = a-move ladder play
         gasRatePerWorker: 0.63, // ~38/min, up to 3 per assimilator (not yet calibrated)
         // Chrono Boost / Nexus energy (confirmed LotV):
         nexusStartEnergy: 50,
