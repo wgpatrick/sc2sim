@@ -1,0 +1,3440 @@
+{
+  "source": "Krystianer_vs_Solar_PvZ_Blackrock_2026-06-28.SC2Replay",
+  "map": "Blackrock LE",
+  "length": 796,
+  "patch": "5.0.16.97364",
+  "player": {
+    "name": "Krystianer",
+    "race": "Protoss",
+    "result": "Loss"
+  },
+  "buildOrder": [
+    {
+      "t": 0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 0,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 14,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 25,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 37,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 46,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 54,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 71,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 71,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 85,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 88,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 95,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 100,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 113,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 125,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 127,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 144,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 150,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 150,
+      "event": "done",
+      "name": "WarpGate"
+    },
+    {
+      "t": 161,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 166,
+      "event": "start",
+      "name": "Nexus"
+    },
+    {
+      "t": 175,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 179,
+      "event": "start",
+      "name": "CyberneticsCore"
+    },
+    {
+      "t": 191,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 200,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 217,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 221,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 227,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 229,
+      "event": "done",
+      "name": "CyberneticsCore"
+    },
+    {
+      "t": 231,
+      "event": "born",
+      "name": "Zealot"
+    },
+    {
+      "t": 247,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 250,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 264,
+      "event": "start",
+      "name": "Stargate"
+    },
+    {
+      "t": 266,
+      "event": "done",
+      "name": "Nexus"
+    },
+    {
+      "t": 270,
+      "event": "born",
+      "name": "Adept"
+    },
+    {
+      "t": 271,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 272,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 292,
+      "event": "done",
+      "name": "WarpGate"
+    },
+    {
+      "t": 294,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 294,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 303,
+      "event": "born",
+      "name": "Adept"
+    },
+    {
+      "t": 305,
+      "event": "born",
+      "name": "AdeptPhaseShift"
+    },
+    {
+      "t": 305,
+      "event": "born",
+      "name": "AdeptPhaseShift"
+    },
+    {
+      "t": 306,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 311,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 320,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 324,
+      "event": "done",
+      "name": "Stargate"
+    },
+    {
+      "t": 329,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 332,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 337,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 338,
+      "event": "born",
+      "name": "AdeptPhaseShift"
+    },
+    {
+      "t": 338,
+      "event": "born",
+      "name": "AdeptPhaseShift"
+    },
+    {
+      "t": 346,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 354,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 357,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 363,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 374,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 375,
+      "event": "born",
+      "name": "Oracle"
+    },
+    {
+      "t": 380,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 381,
+      "event": "start",
+      "name": "Nexus"
+    },
+    {
+      "t": 386,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 391,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 397,
+      "event": "start",
+      "name": "TwilightCouncil"
+    },
+    {
+      "t": 397,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 408,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 411,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 413,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 415,
+      "event": "born",
+      "name": "Oracle"
+    },
+    {
+      "t": 417,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 419,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 424,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 431,
+      "event": "upgrade",
+      "name": "WarpGateResearch"
+    },
+    {
+      "t": 438,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 438,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 439,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 441,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 443,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 443,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 444,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 445,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 447,
+      "event": "done",
+      "name": "TwilightCouncil"
+    },
+    {
+      "t": 449,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 450,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 450,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 461,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 474,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 477,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 478,
+      "event": "done",
+      "name": "WarpGate"
+    },
+    {
+      "t": 480,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 481,
+      "event": "done",
+      "name": "Nexus"
+    },
+    {
+      "t": 490,
+      "event": "start",
+      "name": "ShieldBattery"
+    },
+    {
+      "t": 494,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 495,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 497,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 497,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 497,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 498,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 499,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 499,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 503,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 503,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 503,
+      "event": "done",
+      "name": "WarpGate"
+    },
+    {
+      "t": 503,
+      "event": "done",
+      "name": "WarpGate"
+    },
+    {
+      "t": 505,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 511,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 515,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 517,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 520,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 520,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 526,
+      "event": "done",
+      "name": "WarpGate"
+    },
+    {
+      "t": 528,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 530,
+      "event": "done",
+      "name": "ShieldBattery"
+    },
+    {
+      "t": 533,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 533,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 533,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 534,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 536,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 537,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 538,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 539,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 539,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 541,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 543,
+      "event": "start",
+      "name": "OracleStasisTrap"
+    },
+    {
+      "t": 544,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 545,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 548,
+      "event": "done",
+      "name": "OracleStasisTrap"
+    },
+    {
+      "t": 549,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 555,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 556,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 556,
+      "event": "start",
+      "name": "OracleStasisTrap"
+    },
+    {
+      "t": 561,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 562,
+      "event": "done",
+      "name": "OracleStasisTrap"
+    },
+    {
+      "t": 563,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 563,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 566,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 569,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 569,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 570,
+      "event": "start",
+      "name": "OracleStasisTrap"
+    },
+    {
+      "t": 576,
+      "event": "done",
+      "name": "OracleStasisTrap"
+    },
+    {
+      "t": 578,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 578,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 578,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 579,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 580,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 580,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 580,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 580,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 584,
+      "event": "upgrade",
+      "name": "BlinkTech"
+    },
+    {
+      "t": 585,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 585,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 585,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 585,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 586,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 587,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 595,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 595,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 595,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 600,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 600,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 606,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 606,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 607,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 612,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 612,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 612,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 612,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 612,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 612,
+      "event": "start",
+      "name": "Stalker"
+    },
+    {
+      "t": 612,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 617,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 617,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 617,
+      "event": "done",
+      "name": "Stalker"
+    },
+    {
+      "t": 618,
+      "event": "start",
+      "name": "Forge"
+    },
+    {
+      "t": 630,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 635,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 635,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 635,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 637,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 640,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 642,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 642,
+      "event": "start",
+      "name": "Gateway"
+    },
+    {
+      "t": 642,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 644,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 648,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 649,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 655,
+      "event": "start",
+      "name": "OracleStasisTrap"
+    },
+    {
+      "t": 661,
+      "event": "done",
+      "name": "OracleStasisTrap"
+    },
+    {
+      "t": 663,
+      "event": "done",
+      "name": "Forge"
+    },
+    {
+      "t": 663,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 668,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 682,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 687,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 688,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 692,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 700,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 701,
+      "event": "start",
+      "name": "RoboticsFacility"
+    },
+    {
+      "t": 702,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 702,
+      "event": "start",
+      "name": "TemplarArchive"
+    },
+    {
+      "t": 705,
+      "event": "done",
+      "name": "WarpGate"
+    },
+    {
+      "t": 707,
+      "event": "done",
+      "name": "WarpGate"
+    },
+    {
+      "t": 708,
+      "event": "start",
+      "name": "Nexus"
+    },
+    {
+      "t": 711,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 713,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 715,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 717,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 725,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 727,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 727,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 727,
+      "event": "morph",
+      "name": "WarpGate"
+    },
+    {
+      "t": 730,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 730,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 730,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 730,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 731,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 731,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 733,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 734,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 734,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 735,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 736,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 736,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 736,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 736,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 736,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 736,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 736,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 738,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 740,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 741,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 744,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 750,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 751,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 752,
+      "event": "done",
+      "name": "TemplarArchive"
+    },
+    {
+      "t": 756,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 758,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 765,
+      "event": "upgrade",
+      "name": "Charge"
+    },
+    {
+      "t": 765,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 765,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 766,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 766,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 766,
+      "event": "done",
+      "name": "RoboticsFacility"
+    },
+    {
+      "t": 766,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 766,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 766,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 771,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 771,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 771,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 771,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 772,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 772,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 772,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 775,
+      "event": "start",
+      "name": "Archon"
+    },
+    {
+      "t": 775,
+      "event": "start",
+      "name": "Archon"
+    },
+    {
+      "t": 780,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 781,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 783,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 786,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 787,
+      "event": "done",
+      "name": "Archon"
+    },
+    {
+      "t": 787,
+      "event": "done",
+      "name": "Archon"
+    },
+    {
+      "t": 799,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 802,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 808,
+      "event": "done",
+      "name": "Nexus"
+    },
+    {
+      "t": 809,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 809,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 809,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 811,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 814,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 814,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 814,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 816,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 817,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 817,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 817,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 817,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 822,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 822,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 823,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 823,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 823,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 824,
+      "event": "start",
+      "name": "Archon"
+    },
+    {
+      "t": 825,
+      "event": "start",
+      "name": "Archon"
+    },
+    {
+      "t": 831,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 831,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 831,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 833,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 835,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 836,
+      "event": "start",
+      "name": "PhotonCannon"
+    },
+    {
+      "t": 836,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 836,
+      "event": "done",
+      "name": "Archon"
+    },
+    {
+      "t": 837,
+      "event": "done",
+      "name": "Archon"
+    },
+    {
+      "t": 838,
+      "event": "start",
+      "name": "Assimilator"
+    },
+    {
+      "t": 838,
+      "event": "start",
+      "name": "ShieldBattery"
+    },
+    {
+      "t": 843,
+      "event": "upgrade",
+      "name": "ProtossGroundWeaponsLevel1"
+    },
+    {
+      "t": 845,
+      "event": "born",
+      "name": "WarpPrism"
+    },
+    {
+      "t": 848,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 848,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 852,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 852,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 852,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 852,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 857,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 858,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 858,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 858,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 858,
+      "event": "start",
+      "name": "Archon"
+    },
+    {
+      "t": 858,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 858,
+      "event": "start",
+      "name": "Archon"
+    },
+    {
+      "t": 859,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 859,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 859,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 859,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 860,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 864,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 864,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 865,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 865,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 868,
+      "event": "done",
+      "name": "Assimilator"
+    },
+    {
+      "t": 870,
+      "event": "done",
+      "name": "Archon"
+    },
+    {
+      "t": 870,
+      "event": "done",
+      "name": "Archon"
+    },
+    {
+      "t": 870,
+      "event": "born",
+      "name": "Observer"
+    },
+    {
+      "t": 875,
+      "event": "start",
+      "name": "Pylon"
+    },
+    {
+      "t": 876,
+      "event": "done",
+      "name": "PhotonCannon"
+    },
+    {
+      "t": 878,
+      "event": "done",
+      "name": "ShieldBattery"
+    },
+    {
+      "t": 881,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 889,
+      "event": "start",
+      "name": "FleetBeacon"
+    },
+    {
+      "t": 895,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 896,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 896,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 896,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 900,
+      "event": "done",
+      "name": "Pylon"
+    },
+    {
+      "t": 901,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 902,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 902,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 902,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 903,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 903,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 903,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 903,
+      "event": "start",
+      "name": "RoboticsFacility"
+    },
+    {
+      "t": 908,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 908,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 908,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 909,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 915,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 926,
+      "event": "upgrade",
+      "name": "PsiStormTech"
+    },
+    {
+      "t": 927,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 927,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 927,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 927,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 932,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 933,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 934,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 938,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 938,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 944,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 944,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 944,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 945,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 946,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 949,
+      "event": "done",
+      "name": "FleetBeacon"
+    },
+    {
+      "t": 949,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 949,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 950,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 950,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 953,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 961,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 961,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 961,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 961,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 963,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 966,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 966,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 966,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 966,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 967,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 968,
+      "event": "done",
+      "name": "RoboticsFacility"
+    },
+    {
+      "t": 973,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 973,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 978,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 978,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 986,
+      "event": "morph",
+      "name": "WarpPrismPhasing"
+    },
+    {
+      "t": 994,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 994,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 994,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 994,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 994,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 994,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 994,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1000,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1000,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1000,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1000,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1000,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1000,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1004,
+      "event": "morph",
+      "name": "WarpPrism"
+    },
+    {
+      "t": 1022,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 1027,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 1028,
+      "event": "start",
+      "name": "Stargate"
+    },
+    {
+      "t": 1032,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 1032,
+      "event": "start",
+      "name": "Stargate"
+    },
+    {
+      "t": 1032,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 1032,
+      "event": "start",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 1032,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1032,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1033,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1033,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1033,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1037,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 1037,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 1037,
+      "event": "done",
+      "name": "HighTemplar"
+    },
+    {
+      "t": 1038,
+      "event": "start",
+      "name": "Archon"
+    },
+    {
+      "t": 1038,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1038,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1038,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1038,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1038,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1042,
+      "event": "born",
+      "name": "Immortal"
+    },
+    {
+      "t": 1050,
+      "event": "done",
+      "name": "Archon"
+    },
+    {
+      "t": 1056,
+      "event": "upgrade",
+      "name": "ProtossGroundWeaponsLevel2"
+    },
+    {
+      "t": 1059,
+      "event": "born",
+      "name": "Tempest"
+    },
+    {
+      "t": 1064,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 1065,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 1065,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1065,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1066,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1066,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1066,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1067,
+      "event": "born",
+      "name": "Probe"
+    },
+    {
+      "t": 1071,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1071,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1071,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1071,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1071,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1083,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1083,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1083,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1083,
+      "event": "born",
+      "name": "Immortal"
+    },
+    {
+      "t": 1088,
+      "event": "done",
+      "name": "Stargate"
+    },
+    {
+      "t": 1088,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1088,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1088,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1092,
+      "event": "done",
+      "name": "Stargate"
+    },
+    {
+      "t": 1097,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1098,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1098,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1098,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1098,
+      "event": "start",
+      "name": "Zealot"
+    },
+    {
+      "t": 1103,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1103,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1103,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1103,
+      "event": "done",
+      "name": "Zealot"
+    },
+    {
+      "t": 1103,
+      "event": "done",
+      "name": "Zealot"
+    }
+  ],
+  "economy": [
+    {
+      "t": 0,
+      "minerals": 50,
+      "gas": 0,
+      "mineralRate": 0,
+      "gasRate": 0,
+      "supplyUsed": 8.0,
+      "supplyCap": 13.0,
+      "workers": 8
+    },
+    {
+      "t": 10,
+      "minerals": 40,
+      "gas": 0,
+      "mineralRate": 335,
+      "gasRate": 0,
+      "supplyUsed": 9.0,
+      "supplyCap": 13.0,
+      "workers": 8
+    },
+    {
+      "t": 20,
+      "minerals": 30,
+      "gas": 0,
+      "mineralRate": 447,
+      "gasRate": 0,
+      "supplyUsed": 10.0,
+      "supplyCap": 13.0,
+      "workers": 9
+    },
+    {
+      "t": 30,
+      "minerals": 45,
+      "gas": 0,
+      "mineralRate": 503,
+      "gasRate": 0,
+      "supplyUsed": 11.0,
+      "supplyCap": 13.0,
+      "workers": 10
+    },
+    {
+      "t": 40,
+      "minerals": 55,
+      "gas": 0,
+      "mineralRate": 475,
+      "gasRate": 0,
+      "supplyUsed": 12.0,
+      "supplyCap": 13.0,
+      "workers": 11
+    },
+    {
+      "t": 50,
+      "minerals": 30,
+      "gas": 0,
+      "mineralRate": 587,
+      "gasRate": 0,
+      "supplyUsed": 12.0,
+      "supplyCap": 13.0,
+      "workers": 11
+    },
+    {
+      "t": 60,
+      "minerals": 50,
+      "gas": 0,
+      "mineralRate": 643,
+      "gasRate": 0,
+      "supplyUsed": 13.0,
+      "supplyCap": 13.0,
+      "workers": 12
+    },
+    {
+      "t": 70,
+      "minerals": 80,
+      "gas": 0,
+      "mineralRate": 671,
+      "gasRate": 0,
+      "supplyUsed": 13.0,
+      "supplyCap": 13.0,
+      "workers": 12
+    },
+    {
+      "t": 80,
+      "minerals": 165,
+      "gas": 0,
+      "mineralRate": 699,
+      "gasRate": 0,
+      "supplyUsed": 14.0,
+      "supplyCap": 21.0,
+      "workers": 13
+    },
+    {
+      "t": 90,
+      "minerals": 40,
+      "gas": 0,
+      "mineralRate": 699,
+      "gasRate": 0,
+      "supplyUsed": 15.0,
+      "supplyCap": 21.0,
+      "workers": 14
+    },
+    {
+      "t": 100,
+      "minerals": 40,
+      "gas": 0,
+      "mineralRate": 699,
+      "gasRate": 0,
+      "supplyUsed": 15.0,
+      "supplyCap": 21.0,
+      "workers": 14
+    },
+    {
+      "t": 110,
+      "minerals": 30,
+      "gas": 0,
+      "mineralRate": 727,
+      "gasRate": 0,
+      "supplyUsed": 16.0,
+      "supplyCap": 21.0,
+      "workers": 15
+    },
+    {
+      "t": 120,
+      "minerals": 75,
+      "gas": 0,
+      "mineralRate": 783,
+      "gasRate": 0,
+      "supplyUsed": 17.0,
+      "supplyCap": 21.0,
+      "workers": 16
+    },
+    {
+      "t": 130,
+      "minerals": 185,
+      "gas": 0,
+      "mineralRate": 895,
+      "gasRate": 0,
+      "supplyUsed": 18.0,
+      "supplyCap": 21.0,
+      "workers": 17
+    },
+    {
+      "t": 140,
+      "minerals": 240,
+      "gas": 8,
+      "mineralRate": 867,
+      "gasRate": 44,
+      "supplyUsed": 18.0,
+      "supplyCap": 21.0,
+      "workers": 17
+    },
+    {
+      "t": 150,
+      "minerals": 345,
+      "gas": 16,
+      "mineralRate": 895,
+      "gasRate": 67,
+      "supplyUsed": 19.0,
+      "supplyCap": 21.0,
+      "workers": 18
+    },
+    {
+      "t": 160,
+      "minerals": 355,
+      "gas": 24,
+      "mineralRate": 895,
+      "gasRate": 67,
+      "supplyUsed": 19.0,
+      "supplyCap": 21.0,
+      "workers": 18
+    },
+    {
+      "t": 170,
+      "minerals": 55,
+      "gas": 32,
+      "mineralRate": 867,
+      "gasRate": 67,
+      "supplyUsed": 19.0,
+      "supplyCap": 21.0,
+      "workers": 19
+    },
+    {
+      "t": 180,
+      "minerals": 10,
+      "gas": 48,
+      "mineralRate": 867,
+      "gasRate": 111,
+      "supplyUsed": 19.0,
+      "supplyCap": 29.0,
+      "workers": 19
+    },
+    {
+      "t": 190,
+      "minerals": 60,
+      "gas": 64,
+      "mineralRate": 811,
+      "gasRate": 134,
+      "supplyUsed": 20.0,
+      "supplyCap": 29.0,
+      "workers": 19
+    },
+    {
+      "t": 200,
+      "minerals": 45,
+      "gas": 80,
+      "mineralRate": 895,
+      "gasRate": 134,
+      "supplyUsed": 20.0,
+      "supplyCap": 29.0,
+      "workers": 19
+    },
+    {
+      "t": 210,
+      "minerals": 40,
+      "gas": 100,
+      "mineralRate": 867,
+      "gasRate": 156,
+      "supplyUsed": 23.0,
+      "supplyCap": 29.0,
+      "workers": 20
+    },
+    {
+      "t": 220,
+      "minerals": 85,
+      "gas": 120,
+      "mineralRate": 839,
+      "gasRate": 179,
+      "supplyUsed": 24.0,
+      "supplyCap": 29.0,
+      "workers": 21
+    },
+    {
+      "t": 230,
+      "minerals": 105,
+      "gas": 136,
+      "mineralRate": 923,
+      "gasRate": 156,
+      "supplyUsed": 23.0,
+      "supplyCap": 29.0,
+      "workers": 21
+    },
+    {
+      "t": 240,
+      "minerals": 60,
+      "gas": 131,
+      "mineralRate": 923,
+      "gasRate": 156,
+      "supplyUsed": 26.0,
+      "supplyCap": 29.0,
+      "workers": 21
+    },
+    {
+      "t": 250,
+      "minerals": 65,
+      "gas": 155,
+      "mineralRate": 895,
+      "gasRate": 179,
+      "supplyUsed": 26.0,
+      "supplyCap": 29.0,
+      "workers": 21
+    },
+    {
+      "t": 260,
+      "minerals": 110,
+      "gas": 191,
+      "mineralRate": 783,
+      "gasRate": 268,
+      "supplyUsed": 27.0,
+      "supplyCap": 29.0,
+      "workers": 22
+    },
+    {
+      "t": 270,
+      "minerals": 55,
+      "gas": 81,
+      "mineralRate": 811,
+      "gasRate": 335,
+      "supplyUsed": 27.0,
+      "supplyCap": 34.0,
+      "workers": 22
+    },
+    {
+      "t": 280,
+      "minerals": 30,
+      "gas": 92,
+      "mineralRate": 923,
+      "gasRate": 313,
+      "supplyUsed": 30.0,
+      "supplyCap": 42.0,
+      "workers": 23
+    },
+    {
+      "t": 290,
+      "minerals": 85,
+      "gas": 132,
+      "mineralRate": 867,
+      "gasRate": 313,
+      "supplyUsed": 31.0,
+      "supplyCap": 42.0,
+      "workers": 23
+    },
+    {
+      "t": 300,
+      "minerals": 60,
+      "gas": 122,
+      "mineralRate": 979,
+      "gasRate": 335,
+      "supplyUsed": 33.0,
+      "supplyCap": 42.0,
+      "workers": 25
+    },
+    {
+      "t": 310,
+      "minerals": 130,
+      "gas": 162,
+      "mineralRate": 1035,
+      "gasRate": 335,
+      "supplyUsed": 34.0,
+      "supplyCap": 42.0,
+      "workers": 26
+    },
+    {
+      "t": 320,
+      "minerals": 115,
+      "gas": 198,
+      "mineralRate": 1119,
+      "gasRate": 313,
+      "supplyUsed": 35.0,
+      "supplyCap": 42.0,
+      "workers": 27
+    },
+    {
+      "t": 330,
+      "minerals": 105,
+      "gas": 88,
+      "mineralRate": 1147,
+      "gasRate": 335,
+      "supplyUsed": 40.0,
+      "supplyCap": 42.0,
+      "workers": 29
+    },
+    {
+      "t": 340,
+      "minerals": 10,
+      "gas": 128,
+      "mineralRate": 1287,
+      "gasRate": 335,
+      "supplyUsed": 41.0,
+      "supplyCap": 42.0,
+      "workers": 30
+    },
+    {
+      "t": 350,
+      "minerals": 70,
+      "gas": 160,
+      "mineralRate": 1343,
+      "gasRate": 291,
+      "supplyUsed": 42.0,
+      "supplyCap": 42.0,
+      "workers": 31
+    },
+    {
+      "t": 360,
+      "minerals": 135,
+      "gas": 200,
+      "mineralRate": 1455,
+      "gasRate": 313,
+      "supplyUsed": 41.0,
+      "supplyCap": 50.0,
+      "workers": 32
+    },
+    {
+      "t": 370,
+      "minerals": 270,
+      "gas": 240,
+      "mineralRate": 1455,
+      "gasRate": 313,
+      "supplyUsed": 40.0,
+      "supplyCap": 50.0,
+      "workers": 33
+    },
+    {
+      "t": 380,
+      "minerals": 390,
+      "gas": 130,
+      "mineralRate": 1511,
+      "gasRate": 313,
+      "supplyUsed": 44.0,
+      "supplyCap": 50.0,
+      "workers": 34
+    },
+    {
+      "t": 390,
+      "minerals": 35,
+      "gas": 170,
+      "mineralRate": 1567,
+      "gasRate": 335,
+      "supplyUsed": 45.0,
+      "supplyCap": 50.0,
+      "workers": 35
+    },
+    {
+      "t": 400,
+      "minerals": 65,
+      "gas": 106,
+      "mineralRate": 1539,
+      "gasRate": 335,
+      "supplyUsed": 46.0,
+      "supplyCap": 50.0,
+      "workers": 37
+    },
+    {
+      "t": 410,
+      "minerals": 165,
+      "gas": 142,
+      "mineralRate": 1595,
+      "gasRate": 313,
+      "supplyUsed": 48.0,
+      "supplyCap": 50.0,
+      "workers": 38
+    },
+    {
+      "t": 420,
+      "minerals": 140,
+      "gas": 178,
+      "mineralRate": 1651,
+      "gasRate": 291,
+      "supplyUsed": 48.0,
+      "supplyCap": 58.0,
+      "workers": 39
+    },
+    {
+      "t": 430,
+      "minerals": 270,
+      "gas": 218,
+      "mineralRate": 1819,
+      "gasRate": 313,
+      "supplyUsed": 50.0,
+      "supplyCap": 58.0,
+      "workers": 40
+    },
+    {
+      "t": 440,
+      "minerals": 145,
+      "gas": 208,
+      "mineralRate": 1819,
+      "gasRate": 313,
+      "supplyUsed": 50.0,
+      "supplyCap": 58.0,
+      "workers": 41
+    },
+    {
+      "t": 450,
+      "minerals": 130,
+      "gas": 140,
+      "mineralRate": 1987,
+      "gasRate": 313,
+      "supplyUsed": 54.0,
+      "supplyCap": 58.0,
+      "workers": 42
+    },
+    {
+      "t": 460,
+      "minerals": 45,
+      "gas": 34,
+      "mineralRate": 1875,
+      "gasRate": 358,
+      "supplyUsed": 54.0,
+      "supplyCap": 58.0,
+      "workers": 42
+    },
+    {
+      "t": 470,
+      "minerals": 170,
+      "gas": 86,
+      "mineralRate": 1875,
+      "gasRate": 470,
+      "supplyUsed": 56.0,
+      "supplyCap": 58.0,
+      "workers": 42
+    },
+    {
+      "t": 480,
+      "minerals": 175,
+      "gas": 138,
+      "mineralRate": 1791,
+      "gasRate": 447,
+      "supplyUsed": 57.0,
+      "supplyCap": 58.0,
+      "workers": 43
+    },
+    {
+      "t": 490,
+      "minerals": 180,
+      "gas": 177,
+      "mineralRate": 1847,
+      "gasRate": 470,
+      "supplyUsed": 59.0,
+      "supplyCap": 71.0,
+      "workers": 44
+    },
+    {
+      "t": 500,
+      "minerals": 30,
+      "gas": 83,
+      "mineralRate": 1847,
+      "gasRate": 515,
+      "supplyUsed": 66.0,
+      "supplyCap": 79.0,
+      "workers": 47
+    },
+    {
+      "t": 510,
+      "minerals": 105,
+      "gas": 143,
+      "mineralRate": 1987,
+      "gasRate": 515,
+      "supplyUsed": 68.0,
+      "supplyCap": 79.0,
+      "workers": 47
+    },
+    {
+      "t": 520,
+      "minerals": 160,
+      "gas": 145,
+      "mineralRate": 2043,
+      "gasRate": 470,
+      "supplyUsed": 71.0,
+      "supplyCap": 79.0,
+      "workers": 50
+    },
+    {
+      "t": 530,
+      "minerals": 240,
+      "gas": 180,
+      "mineralRate": 2071,
+      "gasRate": 470,
+      "supplyUsed": 72.0,
+      "supplyCap": 79.0,
+      "workers": 51
+    },
+    {
+      "t": 540,
+      "minerals": 40,
+      "gas": 90,
+      "mineralRate": 2211,
+      "gasRate": 470,
+      "supplyUsed": 79.0,
+      "supplyCap": 79.0,
+      "workers": 53
+    },
+    {
+      "t": 550,
+      "minerals": 85,
+      "gas": 150,
+      "mineralRate": 2267,
+      "gasRate": 492,
+      "supplyUsed": 79.0,
+      "supplyCap": 79.0,
+      "workers": 55
+    },
+    {
+      "t": 560,
+      "minerals": 225,
+      "gas": 206,
+      "mineralRate": 2351,
+      "gasRate": 515,
+      "supplyUsed": 79.0,
+      "supplyCap": 79.0,
+      "workers": 55
+    },
+    {
+      "t": 570,
+      "minerals": 310,
+      "gas": 262,
+      "mineralRate": 2491,
+      "gasRate": 492,
+      "supplyUsed": 86.0,
+      "supplyCap": 95.0,
+      "workers": 55
+    },
+    {
+      "t": 580,
+      "minerals": 390,
+      "gas": 268,
+      "mineralRate": 2575,
+      "gasRate": 470,
+      "supplyUsed": 91.0,
+      "supplyCap": 95.0,
+      "workers": 58
+    },
+    {
+      "t": 590,
+      "minerals": 165,
+      "gas": 174,
+      "mineralRate": 2603,
+      "gasRate": 470,
+      "supplyUsed": 97.0,
+      "supplyCap": 103.0,
+      "workers": 58
+    },
+    {
+      "t": 600,
+      "minerals": 450,
+      "gas": 230,
+      "mineralRate": 2715,
+      "gasRate": 470,
+      "supplyUsed": 95.0,
+      "supplyCap": 103.0,
+      "workers": 61
+    },
+    {
+      "t": 610,
+      "minerals": 320,
+      "gas": 190,
+      "mineralRate": 2715,
+      "gasRate": 470,
+      "supplyUsed": 100.0,
+      "supplyCap": 103.0,
+      "workers": 61
+    },
+    {
+      "t": 620,
+      "minerals": 70,
+      "gas": 96,
+      "mineralRate": 2771,
+      "gasRate": 470,
+      "supplyUsed": 107.0,
+      "supplyCap": 111.0,
+      "workers": 63
+    },
+    {
+      "t": 630,
+      "minerals": 365,
+      "gas": 152,
+      "mineralRate": 2519,
+      "gasRate": 470,
+      "supplyUsed": 107.0,
+      "supplyCap": 111.0,
+      "workers": 63
+    },
+    {
+      "t": 640,
+      "minerals": 170,
+      "gas": 132,
+      "mineralRate": 2435,
+      "gasRate": 604,
+      "supplyUsed": 109.0,
+      "supplyCap": 111.0,
+      "workers": 65
+    },
+    {
+      "t": 650,
+      "minerals": 260,
+      "gas": 224,
+      "mineralRate": 2491,
+      "gasRate": 739,
+      "supplyUsed": 111.0,
+      "supplyCap": 111.0,
+      "workers": 63
+    },
+    {
+      "t": 660,
+      "minerals": 555,
+      "gas": 324,
+      "mineralRate": 2435,
+      "gasRate": 851,
+      "supplyUsed": 108.0,
+      "supplyCap": 111.0,
+      "workers": 60
+    },
+    {
+      "t": 670,
+      "minerals": 745,
+      "gas": 440,
+      "mineralRate": 2379,
+      "gasRate": 940,
+      "supplyUsed": 110.0,
+      "supplyCap": 111.0,
+      "workers": 60
+    },
+    {
+      "t": 680,
+      "minerals": 1035,
+      "gas": 556,
+      "mineralRate": 2379,
+      "gasRate": 963,
+      "supplyUsed": 108.0,
+      "supplyCap": 111.0,
+      "workers": 60
+    },
+    {
+      "t": 690,
+      "minerals": 915,
+      "gas": 568,
+      "mineralRate": 2379,
+      "gasRate": 940,
+      "supplyUsed": 110.0,
+      "supplyCap": 111.0,
+      "workers": 60
+    },
+    {
+      "t": 700,
+      "minerals": 365,
+      "gas": 584,
+      "mineralRate": 2379,
+      "gasRate": 940,
+      "supplyUsed": 110.0,
+      "supplyCap": 103.0,
+      "workers": 60
+    },
+    {
+      "t": 710,
+      "minerals": 485,
+      "gas": 492,
+      "mineralRate": 2211,
+      "gasRate": 940,
+      "supplyUsed": 110.0,
+      "supplyCap": 103.0,
+      "workers": 60
+    },
+    {
+      "t": 720,
+      "minerals": 355,
+      "gas": 550,
+      "mineralRate": 2323,
+      "gasRate": 918,
+      "supplyUsed": 113.0,
+      "supplyCap": 119.0,
+      "workers": 60
+    },
+    {
+      "t": 730,
+      "minerals": 625,
+      "gas": 662,
+      "mineralRate": 2211,
+      "gasRate": 963,
+      "supplyUsed": 113.0,
+      "supplyCap": 135.0,
+      "workers": 60
+    },
+    {
+      "t": 740,
+      "minerals": 110,
+      "gas": 782,
+      "mineralRate": 2323,
+      "gasRate": 1007,
+      "supplyUsed": 131.0,
+      "supplyCap": 143.0,
+      "workers": 63
+    },
+    {
+      "t": 750,
+      "minerals": 385,
+      "gas": 894,
+      "mineralRate": 2379,
+      "gasRate": 963,
+      "supplyUsed": 131.0,
+      "supplyCap": 151.0,
+      "workers": 63
+    },
+    {
+      "t": 760,
+      "minerals": 440,
+      "gas": 1010,
+      "mineralRate": 2267,
+      "gasRate": 940,
+      "supplyUsed": 131.0,
+      "supplyCap": 151.0,
+      "workers": 65
+    },
+    {
+      "t": 770,
+      "minerals": 250,
+      "gas": 530,
+      "mineralRate": 2379,
+      "gasRate": 985,
+      "supplyUsed": 139.0,
+      "supplyCap": 151.0,
+      "workers": 65
+    },
+    {
+      "t": 780,
+      "minerals": 505,
+      "gas": 642,
+      "mineralRate": 2323,
+      "gasRate": 963,
+      "supplyUsed": 135.0,
+      "supplyCap": 151.0,
+      "workers": 65
+    },
+    {
+      "t": 790,
+      "minerals": 590,
+      "gas": 762,
+      "mineralRate": 2351,
+      "gasRate": 985,
+      "supplyUsed": 139.0,
+      "supplyCap": 167.0,
+      "workers": 65
+    },
+    {
+      "t": 800,
+      "minerals": 615,
+      "gas": 678,
+      "mineralRate": 2351,
+      "gasRate": 1007,
+      "supplyUsed": 132.0,
+      "supplyCap": 167.0,
+      "workers": 66
+    },
+    {
+      "t": 810,
+      "minerals": 490,
+      "gas": 340,
+      "mineralRate": 2323,
+      "gasRate": 963,
+      "supplyUsed": 132.0,
+      "supplyCap": 180.0,
+      "workers": 67
+    },
+    {
+      "t": 820,
+      "minerals": 135,
+      "gas": 306,
+      "mineralRate": 2407,
+      "gasRate": 940,
+      "supplyUsed": 138.0,
+      "supplyCap": 180.0,
+      "workers": 68
+    },
+    {
+      "t": 830,
+      "minerals": 415,
+      "gas": 351,
+      "mineralRate": 2547,
+      "gasRate": 985,
+      "supplyUsed": 138.0,
+      "supplyCap": 180.0,
+      "workers": 68
+    },
+    {
+      "t": 840,
+      "minerals": 145,
+      "gas": 471,
+      "mineralRate": 2659,
+      "gasRate": 985,
+      "supplyUsed": 140.0,
+      "supplyCap": 180.0,
+      "workers": 72
+    },
+    {
+      "t": 850,
+      "minerals": 375,
+      "gas": 583,
+      "mineralRate": 2771,
+      "gasRate": 985,
+      "supplyUsed": 143.0,
+      "supplyCap": 180.0,
+      "workers": 74
+    },
+    {
+      "t": 860,
+      "minerals": 235,
+      "gas": 99,
+      "mineralRate": 2911,
+      "gasRate": 1007,
+      "supplyUsed": 157.0,
+      "supplyCap": 188.0,
+      "workers": 75
+    },
+    {
+      "t": 870,
+      "minerals": 370,
+      "gas": 65,
+      "mineralRate": 2855,
+      "gasRate": 985,
+      "supplyUsed": 158.0,
+      "supplyCap": 188.0,
+      "workers": 76
+    },
+    {
+      "t": 880,
+      "minerals": 595,
+      "gas": 209,
+      "mineralRate": 2687,
+      "gasRate": 1119,
+      "supplyUsed": 158.0,
+      "supplyCap": 188.0,
+      "workers": 76
+    },
+    {
+      "t": 890,
+      "minerals": 665,
+      "gas": 169,
+      "mineralRate": 2883,
+      "gasRate": 1254,
+      "supplyUsed": 158.0,
+      "supplyCap": 188.0,
+      "workers": 77
+    },
+    {
+      "t": 900,
+      "minerals": 605,
+      "gas": 329,
+      "mineralRate": 2911,
+      "gasRate": 1321,
+      "supplyUsed": 166.0,
+      "supplyCap": 188.0,
+      "workers": 77
+    },
+    {
+      "t": 910,
+      "minerals": 410,
+      "gas": 381,
+      "mineralRate": 2939,
+      "gasRate": 1299,
+      "supplyUsed": 166.0,
+      "supplyCap": 196.0,
+      "workers": 77
+    },
+    {
+      "t": 920,
+      "minerals": 710,
+      "gas": 525,
+      "mineralRate": 2911,
+      "gasRate": 1254,
+      "supplyUsed": 156.0,
+      "supplyCap": 188.0,
+      "workers": 76
+    },
+    {
+      "t": 930,
+      "minerals": 585,
+      "gas": 661,
+      "mineralRate": 2799,
+      "gasRate": 1187,
+      "supplyUsed": 151.0,
+      "supplyCap": 188.0,
+      "workers": 70
+    },
+    {
+      "t": 940,
+      "minerals": 440,
+      "gas": 781,
+      "mineralRate": 2407,
+      "gasRate": 1030,
+      "supplyUsed": 154.0,
+      "supplyCap": 188.0,
+      "workers": 69
+    },
+    {
+      "t": 950,
+      "minerals": 590,
+      "gas": 609,
+      "mineralRate": 2463,
+      "gasRate": 1007,
+      "supplyUsed": 160.0,
+      "supplyCap": 188.0,
+      "workers": 72
+    },
+    {
+      "t": 960,
+      "minerals": 925,
+      "gas": 733,
+      "mineralRate": 2659,
+      "gasRate": 1007,
+      "supplyUsed": 160.0,
+      "supplyCap": 188.0,
+      "workers": 73
+    },
+    {
+      "t": 970,
+      "minerals": 845,
+      "gas": 861,
+      "mineralRate": 2659,
+      "gasRate": 1075,
+      "supplyUsed": 162.0,
+      "supplyCap": 188.0,
+      "workers": 71
+    },
+    {
+      "t": 980,
+      "minerals": 885,
+      "gas": 977,
+      "mineralRate": 2547,
+      "gasRate": 1030,
+      "supplyUsed": 159.0,
+      "supplyCap": 188.0,
+      "workers": 71
+    },
+    {
+      "t": 990,
+      "minerals": 1205,
+      "gas": 1101,
+      "mineralRate": 2575,
+      "gasRate": 1052,
+      "supplyUsed": 155.0,
+      "supplyCap": 188.0,
+      "workers": 71
+    },
+    {
+      "t": 1000,
+      "minerals": 940,
+      "gas": 1225,
+      "mineralRate": 2659,
+      "gasRate": 1052,
+      "supplyUsed": 155.0,
+      "supplyCap": 188.0,
+      "workers": 72
+    },
+    {
+      "t": 1010,
+      "minerals": 930,
+      "gas": 1241,
+      "mineralRate": 2547,
+      "gasRate": 985,
+      "supplyUsed": 160.0,
+      "supplyCap": 188.0,
+      "workers": 72
+    },
+    {
+      "t": 1020,
+      "minerals": 960,
+      "gas": 1194,
+      "mineralRate": 2631,
+      "gasRate": 1007,
+      "supplyUsed": 151.0,
+      "supplyCap": 188.0,
+      "workers": 72
+    },
+    {
+      "t": 1030,
+      "minerals": 585,
+      "gas": 618,
+      "mineralRate": 2743,
+      "gasRate": 1052,
+      "supplyUsed": 155.0,
+      "supplyCap": 188.0,
+      "workers": 74
+    },
+    {
+      "t": 1040,
+      "minerals": 305,
+      "gas": 288,
+      "mineralRate": 3079,
+      "gasRate": 1007,
+      "supplyUsed": 167.0,
+      "supplyCap": 188.0,
+      "workers": 74
+    },
+    {
+      "t": 1050,
+      "minerals": 285,
+      "gas": 304,
+      "mineralRate": 2855,
+      "gasRate": 1030,
+      "supplyUsed": 171.0,
+      "supplyCap": 188.0,
+      "workers": 74
+    },
+    {
+      "t": 1060,
+      "minerals": 585,
+      "gas": 444,
+      "mineralRate": 2911,
+      "gasRate": 1164,
+      "supplyUsed": 166.0,
+      "supplyCap": 188.0,
+      "workers": 74
+    },
+    {
+      "t": 1070,
+      "minerals": 180,
+      "gas": 484,
+      "mineralRate": 2883,
+      "gasRate": 1164,
+      "supplyUsed": 164.0,
+      "supplyCap": 188.0,
+      "workers": 77
+    },
+    {
+      "t": 1080,
+      "minerals": 540,
+      "gas": 628,
+      "mineralRate": 3023,
+      "gasRate": 1187,
+      "supplyUsed": 150.0,
+      "supplyCap": 188.0,
+      "workers": 77
+    },
+    {
+      "t": 1090,
+      "minerals": 595,
+      "gas": 768,
+      "mineralRate": 2939,
+      "gasRate": 1142,
+      "supplyUsed": 156.0,
+      "supplyCap": 180.0,
+      "workers": 73
+    },
+    {
+      "t": 1100,
+      "minerals": 320,
+      "gas": 872,
+      "mineralRate": 2211,
+      "gasRate": 963,
+      "supplyUsed": 139.0,
+      "supplyCap": 172.0,
+      "workers": 62
+    },
+    {
+      "t": 1110,
+      "minerals": 565,
+      "gas": 976,
+      "mineralRate": 2043,
+      "gasRate": 873,
+      "supplyUsed": 94.0,
+      "supplyCap": 172.0,
+      "workers": 58
+    },
+    {
+      "t": 1113,
+      "minerals": 645,
+      "gas": 1024,
+      "mineralRate": 1959,
+      "gasRate": 940,
+      "supplyUsed": 67.0,
+      "supplyCap": 172.0,
+      "workers": 53
+    },
+    {
+      "t": 1113,
+      "minerals": 645,
+      "gas": 1024,
+      "mineralRate": 1959,
+      "gasRate": 940,
+      "supplyUsed": 67.0,
+      "supplyCap": 172.0,
+      "workers": 53
+    }
+  ]
+}
