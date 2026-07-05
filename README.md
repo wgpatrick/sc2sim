@@ -1,13 +1,16 @@
-# sc2sim — StarCraft II build-order simulator (Protoss)
+# sc2sim — StarCraft II build-order simulator + optimizer
 
 An event-driven economy simulator for StarCraft II build orders, written in
 TypeScript so it can run both in Node and directly in the browser on this site.
-Currently models **Protoss** on patch **5.0.16** (the 8-worker-start economy).
+**Protoss** (patch 5.0.16, the 8-worker-start economy) is the fully-searchable
+race; **Terran and Zerg** now have real, replay-grounded data too (see
+"Modeling the opponent"), enough to replay their actual recorded games and
+score a Protoss build's safety against them.
 
 > **Goal:** a fast, deterministic simulator you can call millions of times inside
 > a search loop, so an optimizer can *discover* build orders instead of us
-> hand-writing them. This repo is milestone 1–2 (a correct, validated simulator).
-> Milestone 3 is the optimizer (see Roadmap).
+> hand-writing them — and increasingly, discover them against a specific real
+> opponent, not just in isolation.
 
 ## What it does
 
@@ -33,6 +36,12 @@ Chrono Boost / Nexus energy. `chrono:X` casts Chrono Boost on the in-production 
 ```bash
 npm install        # just TypeScript
 npm run demo       # compile + run the sample builds in Node
+npm run optimize   # exhaustive template search — fastest army-at-the-enemy
+npm run search     # raw-sequence GA — beats the template, see below
+npm run frontier   # Pareto frontier of (time, value) across many compositions
+npm run opponent   # score builds against a REAL recorded Terran/Zerg opponent
+npm run validate   # compare vs. published pro builds
+npm run diff replays/parsed/*.json   # compare vs. real replays directly
 ```
 
 Open the interactive version in a browser (after `npm run build`, which emits
@@ -50,12 +59,17 @@ sim small and fast enough to search over.
 
 | File | Responsibility |
 |------|----------------|
-| `src/engine.ts` | Race-agnostic **event-driven simulator** + spatial layer (travel/arrival) + `compositionArrivalTime`. Fast-forwards the clock; never ticks per-frame. |
-| `src/data.ts`   | **All the numbers** — costs, build times, supply, move speeds, tech requirements, income + Chrono constants. Swap per patch; the engine never changes. |
+| `src/engine.ts` | Race-agnostic **event-driven simulator** + spatial layer (travel/arrival) + `compositionArrivalTime`. Fast-forwards the clock; never ticks per-frame. Handles Protoss/Terran/Zerg production models generically (townhall/gas-structure config, plus Zerg's larva pool — see "Modeling the opponent"). |
+| `src/data.ts`   | **Protoss** numbers — costs, build times, supply, move speeds, tech requirements, income + Chrono constants. Swap per patch; the engine never changes. |
+| `src/data-terran.ts` · `src/data-zerg.ts` | **Terran / Zerg** numbers, first pass — enough to replay their real recorded build orders (see "Modeling the opponent"), not yet a fully-searchable optimizer target the way Protoss is. |
 | `src/maps.ts`   | **Distance presets** (travel seconds home→enemy, proxy→enemy, probe→proxy). |
-| `src/optimizer.ts` | **The optimizer**: given a target army, search build templates for the one that ARRIVES at the enemy fastest. |
+| `src/optimizer.ts` | **The template optimizer**: given a target army, exhaustively search a parameterized build template for the one that ARRIVES at the enemy fastest. |
+| `src/search.ts` | **The raw-sequence GA**: searches Action[] sequences directly (not the template), seeded from the template's own answer. Finds orderings/chrono placements the template can't express. |
+| `src/opponent.ts` | **Opponent modeling**: replay a real Terran/Zerg opponent's recorded build order through their own race data to get a value-over-time threat curve, then score Protoss builds by whether they ever fall behind it. |
+| `src/replay.ts` | Shared `ParsedReplay` type + real-build-order → `Action[]` conversion, used by both the diff harness and opponent modeling. |
 | `src/builds.ts` | Sample hand-written build orders used to exercise the sim. |
-| `src/cli.ts` · `src/optimize-cli.ts` | Node runners (`npm run demo`, `npm run optimize`). |
+| `src/cli.ts` · `src/optimize-cli.ts` · `src/search-cli.ts` · `src/opponent-cli.ts` | Node runners (`npm run demo` / `optimize` / `search` / `opponent`). |
+| `tools/parse_replay.py` · `tools/calibrate_income.py` · `tools/mining_rate.py` | Replay-grounding pipeline: `.SC2Replay` → JSON (real build order + economy samples, both players) → fitted income constants. |
 | `index.html`    | Self-contained browser UI (timeline, chart, optimizer) importing `dist/`. |
 
 The simulation loop, per action: compute the earliest time all preconditions
@@ -78,30 +92,57 @@ producer and scheduling its completion.
   Gate morph ~7s; warp-in ~4s at any powered Pylon (the old 11.4s proxy penalty
   is gone); per-unit warp cooldown ≈ build time − 7s. Adept build time is the
   hotfix's 33s. Warp cooldowns/warp-in time are best-effort — verify per patch.
-- **Mineral income — now calibrated.** The per-worker mineral rates aren't in the
-  game data (they come from mining behavior), so they were tuned against a
-  published pro build: the sim matches Harstem's 5.0.16 gasless PvT to **1.8s mean
-  error over 8 milestones** (`npm run validate`). Gas rate and `probeBuildOccupancy`
-  are not yet calibrated.
+- **Mineral + gas income — now fit directly from real replay income data.**
+  `tools/calibrate_income.py` does an ordinary-least-squares fit of the
+  engine's tiered mineral model (rate1==rate2, distinct oversaturation rate3)
+  and a single-tier gas rate against every steady-state `PlayerStatsEvent`
+  sample across all 4 replays in `replays/parsed/` (115 mineral / 79 gas
+  samples). R² = 0.979 / 0.918. Result: mineral rate 0.925 → **0.871/s**,
+  oversaturation rate 0.33 → **0.652/s** (oversaturated workers mine much
+  closer to full rate than assumed), gas rate 0.63 → **0.871/s** (was ~38%
+  too low — gas and mineral income per worker turn out to be nearly on par).
+  `probeBuildOccupancy` remains an uncalibrated placeholder — hard to isolate
+  from bank data alone.
+- **Found and fixed a replay-timestamp unit bug along the way.**
+  `tools/parse_replay.py` was using sc2reader's `event.second` (frame ÷ 16, a
+  fixed "Normal speed" assumption) directly, but every replay here is played
+  at **Faster** (1.4×) — the same clock `data.ts` already uses everywhere
+  else. That made every timestamp in `replays/parsed/*.json` ~40% too large
+  (a parsed Gateway start→done was 65s, the raw/Normal nominal value, not the
+  46.4s Faster value it should be). Fixed via `to_faster_seconds()`; every
+  fixture was regenerated. This was silently inflating the diff harness's
+  reported error (Gateway sim 1:47 vs "real" 2:32) in a way that looked like
+  an income-model problem but wasn't.
 
 An optimizer is adversarial against wrong constants: if the income model is off,
 the "optimal" build will be one that abuses the error. So validation comes before
-optimization. The costs/build-times are now trustworthy; the income curve is the
-remaining thing to pin down.
+optimization. The costs/build-times, and now the income rates too, are grounded
+in real recorded games, not book values or a fit to just 1-2 published builds.
 
 To refresh the data after a future patch, regenerate `data.json` from
-sc2-techtree and re-derive the values in `data.ts` (÷ 1.4 for the Faster clock).
+sc2-techtree and re-derive the values in `data.ts` (÷ 1.4 for the Faster clock),
+then re-run `tools/calibrate_income.py` against fresh replays of that patch.
 
 ## Validation
 
-**Done — against a published pro build.** `npm run validate` replays Harstem's
-5.0.16 gasless PvT ([Spawning Tool #203088](https://lotv.spawningtool.com/build/203088/))
-and compares the sim's timing for each milestone to the published game-time.
-After calibrating mineral income, every milestone lands within **±4s** (mean
-**1.8s** over 8: Pylon, Gateway, Nexus, Assimilator, Cyber, Adept, Warp Gate,
-Twilight). The sim is exact in the first minute and stayed accurate deep into
-the mid-game. Published pro builds are the best ground truth available without a
-current-patch client — see the headless caveat below.
+**Two independent checks, both against real data:**
+
+- `npm run validate` replays 2 hand-transcribed published pro builds (Harstem's
+  gasless PvT and PvZ Stargate builds, [Spawning Tool #203088](https://lotv.spawningtool.com/build/203088/)/[#203087](https://lotv.spawningtool.com/build/203087/))
+  and compares the sim's timing for each milestone to the published game-time:
+  **8.8s mean error over 17 milestones, 2 builds.** (This moved from an
+  earlier 5.0s after recalibrating income against the broader replay corpus
+  instead of fitting directly to these same 2 builds — see the data-accuracy
+  note above; less overfit-prone, at the cost of a slightly looser fit to
+  these two specific games.)
+- `npm run diff replays/parsed/*.json` replays the REAL build order and
+  timings straight out of parsed `.SC2Replay` files (no manual transcription
+  to get wrong) and compares the sim's predicted completions AND mineral/gas
+  bank against what actually happened: **~10s mean timing error across all 4
+  replays** (down from ~17s before the timestamp-unit fix above).
+
+Published pro builds and real replays are the best ground truth available
+without a current-patch client — see the headless caveat below.
 
 ### Running SC2 headless (and why it can't give 5.0.16 ground truth)
 
@@ -141,13 +182,15 @@ above already validates the **5.0.16 timings**. To script it when you want to:
 
 `npm run optimize` searches for the build that gets a target army to the enemy
 fastest. It searches a **parameterized build template** — worker count,
-production-building count, gas, opener workers — across **three delivery
-strategies**, turning each parameter set into a valid supply-correct build (the
-greedy generator auto-inserts Pylons and prerequisites) and scoring it with
-`compositionArrivalTime`. The space is small enough to search exhaustively
-(~3,500 candidates in <1s), so within the template the result is the true
-optimum, deterministically. The simulator validates every candidate, so a broken
-build can never "win".
+production-building count, gas, opener workers, and (now) a **second Chrono
+Boost target** (Probe / the primary tech structure / the primary unit, once
+Nexus energy refills — chrono used to be hardcoded to the opener Probe only)
+— across **three delivery strategies**, turning each parameter set into a
+valid supply-correct build (the greedy generator auto-inserts Pylons and
+prerequisites) and scoring it with `compositionArrivalTime`. The space is
+small enough to search exhaustively (~31,600 candidates in a couple seconds),
+so within the template the result is the true optimum, deterministically.
+The simulator validates every candidate, so a broken build can never "win".
 
 The three strategies:
 - **home** — produce at home, walk the army across the map.
@@ -157,8 +200,8 @@ The three strategies:
 Example (standard map, patch 5.0.16):
 
 ```
-TARGET: 4 Zealot arriving at the enemy → best 2:46 (proxyWalk)
-  home 3:12 · proxyWalk 2:46 · proxyWarp 4:05
+TARGET: 4 Zealot arriving at the enemy → best 2:49 (proxyWalk)
+  home 3:14 · proxyWalk 2:49 · proxyWarp 3:51
 ```
 
 The optimizer finds **proxyWalk fastest for these one-shot timings** — proxy
@@ -167,6 +210,41 @@ can't beat them *on first-arrival time*. That's realistic: proxy 2-gate is a
 top all-in. Warp-in's real advantages — keeping production safe at home and
 continuously reinforcing the front — live in objectives this metric doesn't yet
 capture, so `proxyWarp` is modelled and evaluated but wins only when those matter.
+
+## The raw-sequence search (a genetic algorithm)
+
+The template optimizer above is exact *within its template* — but the
+template hardcodes a build's SHAPE (probes → pylon → gas → tech → units, one
+primary producer). It can't discover cutting probes at an unusual point to
+rush a second producer, chrono-ing the tech building instead of Probes, or any
+ordering nobody thought to parameterize. `npm run search` (`src/search.ts`)
+searches **Action[] sequences directly** with a genetic algorithm — mutation
+operators insert/delete/swap/move/duplicate an action, retarget or add/remove
+a `chrono:X` cast, or toggle a structure between home/proxy — using
+`simulate()` as a ~10μs-per-call fitness oracle. It's seeded with the
+template optimizer's own best answer per strategy, so it can never regress;
+a greedy post-hoc pass prunes GA "bloat" (harmless-but-useless actions that
+crossover/mutation tend to accumulate) down to a minimal sequence with the
+same score.
+
+Result on the same 4 example targets: it beats the template's exhaustive
+optimum by **10–18 seconds every time**, in 5–15s of search each:
+
+```
+TARGET: 4 Zealot arriving at the enemy
+template optimizer : 2:49  (31590 candidates, proxyWalk)
+raw-sequence GA     : 2:35  (37533 evaluations, 150 generations, 5.1s)
+  -> GA found a build 14.2s FASTER than any template-shaped build.
+  Pylon@proxy, Gateway@proxy, Gateway@proxy, Zealot@proxy, Zealot@proxy,
+  Zealot@proxy, Zealot@proxy, chrono:Zealot, chrono:Zealot
+```
+
+This is a stochastic local search, not branch-and-bound — there's no
+admissible lower bound, so it's not *provably* optimal the way the template
+search is within its own space. But because a single `simulate()` call is
+sub-millisecond, the GA explores an evaluation budget an order of magnitude
+larger than the template's exhaustive search, which is why it keeps finding
+better answers in practice.
 
 ## The value frontier
 
@@ -194,6 +272,68 @@ Core requirement — which matches the real game's well-known early Zealot
 timing-attack meta. Stalkers/Adepts only start winning value-per-time once
 gas income and Warp Gate throughput ramp up past this window.
 
+## Modeling the opponent
+
+Everything above optimizes Protoss **in isolation** — "how fast can MY army
+arrive", independent of what the enemy is doing. But the real question in a
+match is two-player: a build that's 10s faster but leaves you with less
+fighting value than the enemy actually has at that moment isn't better, it's
+a loss. `src/opponent.ts` scores builds against a REAL opponent instead of a
+hand-authored archetype:
+
+1. **Terran and Zerg now have real data** (`src/data-terran.ts`,
+   `src/data-zerg.ts`), grounded the same way Protoss was — structure
+   costs/buildTimes cross-checked against `replays/parsed/*.opponent.json`
+   (the Terran/Zerg side of this repo's PvT/PvZ replays, extracted for the
+   first time this pass — `parse_replay.py` had only ever pulled the Protoss
+   player). Zerg needed a real engine addition, not just data: production is
+   **larva-based**, not a per-building queue, so `engine.ts` gained a
+   regenerating larva-pool production mode. The regen rate (9.51s, cap 3) is
+   measured directly off the replays — consistent across all 3 Zerg games —
+   not a book value. (This also surfaced and fixed a latent bug: the engine
+   hardcoded `"Nexus"`/`"Assimilator"` in several places despite claiming to
+   be race-agnostic, which would have silently zeroed Terran's starting
+   supply cap.)
+2. **`threatCurveFromReplay()`** replays a real opponent's recorded build
+   order through their own race's `simulate()`, producing a cumulative
+   fighting-value-over-time curve straight from a game someone actually
+   played.
+3. **`dangerScorer()`** is a `Scorer` (pluggable into the GA search above)
+   that ranks Protoss builds by the worst moment they're ever behind that
+   curve, instead of by raw arrival time.
+
+`npm run opponent` runs both scorers against 3 real games and compares. The
+clearest result, against the Krystianer/Solar Zerg replay:
+
+```
+fastest-arrival build (ignores opponent):
+  worst deficit vs this opponent: +12.1 value at 17:52
+
+danger-scored build (optimized against this specific real game):
+  worst deficit vs this opponent: -41.8 value at 2:39
+  -> danger-scoring reduced the worst deficit by 53.9 value
+```
+
+The "fastest" build is a burst rush that produces a handful of units and then
+stops — by minute 18 a real Zerg's macro has snowballed past its total value
+entirely (a positive deficit = behind). The danger-scored search instead
+found a build that keeps producing and stays ahead of that specific game's
+value curve the whole way through. **This is the concrete case for why
+"fastest" and "safest" are different objectives**, and why ranking builds
+only against each other (as the template optimizer and plain GA search do)
+misses it.
+
+Known limitations, honestly: only 4 replays exist in this corpus (1 Terran,
+3 Zerg), so "the opponent" here means 3-4 specific recorded games, not a
+statistical archetype of a matchup. Terran/Zerg data covers non-addon-gated
+units only (see those files' headers for the full gap list — Orbital
+Command/MULEs and Queen larva injects are the biggest ones, meaning Terran's
+real economy and Zerg's real production throughput are both modeled as
+somewhat slower than a game with those mechanics active). And the danger
+score still uses `unitValue()`'s crude combat ranking (see "The value
+frontier" above) on both sides — it's a better question than pure arrival
+time, but still not real combat resolution.
+
 ## Roadmap
 
 1. ✅ Event-driven economy simulator.
@@ -206,15 +346,34 @@ gas income and Warp Gate throughput ramp up past this window.
    `tools/mining_rate.py`) against real pro games, not just transcribed builds.
 8. ✅ Value-over-time frontier (`npm run frontier`) — rank builds by fighting
    value delivered by time t, not just "when does this exact count arrive".
-9. ⏭️ **Calibrate** income rates + map distances against headless SC2 (or more
-   replays — mineral rate is currently ~6-7% high vs. replay-measured income).
-10. ⏭️ **GA over raw action sequences** — explore orderings the template can't
-    express; then branch & bound for provably-optimal min-time openers.
+9. ✅ **Calibrate income from real replay data** (`tools/calibrate_income.py`,
+   a tiered least-squares fit, R²=0.98/0.92) — plus finding and fixing a
+   replay-timestamp unit bug that had been corrupting the ground truth.
+   Map distances remain estimates (still ⏭️ — no headless 5.0.16 client, see
+   below).
+10. ✅ **GA over raw action sequences** (`src/search.ts`) — beats the
+    template's exhaustive optimum by 10-18s on every example target.
+    Chrono TARGET is now a first-class search dimension (both in the GA and
+    as a lightweight `secondChrono` param in the template optimizer), not a
+    hardcoded opener-Probe-only cast. ⏭️ Still open: branch & bound with an
+    admissible lower bound for *provably* min-time openers (the GA is a
+    strong stochastic search, not a proof of optimality).
 11. ⏭️ Real combat resolution (beyond the value heuristic) so DIFFERENT
     build orders — including the opponent's — can be compared head-to-head,
     not just ranked against each other in isolation. Upgrades (Blink, Charge,
     +1/+1) as first-class modeled effects, not just static value inputs.
-12. ⏭️ Reinforcement/safety objectives where warp-in wins; Terran & Zerg.
+12. 🟡 **Terran & Zerg data + opponent-threat safety objective** — first pass
+    done (`src/data-terran.ts`, `src/data-zerg.ts`, `src/opponent.ts`,
+    `npm run opponent`): replay a REAL recorded opponent build to get a value
+    curve, then search for the Protoss build that never falls behind it.
+    Zerg needed a genuine larva-pool production model, added to the engine
+    and calibrated from replay data (9.51s regen, cap 3). Still open: Orbital
+    Command/MULEs, Queen larva injects, Lair/Hive tech tier, addon-gated
+    units (Marauder, Siege Tank, Banshee, ...), and a statistical opponent
+    archetype instead of "whichever 3-4 replays happen to be in this repo".
+13. ⏭️ Multi-objective / game-theoretic framing: search for the build robust
+    across a *distribution* of opponent openings (regret-minimization),
+    not just safe against one specific recorded game at a time.
 
 ## References
 
