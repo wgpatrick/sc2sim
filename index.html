@@ -101,6 +101,10 @@
           <p class="desc" id="desc"></p>
           <label for="order">Build order</label>
           <textarea id="order" spellcheck="false"></textarea>
+          <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;margin-top:10px;cursor:pointer;">
+            <input type="checkbox" id="micro" checked style="width:auto;" />
+            Pro probe micro (hand-mining, +~12% income vs a-move)
+          </label>
           <button id="run">▶ Simulate</button>
         </div>
 
@@ -166,9 +170,18 @@
       }
       presetSel.addEventListener("change", () => { loadPreset(+presetSel.value); run(); });
 
+      const microCb = $("micro");
+      // Clone the data and apply the mining-micro toggle (1.0 = pro, 0.88 = a-move).
+      function activeData() {
+        const d = structuredClone(PROTOSS);
+        d.economy.miningMicro = microCb.checked ? 1.0 : 0.88;
+        return d;
+      }
+      microCb.addEventListener("change", run);
+
       function run() {
         const order = orderTa.value.split("\n").map((l) => l.trim()).filter(Boolean);
-        const res = simulate(PROTOSS, order, DEFAULT_MAP);
+        const res = simulate(activeData(), order, DEFAULT_MAP);
         const s = $("summary");
         if (!res.ok) {
           s.innerHTML = `<span class="err">Invalid build: ${res.error}</span>`;
@@ -266,7 +279,7 @@
         const out = $("opt-out");
         if (!Object.keys(comp).length) { out.innerHTML = '<span class="err">Pick at least one unit.</span>'; return; }
         const map = MAPS[optMap.value];
-        const r = optimize(comp, PROTOSS, map);
+        const r = optimize(comp, activeData(), map);
         const p = r.params;
         const cmp = Object.entries(r.bestByStrategy)
           .map(([s, b]) => `${s} ${fmt(b.arrival)}`)

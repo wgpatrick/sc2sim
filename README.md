@@ -78,9 +78,11 @@ producer and scheduling its completion.
   Gate morph ~7s; warp-in ~4s at any powered Pylon (the old 11.4s proxy penalty
   is gone); per-unit warp cooldown ≈ build time − 7s. Adept build time is the
   hotfix's 33s. Warp cooldowns/warp-in time are best-effort — verify per patch.
-- **⚠️ Still calibration targets** (these are *not* in the game data — they come
-  from mining behavior): the income rates (`mineralRate*`, `gasRatePerWorker`) and
-  `probeBuildOccupancy`. Tune them against headless SC2 (below).
+- **Mineral income — now calibrated.** The per-worker mineral rates aren't in the
+  game data (they come from mining behavior), so they were tuned against a
+  published pro build: the sim matches Harstem's 5.0.16 gasless PvT to **1.8s mean
+  error over 8 milestones** (`npm run validate`). Gas rate and `probeBuildOccupancy`
+  are not yet calibrated.
 
 An optimizer is adversarial against wrong constants: if the income model is off,
 the "optimal" build will be one that abuses the error. So validation comes before
@@ -90,37 +92,50 @@ remaining thing to pin down.
 To refresh the data after a future patch, regenerate `data.json` from
 sc2-techtree and re-derive the values in `data.ts` (÷ 1.4 for the Faster clock).
 
-## Validation — including running SC2 headless (yes, this is possible)
+## Validation
 
-You can get **ground-truth timings** by scripting build orders in an actual
-headless StarCraft II instance and comparing against this sim:
+**Done — against a published pro build.** `npm run validate` replays Harstem's
+5.0.16 gasless PvT ([Spawning Tool #203088](https://lotv.spawningtool.com/build/203088/))
+and compares the sim's timing for each milestone to the published game-time.
+After calibrating mineral income, every milestone lands within **±4s** (mean
+**1.8s** over 8: Pylon, Gateway, Nexus, Assimilator, Cyber, Adept, Warp Gate,
+Twilight). The sim is exact in the first minute and stayed accurate deep into
+the mid-game. Published pro builds are the best ground truth available without a
+current-patch client — see the headless caveat below.
 
-- **Headless Linux build.** Blizzard ships self-contained **Linux SC2 binaries**
-  specifically for the ML/AI community — they run with no rendering. Combined with
-  [BurnySc2/python-sc2](https://github.com/BurnySc2/python-sc2) (or DeepMind's
-  [pysc2](https://github.com/google-deepmind/pysc2)), you can spawn a bot on an
-  empty map **with no opponent**, execute a scripted build via the raw API, and
-  read back the exact game-time each unit/structure completes.
-- **Faster than real time.** Run stepped (non-realtime) mode and it simulates far
-  quicker than a played game; you can batch many builds in parallel.
-- **The calibration loop:** script a known build in headless SC2 → record real
-  completion times → tune `data.ts` (build times + the income curve) until this
-  sim matches within ~1–2s → *then* trust the optimizer's outputs.
-- **⚠️ Patch-version reality (checked July 2026):** the newest headless Linux
-  build Blizzard publishes is **4.10 (2019)** — `SC2.4.10.zip` downloads, but
-  `4.11`/`5.0.x` all 404 (per the [s2client-proto](https://github.com/Blizzard/s2client-proto)
-  package list). So the headless container is **~7 years / dozens of patches
-  behind 5.0.16** (12-worker economy, pre-warpgate-rework, different unit stats).
-  Consequences:
-  - Headless 4.10 can validate the **engine's logic** (event scheduling, worker
-    saturation, Chrono, warp/cooldown bookkeeping) — point `data.ts` at 4.10
-    constants, script the same builds, and confirm the sim matches.
-  - It **cannot** validate the **5.0.16 numbers**. True 5.0.16 ground truth needs
-    the **retail client** (Windows/Mac is on 5.0.16) driven by python-sc2/pysc2 —
-    that runs on your own machine, not a headless Linux box.
-  - Meanwhile, the costs/build-times here already match the community's standard
-    tool by construction (same sc2-techtree `data.json` as BuRny's planner), and
-    published pro builds give supply-count checkpoints to sanity-check against.
+### Running SC2 headless (and why it can't give 5.0.16 ground truth)
+
+You *can* script builds in a headless StarCraft II instance and read exact
+completion times, but the patch it runs is the catch:
+
+- **Official Blizzard Linux headless build: 4.10 (2019)** — nothing newer is
+  published.
+- **Community (AI Arena) headless: up to ~5.0.13/5.0.14 (Build 75689).** AI Arena
+  confirms **there are no Linux builds past Build 75689**, and Blizzard has
+  declined to release newer ones. Even 5.0.14 **predates** the 8-worker / warp-gate
+  5.0.16 overhaul, so no headless build has the 5.0.16 economy.
+- **"Loading a newer patch onto an old binary" is limited.** The AI Arena
+  `sc2patch` approach modifies *map files* to emulate a version on the 4.10 binary
+  — it doesn't run true 5.0.16 balance. The client can pull another version's data
+  via a replay, but only for versions with a matching Linux binary (≤ Build 75689).
+- **True 5.0.16 ground truth = the retail client.** Windows/Mac retail is on
+  5.0.16; python-sc2 can also drive **retail via Wine/Lutris** on Linux
+  (`SC2PF=WineLinux`), which auto-updates to the live patch. That needs a
+  Battle.net login and a ~30 GB install — it runs on your machine, not a headless
+  CI box. Single-player build-order timing doesn't hit the bot-vs-bot desync issues
+  that plague 5.x headless multiplayer.
+
+Either way, headless SC2 would still validate the **engine's logic** (event
+scheduling, worker saturation, Chrono, warp cooldowns); the published-build check
+above already validates the **5.0.16 timings**. To script it when you want to:
+
+- With [python-sc2](https://github.com/BurnySc2/python-sc2) (or [pysc2](https://github.com/google-deepmind/pysc2)),
+  spawn a bot on an empty map **with no opponent**, execute a scripted build via
+  the raw API, and read back the exact game-time each unit/structure completes.
+- Run stepped (non-realtime) mode and it simulates far faster than a played game.
+- The loop: script a known build → record real completion times → tune `data.ts`
+  until the sim matches → trust the optimizer. Do this on **4.10** to check the
+  engine's *logic*, or on the **retail client** for true 5.0.16 numbers.
 
 ## The optimizer
 

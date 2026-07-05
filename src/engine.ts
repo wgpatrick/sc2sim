@@ -38,9 +38,14 @@ export interface EconomyConfig {
   startingGas: number;
   mineralPatchesPerBase: number;
   gasGeysersPerBase: number;
+  // Per-worker mineral rate (min/sec) by patch saturation tier. 1st & 2nd worker
+  // per patch mine at nearly the same rate; the 3rd (oversaturation) ~half.
   mineralRateFirstWorker: number;
   mineralRateSecondWorker: number;
+  mineralRateThirdWorker: number;
   gasRatePerWorker: number;
+  /** Mining-efficiency multiplier. 1.0 = pro hand-mining micro; ~0.9 = a-move. */
+  miningMicro: number;
   nexusStartEnergy: number;
   nexusMaxEnergy: number;
   nexusEnergyRegen: number;
@@ -233,9 +238,14 @@ class State {
     const e = this.eco;
     const patches = this.nexusCount * e.mineralPatchesPerBase;
     const w = this.mineralWorkers;
-    const first = Math.min(w, patches);
-    const second = Math.max(0, Math.min(w - patches, patches));
-    return first * e.mineralRateFirstWorker + second * e.mineralRateSecondWorker;
+    const t1 = Math.min(w, patches); // 1st worker per patch
+    const t2 = Math.max(0, Math.min(w - patches, patches)); // 2nd worker per patch
+    const t3 = Math.max(0, Math.min(w - 2 * patches, patches)); // 3rd (oversaturation)
+    const raw =
+      t1 * e.mineralRateFirstWorker +
+      t2 * e.mineralRateSecondWorker +
+      t3 * e.mineralRateThirdWorker;
+    return raw * e.miningMicro;
   }
   get gasRate(): number {
     return this.gasWorkers * this.eco.gasRatePerWorker;

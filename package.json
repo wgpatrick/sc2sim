@@ -7,6 +7,7 @@
     "build": "tsc",
     "demo": "tsc && node dist/cli.js",
     "optimize": "tsc && node dist/optimize-cli.js",
+    "validate": "tsc && node dist/validate.js",
     "watch": "tsc --watch"
   },
   "devDependencies": {

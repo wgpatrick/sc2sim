@@ -84,10 +84,16 @@ export const PROTOSS = {
         startingGas: 0,
         mineralPatchesPerBase: 8,
         gasGeysersPerBase: 2,
-        // Income calibration targets (resources/second per worker):
-        mineralRateFirstWorker: 0.933, // ~56/min, 1st worker on a patch
-        mineralRateSecondWorker: 0.7, // ~42/min, 2nd worker on a patch
-        gasRatePerWorker: 0.63, // ~38/min, up to 3 per assimilator
+        // Mineral rates (min/sec per worker) grounded in Liquipedia "Mining Minerals":
+        // 1st & 2nd worker per patch mine at ~the same rate; the 3rd (oversaturation)
+        // ~half. These represent pro-level hand-mining (miningMicro = 1.0); an a-move
+        // ladder player gets ~10% less. Fine-tuned so the sim matches published pro
+        // builds (`npm run validate`).
+        mineralRateFirstWorker: 0.95, // ~57/min, 1st worker on a patch
+        mineralRateSecondWorker: 0.9, // ~54/min, 2nd worker on a patch
+        mineralRateThirdWorker: 0.33, // ~20/min, 3rd worker (oversaturation)
+        miningMicro: 1.0, // 1.0 = pro hand-mining; ~0.9 = a-move
+        gasRatePerWorker: 0.63, // ~38/min, up to 3 per assimilator (not yet calibrated)
         // Chrono Boost / Nexus energy (confirmed LotV):
         nexusStartEnergy: 50,
         nexusMaxEnergy: 200,
