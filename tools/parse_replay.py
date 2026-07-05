@@ -61,32 +61,45 @@ def pick_player(replay, player_name, race):
 
 
 def extract_build_order(replay, player):
+    # sc2reader's Unit objects are mutated in place as parsing proceeds, so by
+    # the time we iterate replay.events (after the whole replay is parsed),
+    # `unit.name` reflects the unit's FINAL type — e.g. a Gateway that later
+    # morphs into a WarpGate reports "WarpGate" even for its original
+    # construction-done event decades earlier. We track each unit's type
+    # ourselves in a forward pass so every event uses the type it actually
+    # had at that point in history.
     events = []
+    current_type = {}
     for e in replay.events:
         if e.name == "UnitInitEvent":
             unit_name = e.unit_type_name
+            current_type[e.unit_id] = unit_name
             if e.control_pid != player.pid or is_noise(unit_name):
                 continue
             events.append({"t": e.second, "event": "start", "name": unit_name})
         elif e.name == "UnitDoneEvent":
             u = e.unit
-            if u.owner != player or is_noise(u.name):
+            name = current_type.get(e.unit_id, u.name)
+            if u.owner != player or is_noise(name):
                 continue
-            events.append({"t": e.second, "event": "done", "name": u.name})
+            events.append({"t": e.second, "event": "done", "name": name})
         elif e.name == "UnitBornEvent":
             u = e.unit
-            if u.owner != player or is_noise(u.name):
+            name = current_type.setdefault(e.unit_id, u.name)
+            if u.owner != player or is_noise(name):
                 continue
             # Structures reach UnitBornEvent too (placed instantly); skip those,
             # they're already captured by Init/Done above.
             if u.is_building:
                 continue
-            events.append({"t": e.second, "event": "born", "name": u.name})
+            events.append({"t": e.second, "event": "born", "name": name})
         elif e.name == "UnitTypeChangeEvent":
             u = e.unit
-            if u.owner != player or is_noise(e.unit_type_name):
+            new_name = e.unit_type_name
+            current_type[e.unit_id] = new_name
+            if u.owner != player or is_noise(new_name):
                 continue
-            events.append({"t": e.second, "event": "morph", "name": e.unit_type_name})
+            events.append({"t": e.second, "event": "morph", "name": new_name})
         elif e.name == "UpgradeCompleteEvent":
             if e.pid != player.pid or is_noise(e.upgrade_type_name):
                 continue

@@ -8,9 +8,11 @@
     "demo": "tsc && node dist/cli.js",
     "optimize": "tsc && node dist/optimize-cli.js",
     "validate": "tsc && node dist/validate.js",
+    "diff": "tsc && node dist/validate-replay.js",
     "watch": "tsc --watch"
   },
   "devDependencies": {
+    "@types/node": "^26.1.0",
     "typescript": "^5.5.0"
   },
   "license": "MIT"
