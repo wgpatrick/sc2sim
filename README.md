@@ -50,11 +50,13 @@ sim small and fast enough to search over.
 
 | File | Responsibility |
 |------|----------------|
-| `src/engine.ts` | Race-agnostic **event-driven simulator**. Fast-forwards the clock to the next moment something can happen; never ticks per-frame. |
-| `src/data.ts`   | **All the numbers** — costs, build times, supply, tech requirements, income + Chrono constants. Swap this per patch; the engine never changes. |
+| `src/engine.ts` | Race-agnostic **event-driven simulator** + spatial layer (travel/arrival) + `compositionArrivalTime`. Fast-forwards the clock; never ticks per-frame. |
+| `src/data.ts`   | **All the numbers** — costs, build times, supply, move speeds, tech requirements, income + Chrono constants. Swap per patch; the engine never changes. |
+| `src/maps.ts`   | **Distance presets** (travel seconds home→enemy, proxy→enemy, probe→proxy). |
+| `src/optimizer.ts` | **The optimizer**: given a target army, search build templates for the one that ARRIVES at the enemy fastest. |
 | `src/builds.ts` | Sample hand-written build orders used to exercise the sim. |
-| `src/cli.ts`    | Node runner that prints timelines. |
-| `index.html`    | Self-contained browser UI (timeline + resource chart) importing `dist/`. |
+| `src/cli.ts` · `src/optimize-cli.ts` | Node runners (`npm run demo`, `npm run optimize`). |
+| `index.html`    | Self-contained browser UI (timeline, chart, optimizer) importing `dist/`. |
 
 The simulation loop, per action: compute the earliest time all preconditions
 (money, supply, a free producer, met prerequisites) are satisfied → jump the
@@ -104,17 +106,41 @@ headless StarCraft II instance and comparing against this sim:
   constants may still be the 12-worker pre-5.0.16 numbers, in which case
   calibrate `data.ts` to *that* version, or wait for the matching Linux build.
 
+## The optimizer
+
+`npm run optimize` searches for the build that gets a target army to the enemy
+fastest. It searches a **parameterized build template** — worker count,
+production-building count, gas, opener workers, and **proxy vs. home** — turning
+each parameter set into a valid supply-correct build (the greedy generator
+auto-inserts Pylons and prerequisites) and scoring it with `compositionArrivalTime`.
+The space is small enough to search exhaustively (~2,300 candidates in <1s), so
+within the template the result is the true optimum, deterministically. The
+simulator validates every candidate, so a broken build can never "win".
+
+Example (standard map, patch 5.0.16):
+
+```
+TARGET: 4 Zealot arriving at the enemy
+  best: PROXY, 10 probes, 3 producers → arrival 2:44
+  home best 3:00   proxy best 2:44   → proxy faster by 0:16
+```
+
+The optimizer correctly discovers that **proxying is faster for aggressive
+timings** (it trades a one-time cross-map probe walk for units that arrive in
+~6s instead of ~36s), which is exactly why proxy 2-gate/4-gate builds exist.
+
 ## Roadmap
 
-1. ✅ Event-driven economy simulator (this).
+1. ✅ Event-driven economy simulator.
 2. ✅ Chrono Boost / Nexus energy, sample builds, browser UI.
-3. ⏭️ **Calibrate** `data.ts` from sc2-techtree + headless SC2.
-4. ⏭️ **Optimizer.** Start with a genetic algorithm over the sim (build order =
-   chromosome, fitness = time-to-goal or army-value-at-T). Watch it rediscover
-   known builds first, then explore. Later: depth-first branch & bound (BOSS-style)
-   with an admissible makespan bound for provably-fast min-time openers.
-5. ⏭️ Terran & Zerg data (Zerg needs larva/inject modeling).
-6. ⏭️ Auto-insert workers/supply so the search only decides the interesting actions.
+3. ✅ Authoritative unit data from SC2 game files (5.0.16).
+4. ✅ Spatial layer — travel time, proxies, army arrival at the enemy.
+5. ✅ Optimizer for "target army at the enemy, fastest" (template search).
+6. ⏭️ **Calibrate** income rates + map distances against headless SC2.
+7. ⏭️ **GA over raw action sequences** — explore orderings the template can't
+   express; then branch & bound for provably-optimal min-time openers.
+8. ⏭️ Warp-in modeling (proxy pylon warp-in ≈ instant delivery).
+9. ⏭️ Terran & Zerg data (Zerg needs larva/inject modeling).
 
 ## References
 

@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "demo": "tsc && node dist/cli.js",
+    "optimize": "tsc && node dist/optimize-cli.js",
     "watch": "tsc --watch"
   },
   "devDependencies": {

@@ -119,6 +119,23 @@
         </div>
       </div>
 
+      <div class="panel" style="margin-top: 20px;">
+        <h1 style="font-size: 18px;">⚡ Optimizer — fastest army <em>at the enemy</em></h1>
+        <p class="sub" style="margin-bottom: 16px;">
+          Pick a target army; the optimizer searches ~2,300 build variants (worker count, production
+          buildings, gas, proxy vs. home) for the one whose army <b>arrives at the enemy</b> soonest.
+        </p>
+        <div id="army-rows"></div>
+        <div class="row" style="margin-top: 12px;">
+          <div style="flex:1">
+            <label for="opt-map">Map</label>
+            <select id="opt-map"></select>
+          </div>
+          <button id="optimize" style="flex:0 0 auto; width:auto; margin-top:0; align-self:end; padding:10px 18px;">Optimize ▶</button>
+        </div>
+        <div id="opt-out" class="summary" style="margin-top:16px"></div>
+      </div>
+
       <p class="warn">
         Costs, supply &amp; build times come from SC2's own game data
         (<a href="https://github.com/BurnySc2/sc2-techtree">sc2-techtree</a>'s <code>data.json</code>, current to 5.0.16),
@@ -131,7 +148,8 @@
       import { simulate, fmt } from "./dist/engine.js";
       import { PROTOSS } from "./dist/data.js";
       import { BUILDS } from "./dist/builds.js";
-      import { DEFAULT_MAP } from "./dist/maps.js";
+      import { DEFAULT_MAP, MAPS } from "./dist/maps.js";
+      import { optimize, describeComposition } from "./dist/optimizer.js";
 
       const $ = (id) => document.getElementById(id);
       const presetSel = $("preset"), orderTa = $("order"), descEl = $("desc");
@@ -211,6 +229,60 @@
         ctx.setLineDash([4, 4]); line("supplyCap", ySup, "--supply"); ctx.setLineDash([]);
         line("supplyUsed", ySup, "--supply");
       }
+
+      // ---- Optimizer panel ----
+      const ARMY_UNITS = ["Zealot", "Stalker", "Adept", "Sentry", "Immortal", "Oracle", "VoidRay"];
+      const DEFAULT_ARMY = [["Zealot", 4], ["Stalker", 0], ["Adept", 0]];
+      const armyRows = $("army-rows");
+      DEFAULT_ARMY.forEach(([unit, count]) => {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.style.marginBottom = "8px";
+        const sel = document.createElement("select");
+        ARMY_UNITS.forEach((u) => {
+          const o = document.createElement("option");
+          o.value = u; o.textContent = u; if (u === unit) o.selected = true; sel.appendChild(o);
+        });
+        const num = document.createElement("input");
+        num.type = "number"; num.min = "0"; num.max = "12"; num.value = count;
+        num.style.maxWidth = "90px";
+        sel.className = "opt-unit"; num.className = "opt-count";
+        row.appendChild(sel); row.appendChild(num); armyRows.appendChild(row);
+      });
+
+      const optMap = $("opt-map");
+      Object.entries(MAPS).forEach(([key, m]) => {
+        const o = document.createElement("option");
+        o.value = key; o.textContent = m.name; optMap.appendChild(o);
+      });
+
+      $("optimize").addEventListener("click", () => {
+        const comp = {};
+        document.querySelectorAll("#army-rows .row").forEach((r) => {
+          const u = r.querySelector(".opt-unit").value;
+          const c = parseInt(r.querySelector(".opt-count").value, 10) || 0;
+          if (c > 0) comp[u] = (comp[u] || 0) + c;
+        });
+        const out = $("opt-out");
+        if (!Object.keys(comp).length) { out.innerHTML = '<span class="err">Pick at least one unit.</span>'; return; }
+        const map = MAPS[optMap.value];
+        const r = optimize(comp, PROTOSS, map);
+        const p = r.params;
+        const cmp = (r.bestHome && r.bestProxy)
+          ? `home ${fmt(r.bestHome.arrival)} vs proxy ${fmt(r.bestProxy.arrival)}`
+          : "";
+        out.innerHTML =
+          `<b>${describeComposition(comp)}</b> arrives at the enemy in <b>${fmt(r.arrival)}</b> ` +
+          `(${p.proxy ? "PROXY" : "home"}, ${p.probeTarget} probes, ${p.producerCount} producers, ${p.gasCount} gas)<br>` +
+          `<span style="color:var(--muted)">searched ${r.evaluated} builds · ${cmp}</span><br>` +
+          `<button id="load-opt" style="width:auto;padding:6px 12px;margin-top:10px;">Load this build into the simulator ↑</button>`;
+        $("load-opt").addEventListener("click", () => {
+          descEl.textContent = `Optimizer result: ${describeComposition(comp)} at the enemy, ${fmt(r.arrival)}`;
+          orderTa.value = r.order.join("\n");
+          run();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
 
       loadPreset(0); run();
     </script>

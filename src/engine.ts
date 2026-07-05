@@ -174,6 +174,7 @@ class State {
   completedLoc: Record<string, { home: number; proxy: number }> = {};
   inProgress: InProgress[] = [];
   probeReleases: number[] = [];
+  proxyEstablished = false; // has a probe already reached the proxy site?
 
   constructor(private data: GameData) {
     const e = data.economy;
@@ -425,9 +426,12 @@ function startEntity(
   let finishTime: number;
   if (ent.isStructure) {
     if (loc === "proxy") {
-      // Probe walks to the proxy, THEN warp-in begins.
-      const travel = map.proxyProbeTravelSeconds;
-      s.probeReleases.push(s.time + travel);
+      // The first proxy building pays the full probe walk; once a probe is out
+      // there, subsequent proxy buildings start locally (no repeated cross-map trip).
+      const travel = s.proxyEstablished ? 0 : map.proxyProbeTravelSeconds;
+      const occupancy = s.proxyEstablished ? s.eco.probeBuildOccupancy : map.proxyProbeTravelSeconds;
+      s.proxyEstablished = true;
+      s.probeReleases.push(s.time + occupancy);
       finishTime = s.time + travel + ent.buildTime;
     } else {
       s.probeReleases.push(s.time + s.eco.probeBuildOccupancy);
