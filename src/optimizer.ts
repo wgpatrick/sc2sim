@@ -40,6 +40,14 @@ export interface BuildParams {
    * meantime can beat waiting for every unit to warp in.
    */
   earlyHomeUnits: number;
+  /**
+   * What the SECOND Chrono Boost charge (the opener always chronos the
+   * first Probe; Nexus energy refills roughly every ~89s) targets, once tech
+   * structures are underway. "probe" keeps pumping workers; "primary" boosts
+   * the first army unit off the line instead. Chrono target used to be
+   * hardcoded to the opener Probe only — this makes it a search dimension.
+   */
+  secondChrono: "none" | "probe" | "primary";
 }
 
 export interface StrategyBest {
@@ -156,6 +164,13 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
     maybeProbe();
   }
 
+  // Second Chrono charge (~89s after the opener, from Nexus energy regen):
+  // "probe" is a no-op unless a Probe happens to be in production when the
+  // simulator reaches this point in the sequence (harmless skip otherwise);
+  // "primary" is applied below, right when the first primary-unit action is
+  // emitted (chrono needs the unit already IN PROGRESS to have any target).
+  if (p.secondChrono === "probe") A.push("chrono:Probe");
+
   const earlyHomeUnits = warp ? Math.min(p.earlyHomeUnits, target[primaryUnit] ?? 0) : 0;
 
   if (warp) {
@@ -175,6 +190,7 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
   const rem: Composition = { ...target };
   if (earlyHomeUnits > 0) rem[primaryUnit] -= earlyHomeUnits;
   const types = Object.keys(target);
+  let chronoedPrimary = false;
   let any = true;
   while (any) {
     any = false;
@@ -183,6 +199,10 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
         addUnit(n);
         rem[n]--;
         any = true;
+        if (p.secondChrono === "primary" && n === primaryUnit && !chronoedPrimary) {
+          A.push(`chrono:${primaryUnit}`);
+          chronoedPrimary = true;
+        }
       }
     }
   }
@@ -212,6 +232,8 @@ function* enumerateBuilds(target: Composition, data: GameData, map: MapConfig, o
   const maxEarlyHomeUnits = opts.maxEarlyHomeUnits ?? 6;
   const start = data.economy.startingWorkers;
 
+  const chronoOptions: BuildParams["secondChrono"][] = ["none", "probe", "primary"];
+
   for (const strategy of strategies) {
     const earlyOptions = strategy === "proxyWarp" ? range(0, maxEarlyHomeUnits) : [0];
     for (let openerProbes = 0; openerProbes <= 4; openerProbes++) {
@@ -219,10 +241,14 @@ function* enumerateBuilds(target: Composition, data: GameData, map: MapConfig, o
         for (let producerCount = 1; producerCount <= maxProducers; producerCount++) {
           for (let gasCount = 0; gasCount <= 2; gasCount++) {
             for (const earlyHomeUnits of earlyOptions) {
-              const params: BuildParams = { openerProbes, probeTarget, producerCount, gasCount, strategy, earlyHomeUnits };
-              const order = generateBuild(target, data, params);
-              const result = simulate(data, order, map);
-              yield { params, order, result };
+              for (const secondChrono of chronoOptions) {
+                const params: BuildParams = {
+                  openerProbes, probeTarget, producerCount, gasCount, strategy, earlyHomeUnits, secondChrono,
+                };
+                const order = generateBuild(target, data, params);
+                const result = simulate(data, order, map);
+                yield { params, order, result };
+              }
             }
           }
         }

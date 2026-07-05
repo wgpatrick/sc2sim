@@ -101,6 +101,13 @@ export function generateBuild(target, data, p) {
         A.push(primary + prodTag);
         maybeProbe();
     }
+    // Second Chrono charge (~89s after the opener, from Nexus energy regen):
+    // "probe" is a no-op unless a Probe happens to be in production when the
+    // simulator reaches this point in the sequence (harmless skip otherwise);
+    // "primary" is applied below, right when the first primary-unit action is
+    // emitted (chrono needs the unit already IN PROGRESS to have any target).
+    if (p.secondChrono === "probe")
+        A.push("chrono:Probe");
     const earlyHomeUnits = warp ? Math.min(p.earlyHomeUnits, target[primaryUnit] ?? 0) : 0;
     if (warp) {
         // Keep the home Gateways producing (units walk across the map) instead of
@@ -120,6 +127,7 @@ export function generateBuild(target, data, p) {
     if (earlyHomeUnits > 0)
         rem[primaryUnit] -= earlyHomeUnits;
     const types = Object.keys(target);
+    let chronoedPrimary = false;
     let any = true;
     while (any) {
         any = false;
@@ -128,6 +136,10 @@ export function generateBuild(target, data, p) {
                 addUnit(n);
                 rem[n]--;
                 any = true;
+                if (p.secondChrono === "primary" && n === primaryUnit && !chronoedPrimary) {
+                    A.push(`chrono:${primaryUnit}`);
+                    chronoedPrimary = true;
+                }
             }
         }
     }
@@ -142,6 +154,7 @@ function* enumerateBuilds(target, data, map, opts) {
     const strategies = opts.strategies ?? STRATEGIES;
     const maxEarlyHomeUnits = opts.maxEarlyHomeUnits ?? 6;
     const start = data.economy.startingWorkers;
+    const chronoOptions = ["none", "probe", "primary"];
     for (const strategy of strategies) {
         const earlyOptions = strategy === "proxyWarp" ? range(0, maxEarlyHomeUnits) : [0];
         for (let openerProbes = 0; openerProbes <= 4; openerProbes++) {
@@ -149,10 +162,14 @@ function* enumerateBuilds(target, data, map, opts) {
                 for (let producerCount = 1; producerCount <= maxProducers; producerCount++) {
                     for (let gasCount = 0; gasCount <= 2; gasCount++) {
                         for (const earlyHomeUnits of earlyOptions) {
-                            const params = { openerProbes, probeTarget, producerCount, gasCount, strategy, earlyHomeUnits };
-                            const order = generateBuild(target, data, params);
-                            const result = simulate(data, order, map);
-                            yield { params, order, result };
+                            for (const secondChrono of chronoOptions) {
+                                const params = {
+                                    openerProbes, probeTarget, producerCount, gasCount, strategy, earlyHomeUnits, secondChrono,
+                                };
+                                const order = generateBuild(target, data, params);
+                                const result = simulate(data, order, map);
+                                yield { params, order, result };
+                            }
                         }
                     }
                 }
