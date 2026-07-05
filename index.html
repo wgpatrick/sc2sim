@@ -140,6 +140,33 @@
         <div id="opt-out" class="summary" style="margin-top:16px"></div>
       </div>
 
+      <div class="panel" style="margin-top: 20px;">
+        <h1 style="font-size: 18px;">📈 Value frontier — best army <em>value</em> by time T</h1>
+        <p class="sub" style="margin-bottom: 16px;">
+          Sweeps unit COUNTS (not just one fixed target) and reports the Pareto frontier of
+          <code>unitValue()</code> — <code>sqrt(dps × (hp + shields))</code> — delivered at the enemy by time T. This is a
+          <b>ranking heuristic, not a combat resolver</b>: it ignores upgrades, range, splash, and unit counters entirely.
+        </p>
+        <div id="frontier-units"></div>
+        <div class="row" style="margin-top: 12px;">
+          <div style="flex:1">
+            <label for="fr-map">Map</label>
+            <select id="fr-map"></select>
+          </div>
+          <div style="flex:0 0 120px">
+            <label for="fr-max">Max count</label>
+            <input type="number" id="fr-max" min="4" max="24" value="16" />
+          </div>
+          <button id="frontier" style="flex:0 0 auto; width:auto; margin-top:0; align-self:end; padding:10px 18px;">Compute frontier ▶</button>
+        </div>
+        <div id="fr-summary" class="summary" style="margin-top:16px"></div>
+        <div style="position:relative;">
+          <canvas id="fr-chart" width="900" height="300"></canvas>
+          <div id="fr-tooltip" style="position:absolute; display:none; pointer-events:none; background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:6px 10px; font-size:12px; white-space:nowrap;"></div>
+        </div>
+        <div class="legend"><span style="color:var(--muted)">hover the line for the build behind each point</span></div>
+      </div>
+
       <p class="warn">
         Costs, supply &amp; build times come from SC2's own game data
         (<a href="https://github.com/BurnySc2/sc2-techtree">sc2-techtree</a>'s <code>data.json</code>, current to 5.0.16),
@@ -153,7 +180,7 @@
       import { PROTOSS } from "./dist/data.js";
       import { BUILDS } from "./dist/builds.js";
       import { DEFAULT_MAP, MAPS } from "./dist/maps.js";
-      import { optimize, describeComposition } from "./dist/optimizer.js";
+      import { optimize, valueFrontier, describeComposition } from "./dist/optimizer.js";
 
       const $ = (id) => document.getElementById(id);
       const presetSel = $("preset"), orderTa = $("order"), descEl = $("desc");
@@ -297,6 +324,107 @@
           window.scrollTo({ top: 0, behavior: "smooth" });
         });
       });
+
+      // ---- Value frontier panel ----
+      const FRONTIER_UNITS = ["Zealot", "Stalker", "Adept", "Sentry", "Immortal", "Oracle", "VoidRay"];
+      const DEFAULT_FRONTIER_UNITS = new Set(["Zealot", "Stalker", "Adept"]);
+      const frontierUnitsEl = $("frontier-units");
+      FRONTIER_UNITS.forEach((u) => {
+        const label = document.createElement("label");
+        label.style.cssText = "display:inline-flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;margin:0 16px 8px 0;cursor:pointer;";
+        const cb = document.createElement("input");
+        cb.type = "checkbox"; cb.value = u; cb.style.width = "auto";
+        cb.checked = DEFAULT_FRONTIER_UNITS.has(u);
+        cb.className = "fr-unit";
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode(u));
+        frontierUnitsEl.appendChild(label);
+      });
+
+      const frMap = $("fr-map");
+      Object.entries(MAPS).forEach(([key, m]) => {
+        const o = document.createElement("option");
+        o.value = key; o.textContent = m.name; frMap.appendChild(o);
+      });
+
+      let lastFrontier = []; // [{t, value, name, target, params, order}, ...]
+
+      $("frontier").addEventListener("click", () => {
+        const units = [...document.querySelectorAll(".fr-unit")].filter((cb) => cb.checked).map((cb) => cb.value);
+        const out = $("fr-summary");
+        if (!units.length) { out.innerHTML = '<span class="err">Pick at least one unit.</span>'; return; }
+        const maxCount = Math.max(2, parseInt($("fr-max").value, 10) || 16);
+        const counts = [2, 4, 6, 8, 10, 12, 16, 20, 24].filter((n) => n <= maxCount);
+        const targets = units.flatMap((u) => counts.map((n) => ({ [u]: n })));
+        const map = MAPS[frMap.value];
+
+        const t0 = performance.now();
+        lastFrontier = valueFrontier(targets, activeData(), map);
+        const ms = (performance.now() - t0).toFixed(0);
+
+        out.innerHTML = lastFrontier.length
+          ? `searched ${targets.length} target compositions (${ms}ms) · frontier has ${lastFrontier.length} points, ` +
+            `topping out at <b>${lastFrontier[lastFrontier.length - 1].value.toFixed(0)}</b> value by ` +
+            `<b>${fmt(lastFrontier[lastFrontier.length - 1].t)}</b>`
+          : '<span class="err">No valid builds found.</span>';
+        drawFrontierChart(lastFrontier);
+      });
+
+      function drawFrontierChart(points) {
+        const cv = $("fr-chart"), ctx = cv.getContext("2d");
+        const W = cv.width, H = cv.height, pad = 34;
+        ctx.clearRect(0, 0, W, H);
+        if (!points.length) return;
+        const tMax = Math.max(1, points[points.length - 1].t);
+        const vMax = Math.max(1, points[points.length - 1].value);
+        const css = getComputedStyle(document.documentElement);
+        const x = (t) => pad + (t / tMax) * (W - pad * 2);
+        const y = (v) => H - pad - (v / vMax) * (H - pad * 2);
+
+        ctx.strokeStyle = css.getPropertyValue("--line"); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(pad, H - pad); ctx.lineTo(W - pad, H - pad); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, H - pad); ctx.stroke();
+        ctx.fillStyle = css.getPropertyValue("--muted"); ctx.font = "11px sans-serif";
+        for (let t = 0; t <= tMax; t += Math.max(30, Math.round(tMax / 6 / 30) * 30)) {
+          ctx.fillText(fmt(t), x(t) - 10, H - pad + 16);
+        }
+        ctx.textAlign = "right";
+        for (let i = 0; i <= 4; i++) {
+          const v = (vMax / 4) * i;
+          ctx.fillText(v.toFixed(0), pad - 6, y(v) + 4);
+        }
+        ctx.textAlign = "left";
+
+        // step line: value only rises at an arrival, so hold horizontal then jump
+        ctx.strokeStyle = css.getPropertyValue("--accent"); ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x(0), y(0));
+        for (const p of points) {
+          ctx.lineTo(x(p.t), y(points[points.indexOf(p) - 1]?.value ?? 0));
+          ctx.lineTo(x(p.t), y(p.value));
+        }
+        ctx.stroke();
+      }
+
+      const frCanvas = $("fr-chart"), frTooltip = $("fr-tooltip");
+      frCanvas.addEventListener("mousemove", (ev) => {
+        if (!lastFrontier.length) return;
+        const rect = frCanvas.getBoundingClientRect();
+        const scaleX = frCanvas.width / rect.width;
+        const mx = (ev.clientX - rect.left) * scaleX;
+        const pad = 34, W = frCanvas.width;
+        const tMax = Math.max(1, lastFrontier[lastFrontier.length - 1].t);
+        const t = ((mx - pad) / (W - pad * 2)) * tMax;
+        let nearest = lastFrontier[0];
+        for (const p of lastFrontier) if (p.t <= t) nearest = p; else break;
+        frTooltip.style.display = "block";
+        frTooltip.style.left = `${ev.clientX - rect.left + 12}px`;
+        frTooltip.style.top = `${ev.clientY - rect.top - 12}px`;
+        frTooltip.innerHTML =
+          `<b>${fmt(nearest.t)}</b> · value ${nearest.value.toFixed(1)}<br>` +
+          `+${nearest.name} · ${nearest.params.strategy} · target ${describeComposition(nearest.target)}`;
+      });
+      frCanvas.addEventListener("mouseleave", () => { frTooltip.style.display = "none"; });
 
       loadPreset(0); run();
     </script>
