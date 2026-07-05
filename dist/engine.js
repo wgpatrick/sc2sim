@@ -2,30 +2,58 @@
  * sc2sim — an event-driven StarCraft II build-order economy simulator.
  *
  * Design goals (see README):
- *   1. No opponent, no combat, no map. We simulate ONE player's economy + tech.
- *   2. Event-driven "fast-forward": we jump the clock to the next moment something
- *      can happen, rather than ticking every frame. A full build runs in microseconds.
- *   3. All balance numbers live in `data.ts` (a data file), never in this engine.
- *      When a patch changes the numbers, you swap the data, not the code.
- *
- * This file is the engine. It is race-agnostic; `data.ts` supplies the Protoss data.
+ *   1. No opponent, no map combat. We simulate ONE player's economy + tech,
+ *      plus a lightweight SPATIAL layer (travel time / proxies) so we can ask
+ *      "when does the army ARRIVE at the enemy", not just "when is it built".
+ *   2. Event-driven "fast-forward": we jump the clock to the next moment
+ *      something can happen. A full build runs in microseconds.
+ *   3. All balance numbers live in `data.ts`; map numbers in `maps.ts`.
+ *      The engine holds no constants.
  */
+// --- Spatial / map model ------------------------------------------------
+/** Reference unit speed (Stalker). Map distances are expressed relative to it. */
+export const REF_SPEED = 2.95;
+/** Travel time to the enemy for a unit produced at `loc`. */
+export function travelToEnemy(ent, loc, map) {
+    const base = loc === "proxy" ? map.proxyToEnemySeconds : map.homeToEnemySeconds;
+    const speed = ent.moveSpeed && ent.moveSpeed > 0 ? ent.moveSpeed : REF_SPEED;
+    return base * (REF_SPEED / speed);
+}
+function parseAction(raw) {
+    const a = raw.trim();
+    if (!a)
+        return null;
+    if (a.toLowerCase().startsWith("chrono:")) {
+        return { chrono: true, name: a.slice(a.indexOf(":") + 1).trim(), location: "auto" };
+    }
+    const at = a.indexOf("@");
+    if (at >= 0) {
+        const loc = a.slice(at + 1).trim().toLowerCase();
+        return {
+            chrono: false,
+            name: a.slice(0, at).trim(),
+            location: loc === "proxy" ? "proxy" : "home",
+        };
+    }
+    return { chrono: false, name: a, location: "auto" };
+}
 const EPS = 1e-6;
 class State {
     constructor(data) {
         this.data = data;
         this.time = 0;
         this.completed = {};
+        this.completedLoc = {};
         this.inProgress = [];
-        /** Release times for probes temporarily pulled off minerals to build. */
         this.probeReleases = [];
         const e = data.economy;
         this.minerals = e.startingMinerals;
         this.gas = e.startingGas;
         this.energy = e.nexusStartEnergy;
         this.probesTotal = e.startingWorkers;
-        this.supplyUsed = e.startingWorkers; // each Probe costs 1 supply
+        this.supplyUsed = e.startingWorkers;
         this.completed["Nexus"] = 1;
+        this.completedLoc["Nexus"] = { home: 1, proxy: 0 };
     }
     get eco() {
         return this.data.economy;
@@ -39,14 +67,12 @@ class State {
     get assimilators() {
         return this.count("Assimilator");
     }
-    /** Probes currently occupied warping in a structure. */
     get busyProbes() {
         return this.probeReleases.length;
     }
     get availableProbes() {
         return this.probesTotal - this.busyProbes;
     }
-    // Supply cap comes only from COMPLETED providers (Nexus, Pylon, ...).
     get supplyCap() {
         let cap = 0;
         for (const name in this.completed) {
@@ -56,8 +82,6 @@ class State {
         }
         return cap;
     }
-    // --- Worker assignment + income --------------------------------------
-    // Policy: put up to 3 workers on gas per Assimilator, the rest on minerals.
     get gasWorkers() {
         return Math.min(3 * this.assimilators, this.availableProbes);
     }
@@ -78,19 +102,19 @@ class State {
     get energyRate() {
         return this.nexusCount * this.eco.nexusEnergyRegen;
     }
-    freeProducers(type) {
-        const busy = this.inProgress.filter((p) => p.producer === type).length;
-        return this.count(type) - busy;
+    freeProducers(type, loc) {
+        const done = this.completedLoc[type]?.[loc] ?? 0;
+        const busy = this.inProgress.filter((p) => p.producer === type && p.location === loc).length;
+        return done - busy;
     }
 }
 // ---------------------------------------------------------------------------
 // Simulator
 // ---------------------------------------------------------------------------
-function fmt(t) {
+export function fmt(t) {
     const s = Math.round(t);
     return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
-/** Time until minerals+gas both reach the target, given current rates. */
 function timeToAfford(s, minNeed, gasNeed) {
     const tMin = minNeed <= s.minerals + EPS
         ? 0
@@ -104,7 +128,6 @@ function timeToAfford(s, minNeed, gasNeed) {
             : Infinity;
     return Math.max(tMin, tGas);
 }
-/** Next discrete event time (a production or probe-release completes). */
 function nextEventTime(s) {
     let t = Infinity;
     for (const p of s.inProgress)
@@ -113,37 +136,37 @@ function nextEventTime(s) {
         t = Math.min(t, r);
     return t;
 }
-/** Accrue resources/energy over dt with no completions in between. */
-function advanceBy(s, dt, snapshots) {
+function advanceBy(s, dt, snaps) {
     if (dt <= 0)
         return;
     s.minerals += s.mineralRate * dt;
     s.gas += s.gasRate * dt;
     s.energy = Math.min(s.eco.nexusMaxEnergy, s.energy + s.energyRate * dt);
     s.time += dt;
-    snap(s, snapshots);
+    snap(s, snaps);
 }
-/** Jump to the next completion event and apply all effects at that instant. */
-function advanceToNextEvent(s, snapshots) {
+function advanceToNextEvent(s, snaps) {
+    var _a, _b;
     const t = nextEventTime(s);
     if (!isFinite(t))
         return false;
-    advanceBy(s, t - s.time, snapshots);
-    // Complete productions finishing now.
+    advanceBy(s, t - s.time, snaps);
     const done = s.inProgress.filter((p) => p.finishTime <= s.time + EPS);
     s.inProgress = s.inProgress.filter((p) => p.finishTime > s.time + EPS);
     for (const p of done) {
         s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
+        if (p.kind === "structure") {
+            const cl = ((_a = s.completedLoc)[_b = p.name] ?? (_a[_b] = { home: 0, proxy: 0 }));
+            cl[p.location] += 1;
+        }
         if (p.name === "Probe")
             s.probesTotal += 1;
     }
-    // Release probes that finished warping in a structure.
     s.probeReleases = s.probeReleases.filter((r) => r > s.time + EPS);
-    snap(s, snapshots);
+    snap(s, snaps);
     return true;
 }
-function snap(s, snapshots) {
-    const last = snapshots[snapshots.length - 1];
+function snap(s, snaps) {
     const cur = {
         t: s.time,
         minerals: s.minerals,
@@ -153,111 +176,132 @@ function snap(s, snapshots) {
         probes: s.probesTotal,
         energy: s.energy,
     };
+    const last = snaps[snaps.length - 1];
     if (last && Math.abs(last.t - cur.t) < EPS)
-        snapshots[snapshots.length - 1] = cur;
+        snaps[snaps.length - 1] = cur;
     else
-        snapshots.push(cur);
+        snaps.push(cur);
 }
-export function simulate(data, order) {
+/** Pick where a unit is produced given its tag and available producers. */
+function chooseUnitLocation(s, ent, tag) {
+    if (tag === "proxy")
+        return s.freeProducers(ent.producer, "proxy") >= 1 ? "proxy" : null;
+    if (tag === "home")
+        return s.freeProducers(ent.producer, "home") >= 1 ? "home" : null;
+    // auto: prefer proxy (closer to enemy) then home
+    if (s.freeProducers(ent.producer, "proxy") >= 1)
+        return "proxy";
+    if (s.freeProducers(ent.producer, "home") >= 1)
+        return "home";
+    return null;
+}
+export function simulate(data, order, map) {
     const s = new State(data);
     const log = [];
     const actions = [];
-    const snapshots = [];
-    snap(s, snapshots);
+    const snaps = [];
+    snap(s, snaps);
     const SAFETY = 100000;
     let guard = 0;
     for (const raw of order) {
-        const action = raw.trim();
-        if (!action)
+        const pa = parseAction(raw);
+        if (!pa)
             continue;
-        if (action.toLowerCase().startsWith("chrono:")) {
-            const target = action.slice(action.indexOf(":") + 1).trim();
-            const res = castChrono(s, target, log, snapshots);
-            if (!res && ++guard > SAFETY)
+        if (pa.chrono) {
+            castChrono(s, pa.name, log, snaps);
+            if (++guard > SAFETY)
                 break;
             continue;
         }
-        const ent = data.entities[action];
-        if (!ent) {
-            return fail(s, log, snapshots, actions, `Unknown entity "${action}"`);
-        }
-        // Advance until we can legally start this entity.
+        const ent = data.entities[pa.name];
+        if (!ent)
+            return fail(s, log, snaps, actions, `Unknown entity "${pa.name}"`);
+        const structLoc = pa.location === "proxy" ? "proxy" : "home";
         while (true) {
             if (++guard > SAFETY)
-                return fail(s, log, snapshots, actions, "Safety guard tripped (loop)");
+                return fail(s, log, snaps, actions, "Safety guard tripped");
             const reqOk = ent.requires.every((r) => s.count(r) >= 1);
-            const prodOk = ent.producer === "Probe"
-                ? s.availableProbes >= 1
-                : s.freeProducers(ent.producer) >= 1;
+            const unitLoc = ent.isStructure ? structLoc : chooseUnitLocation(s, ent, pa.location);
+            const prodOk = ent.isStructure ? s.availableProbes >= 1 : unitLoc !== null;
             const supplyOk = s.supplyUsed + ent.supplyCost <= s.supplyCap + EPS;
             if (reqOk && prodOk && supplyOk) {
                 const tAfford = timeToAfford(s, ent.minerals, ent.gas);
                 const tEvent = nextEventTime(s) - s.time;
                 if (tAfford <= tEvent + EPS || !isFinite(tEvent)) {
-                    if (isFinite(tAfford)) {
-                        advanceBy(s, tAfford, snapshots);
-                        startEntity(s, ent, actions, log);
-                        break;
-                    }
-                    return fail(s, log, snapshots, actions, `Can never afford "${ent.name}" (no income for a required resource)`);
+                    if (!isFinite(tAfford))
+                        return fail(s, log, snaps, actions, `Can never afford "${ent.name}"`);
+                    advanceBy(s, tAfford, snaps);
+                    startEntity(s, ent, unitLoc, map, actions, log);
+                    break;
                 }
-                advanceToNextEvent(s, snapshots);
+                advanceToNextEvent(s, snaps);
             }
             else {
-                // Blocked on a discrete condition (tech / producer / supply).
-                if (!advanceToNextEvent(s, snapshots)) {
+                if (!advanceToNextEvent(s, snaps)) {
                     const why = !reqOk
                         ? `missing prerequisite (needs ${ent.requires.join(", ")})`
                         : !supplyOk
                             ? "supply blocked (no Pylon/Nexus queued)"
                             : "no free producer";
-                    return fail(s, log, snapshots, actions, `Deadlocked before "${ent.name}": ${why}`);
+                    return fail(s, log, snaps, actions, `Deadlocked before "${ent.name}": ${why}`);
                 }
             }
         }
     }
-    const result = {
+    // Post-pass: compute arrival times now that chrono has finalized finishTimes.
+    for (const a of actions) {
+        if (a.kind === "unit") {
+            const ent = data.entities[a.name];
+            if (ent.isWorker)
+                continue; // workers aren't army
+            a.arrivalTime = a.finishTime + travelToEnemy(ent, a.location, map);
+        }
+    }
+    return {
         ok: true,
         finishTime: s.time,
         actions,
         log,
-        snapshots,
-        final: snapshots[snapshots.length - 1],
+        snapshots: snaps,
+        final: snaps[snaps.length - 1],
     };
-    return result;
 }
-function startEntity(s, ent, actions, log) {
+function startEntity(s, ent, loc, map, actions, log) {
     s.minerals -= ent.minerals;
     s.gas -= ent.gas;
     const kind = ent.isStructure ? "structure" : "unit";
+    let finishTime;
     if (ent.isStructure) {
-        // A Probe warps it in and is briefly pulled off minerals.
-        s.probeReleases.push(s.time + s.eco.probeBuildOccupancy);
+        if (loc === "proxy") {
+            // Probe walks to the proxy, THEN warp-in begins.
+            const travel = map.proxyProbeTravelSeconds;
+            s.probeReleases.push(s.time + travel);
+            finishTime = s.time + travel + ent.buildTime;
+        }
+        else {
+            s.probeReleases.push(s.time + s.eco.probeBuildOccupancy);
+            finishTime = s.time + ent.buildTime;
+        }
     }
     else {
-        // Units reserve supply the instant production starts.
         s.supplyUsed += ent.supplyCost;
+        finishTime = s.time + ent.buildTime;
     }
-    const finishTime = s.time + ent.buildTime;
-    const row = { name: ent.name, kind, startTime: s.time, finishTime };
+    const row = { name: ent.name, kind, startTime: s.time, finishTime, location: loc };
     s.inProgress.push({
         name: ent.name,
         finishTime,
         kind,
         producer: ent.isStructure ? "Probe" : ent.producer,
+        location: loc,
         boosted: false,
         ref: row,
     });
     actions.push(row);
-    log.push(`${fmt(s.time)}  start ${ent.name}  (done ${fmt(finishTime)})`);
+    const tag = loc === "proxy" ? " @proxy" : "";
+    log.push(`${fmt(s.time)}  start ${ent.name}${tag}  (done ${fmt(finishTime)})`);
 }
-/**
- * Cast Chrono Boost on the in-progress item named `target`.
- * +50% speed for a 20s window. Time saved on remaining work R:
- *   R > boostWork  ->  save (window * (mult-1))        (boost expires before finish)
- *   else           ->  save R * (mult-1)/mult          (item finishes during boost)
- */
-function castChrono(s, target, log, snapshots) {
+function castChrono(s, target, log, snaps) {
     const e = s.eco;
     const boostWork = e.chronoBoostWindow * e.chronoSpeedMultiplier;
     let guard = 0;
@@ -283,18 +327,15 @@ function castChrono(s, target, log, snapshots) {
             log.push(`${fmt(s.time)}  chrono ${target}  (-${saved.toFixed(1)}s, done ${fmt(item.finishTime)})`);
             return true;
         }
-        // Need energy: wait for it, but not past the target finishing or another event.
         const tEnergy = (e.chronoCost - s.energy) / (s.energyRate || Infinity);
         const tEvent = nextEventTime(s) - s.time;
-        if (tEnergy <= tEvent + EPS) {
-            advanceBy(s, tEnergy, snapshots);
-        }
-        else {
-            advanceToNextEvent(s, snapshots);
-        }
+        if (tEnergy <= tEvent + EPS)
+            advanceBy(s, tEnergy, snaps);
+        else
+            advanceToNextEvent(s, snaps);
     }
 }
-function fail(s, log, snapshots, actions, error) {
+function fail(s, log, snaps, actions, error) {
     log.push(`ERROR: ${error}`);
     return {
         ok: false,
@@ -302,8 +343,27 @@ function fail(s, log, snapshots, actions, error) {
         finishTime: s.time,
         actions,
         log,
-        snapshots,
-        final: snapshots[snapshots.length - 1],
+        snapshots: snaps,
+        final: snaps[snaps.length - 1],
     };
 }
-export { fmt };
+/**
+ * Time by which the target composition has ALL ARRIVED at the enemy.
+ * For each unit type we take the k-th earliest arrival (k = required count).
+ * Returns Infinity if the build never produces enough of some unit.
+ */
+export function compositionArrivalTime(res, comp) {
+    if (!res.ok)
+        return Infinity;
+    let worst = 0;
+    for (const [name, need] of Object.entries(comp)) {
+        const arrivals = res.actions
+            .filter((a) => a.name === name && a.arrivalTime !== undefined)
+            .map((a) => a.arrivalTime)
+            .sort((x, y) => x - y);
+        if (arrivals.length < need)
+            return Infinity;
+        worst = Math.max(worst, arrivals[need - 1]);
+    }
+    return worst;
+}

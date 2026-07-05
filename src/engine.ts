@@ -2,39 +2,31 @@
  * sc2sim — an event-driven StarCraft II build-order economy simulator.
  *
  * Design goals (see README):
- *   1. No opponent, no combat, no map. We simulate ONE player's economy + tech.
- *   2. Event-driven "fast-forward": we jump the clock to the next moment something
- *      can happen, rather than ticking every frame. A full build runs in microseconds.
- *   3. All balance numbers live in `data.ts` (a data file), never in this engine.
- *      When a patch changes the numbers, you swap the data, not the code.
- *
- * This file is the engine. It is race-agnostic; `data.ts` supplies the Protoss data.
+ *   1. No opponent, no map combat. We simulate ONE player's economy + tech,
+ *      plus a lightweight SPATIAL layer (travel time / proxies) so we can ask
+ *      "when does the army ARRIVE at the enemy", not just "when is it built".
+ *   2. Event-driven "fast-forward": we jump the clock to the next moment
+ *      something can happen. A full build runs in microseconds.
+ *   3. All balance numbers live in `data.ts`; map numbers in `maps.ts`.
+ *      The engine holds no constants.
  */
 
 // ---------------------------------------------------------------------------
 // Data model
 // ---------------------------------------------------------------------------
 
-/** A buildable thing: a unit, a structure, or (later) an upgrade. */
 export interface EntityData {
   name: string;
   minerals: number;
   gas: number;
-  /** Supply this thing CONSUMES when built (Probe 1, Stalker 2, structures 0). */
-  supplyCost: number;
-  /** Supply this thing PROVIDES once complete (Pylon 8, Nexus 13, else 0). */
-  supplyProvided: number;
-  /** Build/train time in game-seconds at "Faster" speed (the clock players see). */
-  buildTime: number;
-  /**
-   * What produces this thing:
-   *   "Probe"  -> a worker warps in a structure (worker is briefly occupied)
-   *   "Nexus" / "Gateway" / "Stargate" / "RoboticsFacility" -> a production building
-   */
-  producer: string;
-  /** Prerequisite structures/tech that must be COMPLETE before this can start. */
-  requires: string[];
+  supplyCost: number; // supply CONSUMED (Probe 1, Stalker 2, structures 0)
+  supplyProvided: number; // supply PROVIDED once complete (Pylon 8, Nexus 13)
+  buildTime: number; // Faster-clock seconds
+  producer: string; // "Probe" | "Nexus" | "Gateway" | "Stargate" | "RoboticsFacility"
+  requires: string[]; // prerequisite structures that must be COMPLETE
   isStructure: boolean;
+  isWorker?: boolean; // the harvesting worker; excluded from army-arrival
+  moveSpeed?: number; // game units/sec; used for arrival-time (units only)
 }
 
 export interface EconomyConfig {
@@ -43,23 +35,15 @@ export interface EconomyConfig {
   startingGas: number;
   mineralPatchesPerBase: number;
   gasGeysersPerBase: number;
-
-  // --- Income model (CALIBRATION TARGETS — see README "Validation") ---
-  // Per-worker gather rate in resources/second. Mining is NOT linear in workers:
-  // the first worker on a patch mines faster than the second, and a third adds ~0.
-  mineralRateFirstWorker: number; // 1st worker on each patch
-  mineralRateSecondWorker: number; // 2nd worker on each patch
-  gasRatePerWorker: number; // up to 3 per assimilator
-
-  // --- Chrono Boost / Nexus energy (confirmed LotV values) ---
+  mineralRateFirstWorker: number;
+  mineralRateSecondWorker: number;
+  gasRatePerWorker: number;
   nexusStartEnergy: number;
   nexusMaxEnergy: number;
-  nexusEnergyRegen: number; // energy/second per Nexus
-  chronoCost: number; // energy per cast
-  chronoBoostWindow: number; // seconds a cast stays active
-  chronoSpeedMultiplier: number; // 1.5 == +50% production speed
-
-  /** Seconds a Probe is pulled off minerals to start a structure (approx). */
+  nexusEnergyRegen: number;
+  chronoCost: number;
+  chronoBoostWindow: number;
+  chronoSpeedMultiplier: number;
   probeBuildOccupancy: number;
 }
 
@@ -70,22 +54,77 @@ export interface GameData {
   entities: Record<string, EntityData>;
 }
 
+// --- Spatial / map model ------------------------------------------------
+
+/** Reference unit speed (Stalker). Map distances are expressed relative to it. */
+export const REF_SPEED = 2.95;
+
+export interface MapConfig {
+  name: string;
+  /** Ground travel time (Faster s) home->enemy for a REF_SPEED unit. */
+  homeToEnemySeconds: number;
+  /** Ground travel time (Faster s) from a proxy staging point -> enemy. */
+  proxyToEnemySeconds: number;
+  /** Probe walk time (Faster s) from home mineral line -> proxy build site. */
+  proxyProbeTravelSeconds: number;
+}
+
+export type Location = "home" | "proxy";
+
+/** Travel time to the enemy for a unit produced at `loc`. */
+export function travelToEnemy(
+  ent: EntityData,
+  loc: Location,
+  map: MapConfig,
+): number {
+  const base = loc === "proxy" ? map.proxyToEnemySeconds : map.homeToEnemySeconds;
+  const speed = ent.moveSpeed && ent.moveSpeed > 0 ? ent.moveSpeed : REF_SPEED;
+  return base * (REF_SPEED / speed);
+}
+
 // ---------------------------------------------------------------------------
-// Build-order actions
+// Actions & results
 // ---------------------------------------------------------------------------
 
 /**
- * A build order is a list of action strings, e.g.
- *   ["Probe", "Probe", "Pylon", "chrono:Probe", "Gateway", "Stalker"]
- * "chrono:X" casts Chrono Boost on the currently-in-production X.
+ * A build order is a list of action strings:
+ *   "Probe"          build/train at home
+ *   "Gateway@proxy"  build a structure (or train a unit) at the proxy
+ *   "chrono:Probe"   cast Chrono Boost on the in-production Probe
  */
 export type Action = string;
+
+interface ParsedAction {
+  chrono: boolean;
+  name: string;
+  location: Location | "auto";
+}
+
+function parseAction(raw: string): ParsedAction | null {
+  const a = raw.trim();
+  if (!a) return null;
+  if (a.toLowerCase().startsWith("chrono:")) {
+    return { chrono: true, name: a.slice(a.indexOf(":") + 1).trim(), location: "auto" };
+  }
+  const at = a.indexOf("@");
+  if (at >= 0) {
+    const loc = a.slice(at + 1).trim().toLowerCase();
+    return {
+      chrono: false,
+      name: a.slice(0, at).trim(),
+      location: loc === "proxy" ? "proxy" : "home",
+    };
+  }
+  return { chrono: false, name: a, location: "auto" };
+}
 
 export interface StartedItem {
   name: string;
   kind: "unit" | "structure";
   startTime: number;
-  finishTime: number;
+  finishTime: number; // production/construction complete
+  location: Location;
+  arrivalTime?: number; // when it reaches the enemy (units only)
 }
 
 export interface Snapshot {
@@ -101,7 +140,6 @@ export interface Snapshot {
 export interface SimResult {
   ok: boolean;
   error?: string;
-  /** Wall-clock game time when the last action started (the build's "timing"). */
   finishTime: number;
   actions: StartedItem[];
   log: string[];
@@ -110,16 +148,17 @@ export interface SimResult {
 }
 
 // ---------------------------------------------------------------------------
-// Internal live state
+// Internal state
 // ---------------------------------------------------------------------------
 
 interface InProgress {
   name: string;
   finishTime: number;
   kind: "unit" | "structure";
-  producer: string; // producer type occupied while in progress
+  producer: string;
+  location: Location;
   boosted: boolean;
-  ref: StartedItem; // the reported action row, so chrono can update its finish time
+  ref: StartedItem;
 }
 
 const EPS = 1e-6;
@@ -132,8 +171,8 @@ class State {
   supplyUsed: number;
   probesTotal: number;
   completed: Record<string, number> = {};
+  completedLoc: Record<string, { home: number; proxy: number }> = {};
   inProgress: InProgress[] = [];
-  /** Release times for probes temporarily pulled off minerals to build. */
   probeReleases: number[] = [];
 
   constructor(private data: GameData) {
@@ -142,36 +181,29 @@ class State {
     this.gas = e.startingGas;
     this.energy = e.nexusStartEnergy;
     this.probesTotal = e.startingWorkers;
-    this.supplyUsed = e.startingWorkers; // each Probe costs 1 supply
+    this.supplyUsed = e.startingWorkers;
     this.completed["Nexus"] = 1;
+    this.completedLoc["Nexus"] = { home: 1, proxy: 0 };
   }
 
   get eco() {
     return this.data.economy;
   }
-
   count(name: string): number {
     return this.completed[name] ?? 0;
   }
-
   get nexusCount(): number {
     return this.count("Nexus");
   }
-
   get assimilators(): number {
     return this.count("Assimilator");
   }
-
-  /** Probes currently occupied warping in a structure. */
   get busyProbes(): number {
     return this.probeReleases.length;
   }
-
   get availableProbes(): number {
     return this.probesTotal - this.busyProbes;
   }
-
-  // Supply cap comes only from COMPLETED providers (Nexus, Pylon, ...).
   get supplyCap(): number {
     let cap = 0;
     for (const name in this.completed) {
@@ -180,17 +212,12 @@ class State {
     }
     return cap;
   }
-
-  // --- Worker assignment + income --------------------------------------
-  // Policy: put up to 3 workers on gas per Assimilator, the rest on minerals.
   get gasWorkers(): number {
     return Math.min(3 * this.assimilators, this.availableProbes);
   }
-
   get mineralWorkers(): number {
     return this.availableProbes - this.gasWorkers;
   }
-
   get mineralRate(): number {
     const e = this.eco;
     const patches = this.nexusCount * e.mineralPatchesPerBase;
@@ -199,18 +226,18 @@ class State {
     const second = Math.max(0, Math.min(w - patches, patches));
     return first * e.mineralRateFirstWorker + second * e.mineralRateSecondWorker;
   }
-
   get gasRate(): number {
     return this.gasWorkers * this.eco.gasRatePerWorker;
   }
-
   get energyRate(): number {
     return this.nexusCount * this.eco.nexusEnergyRegen;
   }
-
-  freeProducers(type: string): number {
-    const busy = this.inProgress.filter((p) => p.producer === type).length;
-    return this.count(type) - busy;
+  freeProducers(type: string, loc: Location): number {
+    const done = this.completedLoc[type]?.[loc] ?? 0;
+    const busy = this.inProgress.filter(
+      (p) => p.producer === type && p.location === loc,
+    ).length;
+    return done - busy;
   }
 }
 
@@ -218,17 +245,12 @@ class State {
 // Simulator
 // ---------------------------------------------------------------------------
 
-function fmt(t: number): string {
+export function fmt(t: number): string {
   const s = Math.round(t);
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
 
-/** Time until minerals+gas both reach the target, given current rates. */
-function timeToAfford(
-  s: State,
-  minNeed: number,
-  gasNeed: number,
-): number {
+function timeToAfford(s: State, minNeed: number, gasNeed: number): number {
   const tMin =
     minNeed <= s.minerals + EPS
       ? 0
@@ -244,7 +266,6 @@ function timeToAfford(
   return Math.max(tMin, tGas);
 }
 
-/** Next discrete event time (a production or probe-release completes). */
 function nextEventTime(s: State): number {
   let t = Infinity;
   for (const p of s.inProgress) t = Math.min(t, p.finishTime);
@@ -252,37 +273,35 @@ function nextEventTime(s: State): number {
   return t;
 }
 
-/** Accrue resources/energy over dt with no completions in between. */
-function advanceBy(s: State, dt: number, snapshots: Snapshot[]): void {
+function advanceBy(s: State, dt: number, snaps: Snapshot[]): void {
   if (dt <= 0) return;
   s.minerals += s.mineralRate * dt;
   s.gas += s.gasRate * dt;
   s.energy = Math.min(s.eco.nexusMaxEnergy, s.energy + s.energyRate * dt);
   s.time += dt;
-  snap(s, snapshots);
+  snap(s, snaps);
 }
 
-/** Jump to the next completion event and apply all effects at that instant. */
-function advanceToNextEvent(s: State, snapshots: Snapshot[]): boolean {
+function advanceToNextEvent(s: State, snaps: Snapshot[]): boolean {
   const t = nextEventTime(s);
   if (!isFinite(t)) return false;
-  advanceBy(s, t - s.time, snapshots);
-
-  // Complete productions finishing now.
+  advanceBy(s, t - s.time, snaps);
   const done = s.inProgress.filter((p) => p.finishTime <= s.time + EPS);
   s.inProgress = s.inProgress.filter((p) => p.finishTime > s.time + EPS);
   for (const p of done) {
     s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
+    if (p.kind === "structure") {
+      const cl = (s.completedLoc[p.name] ??= { home: 0, proxy: 0 });
+      cl[p.location] += 1;
+    }
     if (p.name === "Probe") s.probesTotal += 1;
   }
-  // Release probes that finished warping in a structure.
   s.probeReleases = s.probeReleases.filter((r) => r > s.time + EPS);
-  snap(s, snapshots);
+  snap(s, snaps);
   return true;
 }
 
-function snap(s: State, snapshots: Snapshot[]): void {
-  const last = snapshots[snapshots.length - 1];
+function snap(s: State, snaps: Snapshot[]): void {
   const cur: Snapshot = {
     t: s.time,
     minerals: s.minerals,
@@ -292,100 +311,110 @@ function snap(s: State, snapshots: Snapshot[]): void {
     probes: s.probesTotal,
     energy: s.energy,
   };
-  if (last && Math.abs(last.t - cur.t) < EPS) snapshots[snapshots.length - 1] = cur;
-  else snapshots.push(cur);
+  const last = snaps[snaps.length - 1];
+  if (last && Math.abs(last.t - cur.t) < EPS) snaps[snaps.length - 1] = cur;
+  else snaps.push(cur);
 }
 
-export function simulate(data: GameData, order: Action[]): SimResult {
+/** Pick where a unit is produced given its tag and available producers. */
+function chooseUnitLocation(
+  s: State,
+  ent: EntityData,
+  tag: Location | "auto",
+): Location | null {
+  if (tag === "proxy") return s.freeProducers(ent.producer, "proxy") >= 1 ? "proxy" : null;
+  if (tag === "home") return s.freeProducers(ent.producer, "home") >= 1 ? "home" : null;
+  // auto: prefer proxy (closer to enemy) then home
+  if (s.freeProducers(ent.producer, "proxy") >= 1) return "proxy";
+  if (s.freeProducers(ent.producer, "home") >= 1) return "home";
+  return null;
+}
+
+export function simulate(
+  data: GameData,
+  order: Action[],
+  map: MapConfig,
+): SimResult {
   const s = new State(data);
   const log: string[] = [];
   const actions: StartedItem[] = [];
-  const snapshots: Snapshot[] = [];
-  snap(s, snapshots);
+  const snaps: Snapshot[] = [];
+  snap(s, snaps);
 
   const SAFETY = 100000;
   let guard = 0;
 
   for (const raw of order) {
-    const action = raw.trim();
-    if (!action) continue;
+    const pa = parseAction(raw);
+    if (!pa) continue;
 
-    if (action.toLowerCase().startsWith("chrono:")) {
-      const target = action.slice(action.indexOf(":") + 1).trim();
-      const res = castChrono(s, target, log, snapshots);
-      if (!res && ++guard > SAFETY) break;
+    if (pa.chrono) {
+      castChrono(s, pa.name, log, snaps);
+      if (++guard > SAFETY) break;
       continue;
     }
 
-    const ent = data.entities[action];
-    if (!ent) {
-      return fail(s, log, snapshots, actions, `Unknown entity "${action}"`);
-    }
+    const ent = data.entities[pa.name];
+    if (!ent) return fail(s, log, snaps, actions, `Unknown entity "${pa.name}"`);
+    const structLoc: Location = pa.location === "proxy" ? "proxy" : "home";
 
-    // Advance until we can legally start this entity.
     while (true) {
       if (++guard > SAFETY)
-        return fail(s, log, snapshots, actions, "Safety guard tripped (loop)");
+        return fail(s, log, snaps, actions, "Safety guard tripped");
 
       const reqOk = ent.requires.every((r) => s.count(r) >= 1);
-      const prodOk =
-        ent.producer === "Probe"
-          ? s.availableProbes >= 1
-          : s.freeProducers(ent.producer) >= 1;
+      const unitLoc = ent.isStructure ? structLoc : chooseUnitLocation(s, ent, pa.location);
+      const prodOk = ent.isStructure ? s.availableProbes >= 1 : unitLoc !== null;
       const supplyOk = s.supplyUsed + ent.supplyCost <= s.supplyCap + EPS;
 
       if (reqOk && prodOk && supplyOk) {
         const tAfford = timeToAfford(s, ent.minerals, ent.gas);
         const tEvent = nextEventTime(s) - s.time;
         if (tAfford <= tEvent + EPS || !isFinite(tEvent)) {
-          if (isFinite(tAfford)) {
-            advanceBy(s, tAfford, snapshots);
-            startEntity(s, ent, actions, log);
-            break;
-          }
-          return fail(
-            s,
-            log,
-            snapshots,
-            actions,
-            `Can never afford "${ent.name}" (no income for a required resource)`,
-          );
+          if (!isFinite(tAfford))
+            return fail(s, log, snaps, actions, `Can never afford "${ent.name}"`);
+          advanceBy(s, tAfford, snaps);
+          startEntity(s, ent, unitLoc!, map, actions, log);
+          break;
         }
-        advanceToNextEvent(s, snapshots);
+        advanceToNextEvent(s, snaps);
       } else {
-        // Blocked on a discrete condition (tech / producer / supply).
-        if (!advanceToNextEvent(s, snapshots)) {
+        if (!advanceToNextEvent(s, snaps)) {
           const why = !reqOk
             ? `missing prerequisite (needs ${ent.requires.join(", ")})`
             : !supplyOk
               ? "supply blocked (no Pylon/Nexus queued)"
               : "no free producer";
-          return fail(
-            s,
-            log,
-            snapshots,
-            actions,
-            `Deadlocked before "${ent.name}": ${why}`,
-          );
+          return fail(s, log, snaps, actions, `Deadlocked before "${ent.name}": ${why}`);
         }
       }
     }
   }
 
-  const result: SimResult = {
+  // Post-pass: compute arrival times now that chrono has finalized finishTimes.
+  for (const a of actions) {
+    if (a.kind === "unit") {
+      const ent = data.entities[a.name];
+      if (ent.isWorker) continue; // workers aren't army
+      a.arrivalTime = a.finishTime + travelToEnemy(ent, a.location, map);
+    }
+  }
+
+  return {
     ok: true,
     finishTime: s.time,
     actions,
     log,
-    snapshots,
-    final: snapshots[snapshots.length - 1],
+    snapshots: snaps,
+    final: snaps[snaps.length - 1],
   };
-  return result;
 }
 
 function startEntity(
   s: State,
   ent: EntityData,
+  loc: Location,
+  map: MapConfig,
   actions: StartedItem[],
   log: string[],
 ): void {
@@ -393,40 +422,38 @@ function startEntity(
   s.gas -= ent.gas;
   const kind: "unit" | "structure" = ent.isStructure ? "structure" : "unit";
 
+  let finishTime: number;
   if (ent.isStructure) {
-    // A Probe warps it in and is briefly pulled off minerals.
-    s.probeReleases.push(s.time + s.eco.probeBuildOccupancy);
+    if (loc === "proxy") {
+      // Probe walks to the proxy, THEN warp-in begins.
+      const travel = map.proxyProbeTravelSeconds;
+      s.probeReleases.push(s.time + travel);
+      finishTime = s.time + travel + ent.buildTime;
+    } else {
+      s.probeReleases.push(s.time + s.eco.probeBuildOccupancy);
+      finishTime = s.time + ent.buildTime;
+    }
   } else {
-    // Units reserve supply the instant production starts.
     s.supplyUsed += ent.supplyCost;
+    finishTime = s.time + ent.buildTime;
   }
 
-  const finishTime = s.time + ent.buildTime;
-  const row: StartedItem = { name: ent.name, kind, startTime: s.time, finishTime };
+  const row: StartedItem = { name: ent.name, kind, startTime: s.time, finishTime, location: loc };
   s.inProgress.push({
     name: ent.name,
     finishTime,
     kind,
     producer: ent.isStructure ? "Probe" : ent.producer,
+    location: loc,
     boosted: false,
     ref: row,
   });
   actions.push(row);
-  log.push(`${fmt(s.time)}  start ${ent.name}  (done ${fmt(finishTime)})`);
+  const tag = loc === "proxy" ? " @proxy" : "";
+  log.push(`${fmt(s.time)}  start ${ent.name}${tag}  (done ${fmt(finishTime)})`);
 }
 
-/**
- * Cast Chrono Boost on the in-progress item named `target`.
- * +50% speed for a 20s window. Time saved on remaining work R:
- *   R > boostWork  ->  save (window * (mult-1))        (boost expires before finish)
- *   else           ->  save R * (mult-1)/mult          (item finishes during boost)
- */
-function castChrono(
-  s: State,
-  target: string,
-  log: string[],
-  snapshots: Snapshot[],
-): boolean {
+function castChrono(s: State, target: string, log: string[], snaps: Snapshot[]): boolean {
   const e = s.eco;
   const boostWork = e.chronoBoostWindow * e.chronoSpeedMultiplier;
   let guard = 0;
@@ -449,26 +476,20 @@ function castChrono(
       item.ref.finishTime = item.finishTime;
       item.boosted = true;
       s.energy -= e.chronoCost;
-      log.push(
-        `${fmt(s.time)}  chrono ${target}  (-${saved.toFixed(1)}s, done ${fmt(item.finishTime)})`,
-      );
+      log.push(`${fmt(s.time)}  chrono ${target}  (-${saved.toFixed(1)}s, done ${fmt(item.finishTime)})`);
       return true;
     }
-    // Need energy: wait for it, but not past the target finishing or another event.
     const tEnergy = (e.chronoCost - s.energy) / (s.energyRate || Infinity);
     const tEvent = nextEventTime(s) - s.time;
-    if (tEnergy <= tEvent + EPS) {
-      advanceBy(s, tEnergy, snapshots);
-    } else {
-      advanceToNextEvent(s, snapshots);
-    }
+    if (tEnergy <= tEvent + EPS) advanceBy(s, tEnergy, snaps);
+    else advanceToNextEvent(s, snaps);
   }
 }
 
 function fail(
   s: State,
   log: string[],
-  snapshots: Snapshot[],
+  snaps: Snapshot[],
   actions: StartedItem[],
   error: string,
 ): SimResult {
@@ -479,9 +500,32 @@ function fail(
     finishTime: s.time,
     actions,
     log,
-    snapshots,
-    final: snapshots[snapshots.length - 1],
+    snapshots: snaps,
+    final: snaps[snaps.length - 1],
   };
 }
 
-export { fmt };
+// ---------------------------------------------------------------------------
+// Objective helpers
+// ---------------------------------------------------------------------------
+
+export type Composition = Record<string, number>;
+
+/**
+ * Time by which the target composition has ALL ARRIVED at the enemy.
+ * For each unit type we take the k-th earliest arrival (k = required count).
+ * Returns Infinity if the build never produces enough of some unit.
+ */
+export function compositionArrivalTime(res: SimResult, comp: Composition): number {
+  if (!res.ok) return Infinity;
+  let worst = 0;
+  for (const [name, need] of Object.entries(comp)) {
+    const arrivals = res.actions
+      .filter((a) => a.name === name && a.arrivalTime !== undefined)
+      .map((a) => a.arrivalTime!)
+      .sort((x, y) => x - y);
+    if (arrivals.length < need) return Infinity;
+    worst = Math.max(worst, arrivals[need - 1]);
+  }
+  return worst;
+}

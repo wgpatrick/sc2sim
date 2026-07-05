@@ -112,7 +112,7 @@
           </div>
           <div style="max-height: 300px; overflow: auto; margin-top: 14px;">
             <table id="timeline">
-              <thead><tr><th class="mono">Start</th><th>Action</th><th class="mono">Done</th></tr></thead>
+              <thead><tr><th class="mono">Start</th><th>Action</th><th class="mono">Done</th><th class="mono">Arrives</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
@@ -131,6 +131,7 @@
       import { simulate, fmt } from "./dist/engine.js";
       import { PROTOSS } from "./dist/data.js";
       import { BUILDS } from "./dist/builds.js";
+      import { DEFAULT_MAP } from "./dist/maps.js";
 
       const $ = (id) => document.getElementById(id);
       const presetSel = $("preset"), orderTa = $("order"), descEl = $("desc");
@@ -149,7 +150,7 @@
 
       function run() {
         const order = orderTa.value.split("\n").map((l) => l.trim()).filter(Boolean);
-        const res = simulate(PROTOSS, order);
+        const res = simulate(PROTOSS, order, DEFAULT_MAP);
         const s = $("summary");
         if (!res.ok) {
           s.innerHTML = `<span class="err">Invalid build: ${res.error}</span>`;
@@ -165,10 +166,13 @@
         tb.innerHTML = "";
         for (const a of res.actions) {
           const tr = document.createElement("tr");
+          const loc = a.location === "proxy" ? ' <span class="tag chrono">proxy</span>' : "";
+          const arrive = a.arrivalTime !== undefined ? fmt(a.arrivalTime) : "—";
           tr.innerHTML =
             `<td class="mono">${fmt(a.startTime)}</td>` +
-            `<td><span class="tag ${a.kind}">${a.kind}</span> ${a.name}</td>` +
-            `<td class="mono">${fmt(a.finishTime)}</td>`;
+            `<td><span class="tag ${a.kind}">${a.kind}</span> ${a.name}${loc}</td>` +
+            `<td class="mono">${fmt(a.finishTime)}</td>` +
+            `<td class="mono">${arrive}</td>`;
           tb.appendChild(tr);
         }
         drawChart(res.snapshots);

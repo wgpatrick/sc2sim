@@ -51,18 +51,18 @@ add(ent("TwilightCouncil", 150, 100, 35.7, "Probe", { isStructure: true, require
 add(ent("Stargate", 150, 150, 42.9, "Probe", { isStructure: true, requires: ["CyberneticsCore"] }));
 add(ent("RoboticsFacility", 150, 100, 46.4, "Probe", { isStructure: true, requires: ["CyberneticsCore"] }));
 // --- Nexus-produced -----------------------------------------------------
-add(ent("Probe", 50, 0, 12.1, "Nexus", { supplyCost: 1 }));
+add(ent("Probe", 50, 0, 12.1, "Nexus", { supplyCost: 1, isWorker: true, moveSpeed: 2.8125 }));
 // --- Gateway units ------------------------------------------------------
-add(ent("Zealot", 100, 0, 27.1, "Gateway", { supplyCost: 2 }));
-add(ent("Stalker", 125, 50, 27.1, "Gateway", { supplyCost: 2, requires: ["CyberneticsCore"] }));
-add(ent("Adept", 100, 25, 32.5, "Gateway", { supplyCost: 2, requires: ["CyberneticsCore"] }));
-add(ent("Sentry", 50, 100, 23.3, "Gateway", { supplyCost: 2, requires: ["CyberneticsCore"] }));
+add(ent("Zealot", 100, 0, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.25 }));
+add(ent("Stalker", 125, 50, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.9531, requires: ["CyberneticsCore"] }));
+add(ent("Adept", 100, 25, 32.5, "Gateway", { supplyCost: 2, moveSpeed: 2.5, requires: ["CyberneticsCore"] }));
+add(ent("Sentry", 50, 100, 23.3, "Gateway", { supplyCost: 2, moveSpeed: 2.5, requires: ["CyberneticsCore"] }));
 // --- Stargate units -----------------------------------------------------
-add(ent("Oracle", 150, 150, 37.1, "Stargate", { supplyCost: 3 }));
-add(ent("VoidRay", 250, 150, 43.0, "Stargate", { supplyCost: 4 }));
+add(ent("Oracle", 150, 150, 37.1, "Stargate", { supplyCost: 3, moveSpeed: 4.0 }));
+add(ent("VoidRay", 250, 150, 43.0, "Stargate", { supplyCost: 4, moveSpeed: 2.75 }));
 // --- Robotics units -----------------------------------------------------
-add(ent("Immortal", 250, 100, 39.3, "RoboticsFacility", { supplyCost: 4 }));
-add(ent("Observer", 25, 75, 17.9, "RoboticsFacility", { supplyCost: 1 }));
+add(ent("Immortal", 250, 100, 39.3, "RoboticsFacility", { supplyCost: 4, moveSpeed: 2.25 }));
+add(ent("Observer", 25, 75, 17.9, "RoboticsFacility", { supplyCost: 1, moveSpeed: 2.0156 }));
 export const PROTOSS = {
     patch: "5.0.16",
     race: "Protoss",
