@@ -19,13 +19,12 @@ for (const target of targets) {
     console.log("=".repeat(72));
     const r = optimize(target, PROTOSS, map);
     const p = r.params;
-    console.log(`evaluated ${r.evaluated} candidate builds → best arrival ${fmt(r.arrival)}`);
-    console.log(`  best params: ${p.proxy ? "PROXY" : "home"}, ${p.probeTarget} probes, ` +
-        `${p.producerCount} producers, ${p.gasCount} gas, +${p.openerProbes} opener probes`);
-    if (r.bestHome && r.bestProxy) {
-        const diff = r.bestHome.arrival - r.bestProxy.arrival;
-        console.log(`  home best:  ${fmt(r.bestHome.arrival)}   proxy best: ${fmt(r.bestProxy.arrival)}` +
-            `   → proxy is ${diff >= 0 ? "faster" : "slower"} by ${fmt(Math.abs(diff))}`);
+    console.log(`evaluated ${r.evaluated} candidate builds → best arrival ${fmt(r.arrival)} (${p.strategy})`);
+    console.log(`  best params: ${p.probeTarget} probes, ${p.producerCount} producers, ` +
+        `${p.gasCount} gas, +${p.openerProbes} opener probes`);
+    console.log("  by strategy:");
+    for (const [name, sb] of Object.entries(r.bestByStrategy)) {
+        console.log(`    ${name.padEnd(10)} ${fmt(sb.arrival)}   (${sb.params.producerCount} producers, ${sb.params.probeTarget} probes)`);
     }
     console.log("\n  winning build order:");
     console.log("    " + r.order.join(", "));

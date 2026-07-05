@@ -164,7 +164,7 @@
         descEl.textContent = b.description;
         orderTa.value = b.order.join("\n");
       }
-      presetSel.addEventListener("change", () => loadPreset(+presetSel.value));
+      presetSel.addEventListener("change", () => { loadPreset(+presetSel.value); run(); });
 
       function run() {
         const order = orderTa.value.split("\n").map((l) => l.trim()).filter(Boolean);
@@ -268,12 +268,12 @@
         const map = MAPS[optMap.value];
         const r = optimize(comp, PROTOSS, map);
         const p = r.params;
-        const cmp = (r.bestHome && r.bestProxy)
-          ? `home ${fmt(r.bestHome.arrival)} vs proxy ${fmt(r.bestProxy.arrival)}`
-          : "";
+        const cmp = Object.entries(r.bestByStrategy)
+          .map(([s, b]) => `${s} ${fmt(b.arrival)}`)
+          .join(" · ");
         out.innerHTML =
           `<b>${describeComposition(comp)}</b> arrives at the enemy in <b>${fmt(r.arrival)}</b> ` +
-          `(${p.proxy ? "PROXY" : "home"}, ${p.probeTarget} probes, ${p.producerCount} producers, ${p.gasCount} gas)<br>` +
+          `via <b>${p.strategy}</b> (${p.probeTarget} probes, ${p.producerCount} producers, ${p.gasCount} gas)<br>` +
           `<span style="color:var(--muted)">searched ${r.evaluated} builds · ${cmp}</span><br>` +
           `<button id="load-opt" style="width:auto;padding:6px 12px;margin-top:10px;">Load this build into the simulator ↑</button>`;
         $("load-opt").addEventListener("click", () => {

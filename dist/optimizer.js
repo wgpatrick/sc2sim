@@ -1,6 +1,7 @@
 import { simulate, compositionArrivalTime, fmt } from "./engine.js";
+export const STRATEGIES = ["home", "proxyWalk", "proxyWarp"];
 /** Structures required to produce a composition, ordered by dependency depth. */
-function techClosure(target, data) {
+function techClosure(target, data, extra = []) {
     const need = new Set();
     const addStruct = (name) => {
         const e = data.entities[name];
@@ -18,7 +19,9 @@ function techClosure(target, data) {
         for (const r of e.requires)
             addStruct(r);
     }
-    need.delete("Pylon"); // handled specially (supply/power)
+    for (const x of extra)
+        addStruct(x);
+    need.delete("Pylon");
     need.delete("Nexus");
     const depth = (name) => {
         const e = data.entities[name];
@@ -33,9 +36,12 @@ export function generateBuild(target, data, p) {
     const E = (n) => data.entities[n];
     const pylonSupply = E("Pylon").supplyProvided;
     let supUsed = data.economy.startingWorkers;
-    let supCap = E("Nexus").supplyProvided; // 13
+    let supCap = E("Nexus").supplyProvided;
     let probes = supUsed;
-    const tag = p.proxy ? "@proxy" : "";
+    const warp = p.strategy === "proxyWarp";
+    const proxyProd = p.strategy === "proxyWalk";
+    const prodTag = proxyProd ? "@proxy" : "";
+    const unitTag = proxyProd ? "@proxy" : ""; // warp units are untagged (auto warp-in)
     const ensureSupply = (cost) => {
         while (supUsed + cost > supCap) {
             A.push("Pylon");
@@ -51,48 +57,51 @@ export function generateBuild(target, data, p) {
     const addUnit = (n) => {
         const e = E(n);
         ensureSupply(e.supplyCost);
-        A.push(n + tag);
+        A.push(n + unitTag);
         supUsed += e.supplyCost;
     };
     const maybeProbe = () => {
         if (probes < p.probeTarget)
             addProbe();
     };
-    // Opener: first probe + a chrono, then a few more workers.
     A.push("Probe");
     supUsed += 1;
     probes += 1;
     A.push("chrono:Probe");
     for (let i = 0; i < p.openerProbes; i++)
         maybeProbe();
-    // First (home) Pylon — supply + power.
     A.push("Pylon");
     supCap += pylonSupply;
     maybeProbe();
-    const structs = techClosure(target, data);
+    // Warp Gate research needs a Cybernetics Core even if the army itself doesn't.
+    const structs = techClosure(target, data, warp ? ["CyberneticsCore"] : []);
     const primary = E(Object.keys(target)[0]).producer;
     const needGas = Object.keys(target).some((n) => E(n).gas > 0);
-    const gasCount = needGas ? Math.max(1, p.gasCount) : p.gasCount;
+    const gasCount = needGas || warp ? Math.max(1, p.gasCount) : p.gasCount; // warp research needs gas
     for (let i = 0; i < gasCount; i++) {
         A.push("Assimilator");
         maybeProbe();
     }
-    // Proxy power pylon before any proxy production.
-    if (p.proxy) {
-        A.push("Pylon@proxy");
+    if (proxyProd) {
+        A.push("Pylon@proxy"); // power for proxy production buildings
         supCap += pylonSupply;
     }
-    // Tech + first primary producer, in dependency order.
     for (const st of structs) {
-        A.push(st === primary ? st + tag : st);
+        A.push(st === primary ? st + prodTag : st);
         maybeProbe();
     }
-    // Additional primary producers.
     for (let i = 1; i < p.producerCount; i++) {
-        A.push(primary + tag);
+        A.push(primary + prodTag);
         maybeProbe();
     }
-    // Finish economy, then mass the army uninterrupted.
+    if (warp) {
+        A.push("WarpGateResearch");
+        A.push("chrono:WarpGateResearch");
+        A.push("Pylon@proxy"); // warp anchor near the enemy
+        supCap += pylonSupply;
+        for (let i = 0; i < p.producerCount; i++)
+            A.push("WarpGate"); // morph the Gateways
+    }
     while (probes < p.probeTarget)
         addProbe();
     const rem = { ...target };
@@ -113,18 +122,17 @@ export function generateBuild(target, data, p) {
 export function optimize(target, data, map, opts = {}) {
     const maxProbes = opts.maxProbes ?? 20;
     const maxProducers = opts.maxProducers ?? 6;
-    const proxyOptions = opts.allowProxy === false ? [false] : [false, true];
+    const strategies = opts.strategies ?? STRATEGIES;
     const start = data.economy.startingWorkers;
     let best = null;
-    let bestHome;
-    let bestProxy;
+    const bestByStrategy = {};
     let evaluated = 0;
-    for (const proxy of proxyOptions) {
+    for (const strategy of strategies) {
         for (let openerProbes = 0; openerProbes <= 4; openerProbes++) {
             for (let probeTarget = start; probeTarget <= maxProbes; probeTarget++) {
                 for (let producerCount = 1; producerCount <= maxProducers; producerCount++) {
                     for (let gasCount = 0; gasCount <= 2; gasCount++) {
-                        const params = { openerProbes, probeTarget, producerCount, gasCount, proxy };
+                        const params = { openerProbes, probeTarget, producerCount, gasCount, strategy };
                         const order = generateBuild(target, data, params);
                         const result = simulate(data, order, map);
                         evaluated++;
@@ -133,10 +141,9 @@ export function optimize(target, data, map, opts = {}) {
                             continue;
                         if (!best || arrival < best.arrival)
                             best = { arrival, params, order, result };
-                        if (proxy && (!bestProxy || arrival < bestProxy.arrival))
-                            bestProxy = { arrival, params, order };
-                        if (!proxy && (!bestHome || arrival < bestHome.arrival))
-                            bestHome = { arrival, params, order };
+                        const sb = bestByStrategy[strategy];
+                        if (!sb || arrival < sb.arrival)
+                            bestByStrategy[strategy] = { arrival, params, order };
                     }
                 }
             }
@@ -144,18 +151,8 @@ export function optimize(target, data, map, opts = {}) {
     }
     if (!best)
         throw new Error("No valid build found for target composition");
-    return {
-        target,
-        arrival: best.arrival,
-        params: best.params,
-        order: best.order,
-        result: best.result,
-        bestHome,
-        bestProxy,
-        evaluated,
-    };
+    return { target, arrival: best.arrival, params: best.params, order: best.order, result: best.result, bestByStrategy, evaluated };
 }
-/** Human-readable one-liner for a target composition. */
 export function describeComposition(comp) {
     return Object.entries(comp)
         .map(([n, c]) => `${c} ${n}`)

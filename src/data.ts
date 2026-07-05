@@ -33,16 +33,19 @@ function ent(
   producer: string,
   opts: Partial<EntityData> = {},
 ): EntityData {
+  // Defaults first, then spread opts so ALL optional fields (moveSpeed,
+  // morphFrom, isUpgrade, warpCooldown, isWorker, ...) carry through.
   return {
     name,
     minerals,
     gas,
     buildTime,
     producer,
-    supplyCost: opts.supplyCost ?? 0,
-    supplyProvided: opts.supplyProvided ?? 0,
-    requires: opts.requires ?? [],
-    isStructure: opts.isStructure ?? false,
+    supplyCost: 0,
+    supplyProvided: 0,
+    requires: [],
+    isStructure: false,
+    ...opts,
   };
 }
 
@@ -63,14 +66,24 @@ add(ent("TwilightCouncil", 150, 100, 35.7, "Probe", { isStructure: true, require
 add(ent("Stargate", 150, 150, 42.9, "Probe", { isStructure: true, requires: ["CyberneticsCore"] }));
 add(ent("RoboticsFacility", 150, 100, 46.4, "Probe", { isStructure: true, requires: ["CyberneticsCore"] }));
 
+// --- Warp Gate tech ------------------------------------------------------
+// Warp Gate research is at the Cybernetics Core (the 5.0.16 PTR briefly moved it
+// to the Gateway; that was reverted in the live hotfixes). A Warp Gate is a
+// Gateway morphed in place (~7s). Once you have Warp Gates and a powered Pylon,
+// you WARP units in there (~4s) — planting a proxy Pylon near the enemy delivers
+// the army at the front instead of walking it across the map.
+add(ent("WarpGateResearch", 50, 50, 100, "CyberneticsCore", { isUpgrade: true, requires: ["CyberneticsCore"] }));
+add(ent("WarpGate", 25, 25, 7, "Gateway", { isStructure: true, morphFrom: "Gateway", requires: ["WarpGateResearch"] }));
+
 // --- Nexus-produced -----------------------------------------------------
 add(ent("Probe", 50, 0, 12.1, "Nexus", { supplyCost: 1, isWorker: true, moveSpeed: 2.8125 }));
 
-// --- Gateway units ------------------------------------------------------
-add(ent("Zealot", 100, 0, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.25 }));
-add(ent("Stalker", 125, 50, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.9531, requires: ["CyberneticsCore"] }));
-add(ent("Adept", 100, 25, 32.5, "Gateway", { supplyCost: 2, moveSpeed: 2.5, requires: ["CyberneticsCore"] }));
-add(ent("Sentry", 50, 100, 23.3, "Gateway", { supplyCost: 2, moveSpeed: 2.5, requires: ["CyberneticsCore"] }));
+// --- Gateway units (warpCooldown ~ build time - 7s, per Liquipedia) -------
+// Adept pre-warpgate build time bumped 30 -> 33 by the 5.0.16 hotfix.
+add(ent("Zealot", 100, 0, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.25, warpCooldown: 20 }));
+add(ent("Stalker", 125, 50, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.9531, warpCooldown: 20, requires: ["CyberneticsCore"] }));
+add(ent("Adept", 100, 25, 33.0, "Gateway", { supplyCost: 2, moveSpeed: 2.5, warpCooldown: 26, requires: ["CyberneticsCore"] }));
+add(ent("Sentry", 50, 100, 23.3, "Gateway", { supplyCost: 2, moveSpeed: 2.5, warpCooldown: 20.3, requires: ["CyberneticsCore"] }));
 
 // --- Stargate units -----------------------------------------------------
 add(ent("Oracle", 150, 150, 37.1, "Stargate", { supplyCost: 3, moveSpeed: 4.0 }));
@@ -104,6 +117,7 @@ export const PROTOSS: GameData = {
     chronoSpeedMultiplier: 1.5,
 
     probeBuildOccupancy: 4, // seconds a probe is off minerals to start a structure
+    warpInTime: 4, // 5.0.16 standardized warp-in (old 11.4s proxy penalty removed)
   },
   entities,
 };

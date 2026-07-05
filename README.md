@@ -73,6 +73,11 @@ producer and scheduling its completion.
   seconds** (raw game data ÷ 1.4; verified against Probe 12, Gateway 46, Nexus 71).
 - **Confirmed 5.0.16 overrides:** 8-worker start, Nexus supply 13, Chrono Boost
   (50 energy, +50% for 20s, Nexus 50→200 energy at 0.5625/s).
+- **Warp Gate (final 5.0.16, after hotfixes):** research at the **Cybernetics
+  Core** (the PTR's move-to-Gateway was reverted), 50/50 over ~100s; Gateway→Warp
+  Gate morph ~7s; warp-in ~4s at any powered Pylon (the old 11.4s proxy penalty
+  is gone); per-unit warp cooldown ≈ build time − 7s. Adept build time is the
+  hotfix's 33s. Warp cooldowns/warp-in time are best-effort — verify per patch.
 - **⚠️ Still calibration targets** (these are *not* in the game data — they come
   from mining behavior): the income rates (`mineralRate*`, `gasRatePerWorker`) and
   `probeBuildOccupancy`. Tune them against headless SC2 (below).
@@ -110,24 +115,32 @@ headless StarCraft II instance and comparing against this sim:
 
 `npm run optimize` searches for the build that gets a target army to the enemy
 fastest. It searches a **parameterized build template** — worker count,
-production-building count, gas, opener workers, and **proxy vs. home** — turning
-each parameter set into a valid supply-correct build (the greedy generator
-auto-inserts Pylons and prerequisites) and scoring it with `compositionArrivalTime`.
-The space is small enough to search exhaustively (~2,300 candidates in <1s), so
-within the template the result is the true optimum, deterministically. The
-simulator validates every candidate, so a broken build can never "win".
+production-building count, gas, opener workers — across **three delivery
+strategies**, turning each parameter set into a valid supply-correct build (the
+greedy generator auto-inserts Pylons and prerequisites) and scoring it with
+`compositionArrivalTime`. The space is small enough to search exhaustively
+(~3,500 candidates in <1s), so within the template the result is the true
+optimum, deterministically. The simulator validates every candidate, so a broken
+build can never "win".
+
+The three strategies:
+- **home** — produce at home, walk the army across the map.
+- **proxyWalk** — proxy Gateways near the enemy; units walk a short distance (the classic proxy 2-gate all-in).
+- **proxyWarp** — Warp Gate tech + a proxy Pylon; **warp** the army onto the enemy in ~4s instead of walking.
 
 Example (standard map, patch 5.0.16):
 
 ```
-TARGET: 4 Zealot arriving at the enemy
-  best: PROXY, 10 probes, 3 producers → arrival 2:44
-  home best 3:00   proxy best 2:44   → proxy faster by 0:16
+TARGET: 4 Zealot arriving at the enemy → best 2:46 (proxyWalk)
+  home 3:12 · proxyWalk 2:46 · proxyWarp 4:05
 ```
 
-The optimizer correctly discovers that **proxying is faster for aggressive
-timings** (it trades a one-time cross-map probe walk for units that arrive in
-~6s instead of ~36s), which is exactly why proxy 2-gate/4-gate builds exist.
+The optimizer finds **proxyWalk fastest for these one-shot timings** — proxy
+Gateways already deliver units in ~7s, so paying ~100s for Warp Gate research
+can't beat them *on first-arrival time*. That's realistic: proxy 2-gate is a
+top all-in. Warp-in's real advantages — keeping production safe at home and
+continuously reinforcing the front — live in objectives this metric doesn't yet
+capture, so `proxyWarp` is modelled and evaluated but wins only when those matter.
 
 ## Roadmap
 
@@ -135,12 +148,12 @@ timings** (it trades a one-time cross-map probe walk for units that arrive in
 2. ✅ Chrono Boost / Nexus energy, sample builds, browser UI.
 3. ✅ Authoritative unit data from SC2 game files (5.0.16).
 4. ✅ Spatial layer — travel time, proxies, army arrival at the enemy.
-5. ✅ Optimizer for "target army at the enemy, fastest" (template search).
-6. ⏭️ **Calibrate** income rates + map distances against headless SC2.
-7. ⏭️ **GA over raw action sequences** — explore orderings the template can't
+5. ✅ Optimizer for "target army at the enemy, fastest" (3 strategies).
+6. ✅ Warp Gate tech: research → Gateway morph → warp-in; proxy-pylon delivery.
+7. ⏭️ **Calibrate** income rates + map distances against headless SC2.
+8. ⏭️ **GA over raw action sequences** — explore orderings the template can't
    express; then branch & bound for provably-optimal min-time openers.
-8. ⏭️ Warp-in modeling (proxy pylon warp-in ≈ instant delivery).
-9. ⏭️ Terran & Zerg data (Zerg needs larva/inject modeling).
+9. ⏭️ Reinforcement/safety objectives where warp-in wins; Terran & Zerg.
 
 ## References
 

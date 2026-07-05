@@ -59,4 +59,15 @@ export const BUILDS = [
         description: "Minimal tech rush — how fast can a Cybernetics Core finish from the 8-worker start?",
         order: ["Probe", "Pylon", "Gateway", "Assimilator", "CyberneticsCore"],
     },
+    {
+        name: "Proxy-pylon warp-in Zealots",
+        description: "Warp Gate tech + a proxy Pylon: keep Gateways safe at home, then WARP Zealots onto the enemy (arrival ≈ warp-in time, not a cross-map walk). Watch the last column.",
+        order: [
+            "Probe", "chrono:Probe", "Probe", "Probe", "Pylon", "Probe",
+            "Gateway", "Assimilator", "Probe", "CyberneticsCore",
+            "WarpGateResearch", "chrono:WarpGateResearch", "Pylon", "Probe",
+            "Gateway", "Pylon@proxy", "WarpGate", "WarpGate",
+            "Zealot", "Zealot", "Zealot", "Zealot",
+        ],
+    },
 ];

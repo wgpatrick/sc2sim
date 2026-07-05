@@ -23,9 +23,12 @@ export interface EntityData {
   supplyProvided: number; // supply PROVIDED once complete (Pylon 8, Nexus 13)
   buildTime: number; // Faster-clock seconds
   producer: string; // "Probe" | "Nexus" | "Gateway" | "Stargate" | "RoboticsFacility"
-  requires: string[]; // prerequisite structures that must be COMPLETE
+  requires: string[]; // prerequisite structures/upgrades that must be COMPLETE
   isStructure: boolean;
   isWorker?: boolean; // the harvesting worker; excluded from army-arrival
+  isUpgrade?: boolean; // researched at `producer`; sets a flag when done
+  morphFrom?: string; // this building is morphed from another (Gateway->WarpGate)
+  warpCooldown?: number; // if produced via warp-in, producer busy this long (Faster s)
   moveSpeed?: number; // game units/sec; used for arrival-time (units only)
 }
 
@@ -45,6 +48,7 @@ export interface EconomyConfig {
   chronoBoostWindow: number;
   chronoSpeedMultiplier: number;
   probeBuildOccupancy: number;
+  warpInTime: number; // seconds from warp-in start to unit existing (5.0.16 ~4s)
 }
 
 export interface GameData {
@@ -118,12 +122,15 @@ function parseAction(raw: string): ParsedAction | null {
   return { chrono: false, name: a, location: "auto" };
 }
 
+export type ItemKind = "unit" | "structure" | "upgrade" | "morph";
+
 export interface StartedItem {
   name: string;
-  kind: "unit" | "structure";
+  kind: ItemKind;
   startTime: number;
   finishTime: number; // production/construction complete
   location: Location;
+  warpedIn?: boolean; // produced via warp-in rather than a normal Gateway
   arrivalTime?: number; // when it reaches the enemy (units only)
 }
 
@@ -154,7 +161,7 @@ export interface SimResult {
 interface InProgress {
   name: string;
   finishTime: number;
-  kind: "unit" | "structure";
+  kind: ItemKind;
   producer: string;
   location: Location;
   boosted: boolean;
@@ -175,6 +182,9 @@ class State {
   inProgress: InProgress[] = [];
   probeReleases: number[] = [];
   proxyEstablished = false; // has a probe already reached the proxy site?
+  researched = new Set<string>(); // completed upgrades (e.g. WarpGateResearch)
+  /** Warp Gates on cooldown after a warp-in: freed at `until`. */
+  producerReleases: { type: string; loc: Location; until: number }[] = [];
 
   constructor(private data: GameData) {
     const e = data.economy;
@@ -238,7 +248,19 @@ class State {
     const busy = this.inProgress.filter(
       (p) => p.producer === type && p.location === loc,
     ).length;
-    return done - busy;
+    const cooling = this.producerReleases.filter(
+      (r) => r.type === type && r.loc === loc,
+    ).length;
+    return done - busy - cooling;
+  }
+
+  /** Requirement met if the structure is complete OR the upgrade is researched. */
+  reqMet(name: string): boolean {
+    return this.count(name) >= 1 || this.researched.has(name);
+  }
+
+  get proxyPylonExists(): boolean {
+    return (this.completedLoc["Pylon"]?.proxy ?? 0) >= 1;
   }
 }
 
@@ -271,6 +293,7 @@ function nextEventTime(s: State): number {
   let t = Infinity;
   for (const p of s.inProgress) t = Math.min(t, p.finishTime);
   for (const r of s.probeReleases) t = Math.min(t, r);
+  for (const r of s.producerReleases) t = Math.min(t, r.until);
   return t;
 }
 
@@ -290,6 +313,18 @@ function advanceToNextEvent(s: State, snaps: Snapshot[]): boolean {
   const done = s.inProgress.filter((p) => p.finishTime <= s.time + EPS);
   s.inProgress = s.inProgress.filter((p) => p.finishTime > s.time + EPS);
   for (const p of done) {
+    if (p.kind === "upgrade") {
+      s.researched.add(p.name);
+      continue;
+    }
+    if (p.kind === "morph") {
+      // Gateway -> WarpGate, in place at p.location.
+      s.completed["Gateway"] = (s.completed["Gateway"] ?? 0) - 1;
+      (s.completedLoc["Gateway"] ??= { home: 0, proxy: 0 })[p.location] -= 1;
+      s.completed["WarpGate"] = (s.completed["WarpGate"] ?? 0) + 1;
+      (s.completedLoc["WarpGate"] ??= { home: 0, proxy: 0 })[p.location] += 1;
+      continue;
+    }
     s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
     if (p.kind === "structure") {
       const cl = (s.completedLoc[p.name] ??= { home: 0, proxy: 0 });
@@ -298,6 +333,7 @@ function advanceToNextEvent(s: State, snaps: Snapshot[]): boolean {
     if (p.name === "Probe") s.probesTotal += 1;
   }
   s.probeReleases = s.probeReleases.filter((r) => r > s.time + EPS);
+  s.producerReleases = s.producerReleases.filter((r) => r.until > s.time + EPS);
   snap(s, snaps);
   return true;
 }
@@ -317,17 +353,51 @@ function snap(s: State, snaps: Snapshot[]): void {
   else snaps.push(cur);
 }
 
-/** Pick where a unit is produced given its tag and available producers. */
-function chooseUnitLocation(
-  s: State,
-  ent: EntityData,
-  tag: Location | "auto",
-): Location | null {
-  if (tag === "proxy") return s.freeProducers(ent.producer, "proxy") >= 1 ? "proxy" : null;
-  if (tag === "home") return s.freeProducers(ent.producer, "home") >= 1 ? "home" : null;
-  // auto: prefer proxy (closer to enemy) then home
-  if (s.freeProducers(ent.producer, "proxy") >= 1) return "proxy";
-  if (s.freeProducers(ent.producer, "home") >= 1) return "home";
+type StartMode = "build" | "research" | "morph" | "gate" | "warp";
+
+interface StartPlan {
+  mode: StartMode;
+  kind: ItemKind;
+  unitLoc: Location; // where the produced thing ends up / arrives
+  producerType?: string; // production building occupied
+  producerLoc?: Location;
+}
+
+/** Decide how (and whether) an entity can start right now. null = not yet. */
+function planStart(s: State, ent: EntityData, tag: Location | "auto"): StartPlan | null {
+  if (ent.isUpgrade) {
+    return s.freeProducers(ent.producer, "home") >= 1
+      ? { mode: "research", kind: "upgrade", unitLoc: "home", producerType: ent.producer, producerLoc: "home" }
+      : null;
+  }
+  if (ent.morphFrom) {
+    const loc: Location = tag === "proxy" ? "proxy" : "home";
+    return s.freeProducers(ent.morphFrom, loc) >= 1
+      ? { mode: "morph", kind: "morph", unitLoc: loc, producerType: ent.morphFrom, producerLoc: loc }
+      : null;
+  }
+  if (ent.isStructure) {
+    const loc: Location = tag === "proxy" ? "proxy" : "home";
+    return s.availableProbes >= 1 ? { mode: "build", kind: "structure", unitLoc: loc } : null;
+  }
+  return chooseProduction(s, ent, tag);
+}
+
+/** Choose warp-in vs. normal production for a unit. Warp-in is preferred. */
+function chooseProduction(s: State, ent: EntityData, tag: Location | "auto"): StartPlan | null {
+  if (ent.producer === "Gateway" && ent.warpCooldown != null && s.researched.has("WarpGateResearch")) {
+    const wgLoc: Location | null =
+      s.freeProducers("WarpGate", "home") >= 1 ? "home" : s.freeProducers("WarpGate", "proxy") >= 1 ? "proxy" : null;
+    if (wgLoc) {
+      // Warp in at a proxy Pylon if one exists (delivers at the enemy), else at home.
+      const warpLoc: Location = s.proxyPylonExists ? "proxy" : "home";
+      return { mode: "warp", kind: "unit", unitLoc: warpLoc, producerType: "WarpGate", producerLoc: wgLoc };
+    }
+  }
+  const order: Location[] = tag === "proxy" ? ["proxy"] : tag === "home" ? ["home"] : ["proxy", "home"];
+  for (const loc of order)
+    if (s.freeProducers(ent.producer, loc) >= 1)
+      return { mode: "gate", kind: "unit", unitLoc: loc, producerType: ent.producer, producerLoc: loc };
   return null;
 }
 
@@ -357,25 +427,23 @@ export function simulate(
 
     const ent = data.entities[pa.name];
     if (!ent) return fail(s, log, snaps, actions, `Unknown entity "${pa.name}"`);
-    const structLoc: Location = pa.location === "proxy" ? "proxy" : "home";
 
     while (true) {
       if (++guard > SAFETY)
         return fail(s, log, snaps, actions, "Safety guard tripped");
 
-      const reqOk = ent.requires.every((r) => s.count(r) >= 1);
-      const unitLoc = ent.isStructure ? structLoc : chooseUnitLocation(s, ent, pa.location);
-      const prodOk = ent.isStructure ? s.availableProbes >= 1 : unitLoc !== null;
+      const reqOk = ent.requires.every((r) => s.reqMet(r));
+      const plan = reqOk ? planStart(s, ent, pa.location) : null;
       const supplyOk = s.supplyUsed + ent.supplyCost <= s.supplyCap + EPS;
 
-      if (reqOk && prodOk && supplyOk) {
+      if (reqOk && plan && supplyOk) {
         const tAfford = timeToAfford(s, ent.minerals, ent.gas);
         const tEvent = nextEventTime(s) - s.time;
         if (tAfford <= tEvent + EPS || !isFinite(tEvent)) {
           if (!isFinite(tAfford))
             return fail(s, log, snaps, actions, `Can never afford "${ent.name}"`);
           advanceBy(s, tAfford, snaps);
-          startEntity(s, ent, unitLoc!, map, actions, log);
+          startEntity(s, ent, plan, map, actions, log);
           break;
         }
         advanceToNextEvent(s, snaps);
@@ -414,47 +482,78 @@ export function simulate(
 function startEntity(
   s: State,
   ent: EntityData,
-  loc: Location,
+  plan: StartPlan,
   map: MapConfig,
   actions: StartedItem[],
   log: string[],
 ): void {
   s.minerals -= ent.minerals;
   s.gas -= ent.gas;
-  const kind: "unit" | "structure" = ent.isStructure ? "structure" : "unit";
+  const loc = plan.unitLoc;
+  let finishTime = s.time + ent.buildTime;
+  let producerForItem = ""; // producer type recorded on the in-progress item
+  let warpedIn = false;
+  let verb = "start";
 
-  let finishTime: number;
-  if (ent.isStructure) {
-    if (loc === "proxy") {
-      // The first proxy building pays the full probe walk; once a probe is out
-      // there, subsequent proxy buildings start locally (no repeated cross-map trip).
-      const travel = s.proxyEstablished ? 0 : map.proxyProbeTravelSeconds;
-      const occupancy = s.proxyEstablished ? s.eco.probeBuildOccupancy : map.proxyProbeTravelSeconds;
-      s.proxyEstablished = true;
-      s.probeReleases.push(s.time + occupancy);
-      finishTime = s.time + travel + ent.buildTime;
-    } else {
-      s.probeReleases.push(s.time + s.eco.probeBuildOccupancy);
-      finishTime = s.time + ent.buildTime;
-    }
-  } else {
-    s.supplyUsed += ent.supplyCost;
-    finishTime = s.time + ent.buildTime;
+  switch (plan.mode) {
+    case "research":
+      producerForItem = plan.producerType!; // occupies e.g. the Cybernetics Core
+      verb = "research";
+      break;
+    case "morph":
+      producerForItem = plan.producerType!; // occupies the Gateway being morphed
+      verb = "morph";
+      break;
+    case "build":
+      if (loc === "proxy") {
+        // First proxy building pays the cross-map probe walk once; later proxy
+        // buildings start locally (a probe is already out there).
+        const travel = s.proxyEstablished ? 0 : map.proxyProbeTravelSeconds;
+        const occupancy = s.proxyEstablished ? s.eco.probeBuildOccupancy : map.proxyProbeTravelSeconds;
+        s.proxyEstablished = true;
+        s.probeReleases.push(s.time + occupancy);
+        finishTime = s.time + travel + ent.buildTime;
+      } else {
+        s.probeReleases.push(s.time + s.eco.probeBuildOccupancy);
+      }
+      break;
+    case "gate":
+      s.supplyUsed += ent.supplyCost;
+      producerForItem = plan.producerType!; // Gateway/Stargate/Robo, busy until done
+      break;
+    case "warp":
+      s.supplyUsed += ent.supplyCost;
+      finishTime = s.time + s.eco.warpInTime; // unit exists after the warp-in
+      // The Warp Gate is on cooldown separately (throughput), longer than warp-in.
+      s.producerReleases.push({
+        type: "WarpGate",
+        loc: plan.producerLoc!,
+        until: s.time + (ent.warpCooldown ?? ent.buildTime),
+      });
+      warpedIn = true;
+      break;
   }
 
-  const row: StartedItem = { name: ent.name, kind, startTime: s.time, finishTime, location: loc };
+  const row: StartedItem = {
+    name: ent.name,
+    kind: plan.kind,
+    startTime: s.time,
+    finishTime,
+    location: loc,
+    warpedIn: warpedIn || undefined,
+  };
   s.inProgress.push({
     name: ent.name,
     finishTime,
-    kind,
-    producer: ent.isStructure ? "Probe" : ent.producer,
+    kind: plan.kind,
+    producer: producerForItem,
     location: loc,
     boosted: false,
     ref: row,
   });
   actions.push(row);
-  const tag = loc === "proxy" ? " @proxy" : "";
-  log.push(`${fmt(s.time)}  start ${ent.name}${tag}  (done ${fmt(finishTime)})`);
+  const tag = warpedIn ? ` (warp-in${loc === "proxy" ? " @proxy" : ""})` : loc === "proxy" ? " @proxy" : "";
+  log.push(`${fmt(s.time)}  ${verb} ${ent.name}${tag}  (done ${fmt(finishTime)})`);
 }
 
 function castChrono(s: State, target: string, log: string[], snaps: Snapshot[]): boolean {
