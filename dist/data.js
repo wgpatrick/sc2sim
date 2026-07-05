@@ -93,6 +93,8 @@ export const PROTOSS = {
         startingGas: 0,
         mineralPatchesPerBase: 8,
         gasGeysersPerBase: 2,
+        startingTownhall: "Nexus",
+        gasStructure: "Assimilator",
         // Mineral rates (min/sec per worker), FIT DIRECTLY from replay income data
         // via tools/calibrate_income.py: a tiered (rate1==rate2, distinct rate3)
         // ordinary-least-squares fit against every steady-state PlayerStatsEvent

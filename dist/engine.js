@@ -55,6 +55,7 @@ function parseAction(raw) {
 const EPS = 1e-6;
 class State {
     constructor(data) {
+        var _a;
         this.data = data;
         this.time = 0;
         this.completed = {};
@@ -65,14 +66,23 @@ class State {
         this.researched = new Set(); // completed upgrades (e.g. WarpGateResearch)
         /** Warp Gates on cooldown after a warp-in: freed at `until`. */
         this.producerReleases = [];
+        /** Zerg only: stored larva per location, and pending regen events. */
+        this.larva = { home: 0, proxy: 0 };
+        this.larvaRegens = [];
         const e = data.economy;
         this.minerals = e.startingMinerals;
         this.gas = e.startingGas;
         this.energy = e.nexusStartEnergy;
         this.probesTotal = e.startingWorkers;
         this.supplyUsed = e.startingWorkers;
-        this.completed["Nexus"] = 1;
-        this.completedLoc["Nexus"] = { home: 1, proxy: 0 };
+        this.completed[e.startingTownhall] = 1;
+        this.completedLoc[e.startingTownhall] = { home: 1, proxy: 0 };
+        for (const [name, count] of Object.entries(e.startingUnits ?? {})) {
+            this.completed[name] = (this.completed[name] ?? 0) + count;
+            ((_a = this.completedLoc)[name] ?? (_a[name] = { home: 0, proxy: 0 })).home += count;
+        }
+        if (e.larvaRegenSeconds != null)
+            this.larva.home = e.larvaCapPerTownhall ?? 3;
     }
     get eco() {
         return this.data.economy;
@@ -80,11 +90,11 @@ class State {
     count(name) {
         return this.completed[name] ?? 0;
     }
-    get nexusCount() {
-        return this.count("Nexus");
+    get townhallCount() {
+        return this.count(this.eco.startingTownhall);
     }
-    get assimilators() {
-        return this.count("Assimilator");
+    get gasStructureCount() {
+        return this.count(this.eco.gasStructure);
     }
     get busyProbes() {
         return this.probeReleases.length;
@@ -102,14 +112,14 @@ class State {
         return cap;
     }
     get gasWorkers() {
-        return Math.min(3 * this.assimilators, this.availableProbes);
+        return Math.min(3 * this.gasStructureCount, this.availableProbes);
     }
     get mineralWorkers() {
         return this.availableProbes - this.gasWorkers;
     }
     get mineralRate() {
         const e = this.eco;
-        const patches = this.nexusCount * e.mineralPatchesPerBase;
+        const patches = this.townhallCount * e.mineralPatchesPerBase;
         const w = this.mineralWorkers;
         const t1 = Math.min(w, patches); // 1st worker per patch
         const t2 = Math.max(0, Math.min(w - patches, patches)); // 2nd worker per patch
@@ -123,13 +133,16 @@ class State {
         return this.gasWorkers * this.eco.gasRatePerWorker;
     }
     get energyRate() {
-        return this.nexusCount * this.eco.nexusEnergyRegen;
+        return this.townhallCount * this.eco.nexusEnergyRegen;
     }
     freeProducers(type, loc) {
         const done = this.completedLoc[type]?.[loc] ?? 0;
         const busy = this.inProgress.filter((p) => p.producer === type && p.location === loc).length;
         const cooling = this.producerReleases.filter((r) => r.type === type && r.loc === loc).length;
         return done - busy - cooling;
+    }
+    larvaCap(loc) {
+        return (this.eco.larvaCapPerTownhall ?? 3) * (this.completedLoc[this.eco.startingTownhall]?.[loc] ?? 0);
     }
     /** Requirement met if the structure is complete OR the upgrade is researched. */
     reqMet(name) {
@@ -167,7 +180,18 @@ function nextEventTime(s) {
         t = Math.min(t, r);
     for (const r of s.producerReleases)
         t = Math.min(t, r.until);
+    for (const r of s.larvaRegens)
+        t = Math.min(t, r.at);
     return t;
+}
+/** Consuming a larva always opens room for one more, up to the per-location
+ * cap -- schedule its regen unconditionally; applying it later is a no-op
+ * if the pool is already full by then. */
+function scheduleLarvaRegen(s, loc) {
+    const seconds = s.eco.larvaRegenSeconds;
+    if (seconds == null)
+        return;
+    s.larvaRegens.push({ loc, at: s.time + seconds });
 }
 function advanceBy(s, dt, snaps) {
     if (dt <= 0)
@@ -179,7 +203,7 @@ function advanceBy(s, dt, snaps) {
     snap(s, snaps);
 }
 function advanceToNextEvent(s, snaps) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e, _f;
     const t = nextEventTime(s);
     if (!isFinite(t))
         return false;
@@ -192,23 +216,28 @@ function advanceToNextEvent(s, snaps) {
             continue;
         }
         if (p.kind === "morph") {
-            // Gateway -> WarpGate, in place at p.location.
-            s.completed["Gateway"] = (s.completed["Gateway"] ?? 0) - 1;
-            ((_a = s.completedLoc)["Gateway"] ?? (_a["Gateway"] = { home: 0, proxy: 0 }))[p.location] -= 1;
-            s.completed["WarpGate"] = (s.completed["WarpGate"] ?? 0) + 1;
-            ((_b = s.completedLoc)["WarpGate"] ?? (_b["WarpGate"] = { home: 0, proxy: 0 }))[p.location] += 1;
+            // p.producer holds the FROM entity (e.g. Gateway->WarpGate, Zergling->Baneling).
+            s.completed[p.producer] = (s.completed[p.producer] ?? 0) - 1;
+            ((_a = s.completedLoc)[_b = p.producer] ?? (_a[_b] = { home: 0, proxy: 0 }))[p.location] -= 1;
+            s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
+            ((_c = s.completedLoc)[_d = p.name] ?? (_c[_d] = { home: 0, proxy: 0 }))[p.location] += 1;
             continue;
         }
         s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
-        if (p.kind === "structure") {
-            const cl = ((_c = s.completedLoc)[_d = p.name] ?? (_c[_d] = { home: 0, proxy: 0 }));
-            cl[p.location] += 1;
-        }
+        // Location-split count for ALL kinds, not just structures: a unit can
+        // later be consumed as a morphFrom source (e.g. Zergling -> Baneling),
+        // which checks freeProducers()/completedLoc same as a building would.
+        ((_e = s.completedLoc)[_f = p.name] ?? (_e[_f] = { home: 0, proxy: 0 }))[p.location] += 1;
         if (p.name === "Probe")
             s.probesTotal += 1;
     }
     s.probeReleases = s.probeReleases.filter((r) => r > s.time + EPS);
     s.producerReleases = s.producerReleases.filter((r) => r.until > s.time + EPS);
+    for (const r of s.larvaRegens) {
+        if (r.at <= s.time + EPS && s.larva[r.loc] < s.larvaCap(r.loc))
+            s.larva[r.loc] += 1;
+    }
+    s.larvaRegens = s.larvaRegens.filter((r) => r.at > s.time + EPS);
     snap(s, snaps);
     return true;
 }
@@ -249,6 +278,15 @@ function planStart(s, ent, tag) {
 }
 /** Choose warp-in vs. normal production for a unit. Warp-in is preferred. */
 function chooseProduction(s, ent, tag) {
+    if (ent.producer === "Larva") {
+        // Zerg: trained from a shared per-location larva pool, not a queue on a
+        // specific building — see State.larva / scheduleLarvaRegen.
+        const order = tag === "proxy" ? ["proxy"] : tag === "home" ? ["home"] : ["proxy", "home"];
+        for (const loc of order)
+            if (s.larva[loc] >= 1)
+                return { mode: "larva", kind: "unit", unitLoc: loc, producerLoc: loc };
+        return null;
+    }
     if (ent.producer === "Gateway" && ent.warpCooldown != null && s.researched.has("WarpGateResearch")) {
         const wgLoc = s.freeProducers("WarpGate", "home") >= 1 ? "home" : s.freeProducers("WarpGate", "proxy") >= 1 ? "proxy" : null;
         if (wgLoc) {
@@ -377,6 +415,14 @@ function startEntity(s, ent, plan, map, actions, log) {
                 until: s.time + (ent.warpCooldown ?? ent.buildTime),
             });
             warpedIn = true;
+            break;
+        case "larva":
+            // No producer building is occupied — larva consumption is independent
+            // of the townhall's own action queue (it can still train a Queen etc.
+            // at the same time). Just spend one larva and schedule its regen.
+            s.supplyUsed += ent.supplyCost;
+            s.larva[plan.producerLoc] -= 1;
+            scheduleLarvaRegen(s, plan.producerLoc);
             break;
     }
     const row = {

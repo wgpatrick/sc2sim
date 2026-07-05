@@ -100,6 +100,8 @@ export const TERRAN: GameData = {
     startingGas: 0,
     mineralPatchesPerBase: 8,
     gasGeysersPerBase: 2,
+    startingTownhall: "CommandCenter",
+    gasStructure: "Refinery",
     // No independent Terran income fit yet (only 1 replay, and it never runs
     // gas-free long enough for a clean tiered fit the way the Protoss corpus
     // did) — reuse the cross-replay Protoss fit as a same-patch placeholder;
