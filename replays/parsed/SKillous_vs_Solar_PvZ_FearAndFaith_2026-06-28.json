@@ -1,8 +1,9 @@
 {
   "source": "SKillous_vs_Solar_PvZ_FearAndFaith_2026-06-28.SC2Replay",
   "map": "Fear and Faith LE",
-  "length": 481,
+  "length": 481.6964285714286,
   "patch": "5.0.16.97364",
+  "speed": "Faster",
   "player": {
     "name": "SKillous",
     "race": "Protoss",
@@ -10,1034 +11,1034 @@
   },
   "buildOrder": [
     {
-      "t": 0,
+      "t": 0.0,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 0,
+      "t": 0.0,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 0,
+      "t": 0.0,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 0,
+      "t": 0.0,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 0,
+      "t": 0.0,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 0,
+      "t": 0.0,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 0,
+      "t": 0.0,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 0,
+      "t": 0.0,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 15,
+      "t": 11.026785714285715,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 26,
+      "t": 19.107142857142858,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 38,
+      "t": 27.1875,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 46,
+      "t": 33.035714285714285,
       "event": "start",
       "name": "Pylon"
     },
     {
-      "t": 54,
+      "t": 38.75,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 71,
+      "t": 50.84821428571429,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 71,
+      "t": 50.892857142857146,
       "event": "done",
       "name": "Pylon"
     },
     {
-      "t": 78,
+      "t": 56.16071428571429,
       "event": "start",
       "name": "Gateway"
     },
     {
-      "t": 88,
+      "t": 63.03571428571429,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 92,
+      "t": 65.9375,
       "event": "start",
       "name": "Assimilator"
     },
     {
-      "t": 105,
+      "t": 75.13392857142857,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 122,
+      "t": 87.23214285714286,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 122,
+      "t": 87.36607142857143,
       "event": "done",
       "name": "Assimilator"
     },
     {
-      "t": 134,
+      "t": 95.71428571428572,
       "event": "start",
       "name": "Gateway"
     },
     {
-      "t": 139,
+      "t": 99.33035714285715,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 143,
+      "t": 102.58928571428572,
       "event": "done",
       "name": "Gateway"
     },
     {
-      "t": 144,
+      "t": 103.39285714285715,
       "event": "start",
       "name": "CyberneticsCore"
     },
     {
-      "t": 152,
+      "t": 109.15178571428572,
       "event": "start",
       "name": "Pylon"
     },
     {
-      "t": 156,
+      "t": 111.42857142857143,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 174,
+      "t": 124.41964285714286,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 177,
+      "t": 127.00892857142858,
       "event": "done",
       "name": "Pylon"
     },
     {
-      "t": 191,
+      "t": 136.51785714285714,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 194,
+      "t": 139.10714285714286,
       "event": "done",
       "name": "CyberneticsCore"
     },
     {
-      "t": 199,
+      "t": 142.14285714285714,
       "event": "done",
       "name": "Gateway"
     },
     {
-      "t": 208,
+      "t": 148.9732142857143,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 225,
+      "t": 161.1607142857143,
       "event": "born",
       "name": "Adept"
     },
     {
-      "t": 227,
+      "t": 162.67857142857144,
       "event": "born",
       "name": "Adept"
     },
     {
-      "t": 228,
+      "t": 163.21428571428572,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 228,
+      "t": 163.21428571428572,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 238,
+      "t": 170.2232142857143,
       "event": "start",
       "name": "Nexus"
     },
     {
-      "t": 257,
+      "t": 183.61607142857144,
       "event": "start",
       "name": "Gateway"
     },
     {
-      "t": 258,
+      "t": 184.77678571428572,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 259,
+      "t": 185.40178571428572,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 259,
+      "t": 185.40178571428572,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 270,
+      "t": 193.48214285714286,
       "event": "born",
       "name": "Stalker"
     },
     {
-      "t": 277,
+      "t": 198.4375,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 284,
+      "t": 203.21428571428572,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 284,
+      "t": 203.21428571428572,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 290,
+      "t": 207.45535714285717,
       "event": "start",
       "name": "Pylon"
     },
     {
-      "t": 308,
+      "t": 220.2232142857143,
       "event": "start",
       "name": "Gateway"
     },
     {
-      "t": 315,
+      "t": 225.31250000000003,
       "event": "done",
       "name": "Pylon"
     },
     {
-      "t": 320,
+      "t": 228.70535714285717,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 322,
+      "t": 230.04464285714286,
       "event": "done",
       "name": "Gateway"
     },
     {
-      "t": 322,
+      "t": 230.44642857142858,
       "event": "start",
       "name": "ShieldBattery"
     },
     {
-      "t": 325,
+      "t": 232.81250000000003,
       "event": "start",
       "name": "Pylon"
     },
     {
-      "t": 333,
+      "t": 238.21428571428572,
       "event": "upgrade",
       "name": "WarpGateResearch"
     },
     {
-      "t": 337,
+      "t": 240.80357142857144,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 338,
+      "t": 241.65178571428572,
       "event": "done",
       "name": "Nexus"
     },
     {
-      "t": 344,
+      "t": 245.98214285714286,
       "event": "born",
       "name": "Adept"
     },
     {
-      "t": 350,
+      "t": 250.00000000000003,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 350,
+      "t": 250.66964285714286,
       "event": "done",
       "name": "Pylon"
     },
     {
-      "t": 351,
+      "t": 251.38392857142858,
       "event": "morph",
       "name": "WarpGate"
     },
     {
-      "t": 354,
+      "t": 252.90178571428572,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 357,
+      "t": 255.35714285714286,
       "event": "born",
       "name": "Adept"
     },
     {
-      "t": 361,
+      "t": 257.9017857142857,
       "event": "morph",
       "name": "WarpGate"
     },
     {
-      "t": 361,
+      "t": 258.08035714285717,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 362,
+      "t": 259.01785714285717,
       "event": "done",
       "name": "ShieldBattery"
     },
     {
-      "t": 368,
+      "t": 263.08035714285717,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 368,
+      "t": 263.30357142857144,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 372,
+      "t": 266.0714285714286,
       "event": "start",
       "name": "Pylon"
     },
     {
-      "t": 373,
+      "t": 266.6517857142857,
       "event": "done",
       "name": "Gateway"
     },
     {
-      "t": 373,
+      "t": 266.9196428571429,
       "event": "morph",
       "name": "WarpGate"
     },
     {
-      "t": 373,
+      "t": 267.0982142857143,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 374,
+      "t": 267.3214285714286,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 378,
+      "t": 270.3571428571429,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 384,
+      "t": 274.375,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 384,
+      "t": 274.64285714285717,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 384,
+      "t": 274.64285714285717,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 384,
+      "t": 274.64285714285717,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 384,
+      "t": 274.64285714285717,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 384,
+      "t": 274.64285714285717,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 387,
+      "t": 276.5625,
       "event": "morph",
       "name": "WarpGate"
     },
     {
-      "t": 388,
+      "t": 277.6339285714286,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 388,
+      "t": 277.67857142857144,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 389,
+      "t": 278.2142857142857,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 395,
+      "t": 282.2321428571429,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 397,
+      "t": 283.92857142857144,
       "event": "done",
       "name": "Pylon"
     },
     {
-      "t": 401,
+      "t": 286.4732142857143,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 402,
+      "t": 287.2767857142857,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 404,
+      "t": 288.8839285714286,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 404,
+      "t": 288.8839285714286,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 404,
+      "t": 288.8839285714286,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 404,
+      "t": 288.8839285714286,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 404,
+      "t": 288.8839285714286,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 404,
+      "t": 288.8839285714286,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 405,
+      "t": 289.7321428571429,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 406,
+      "t": 290.49107142857144,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 407,
+      "t": 291.2946428571429,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 407,
+      "t": 291.2946428571429,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 420,
+      "t": 300.6696428571429,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 420,
+      "t": 300.6696428571429,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 420,
+      "t": 300.6696428571429,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 420,
+      "t": 300.6696428571429,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 420,
+      "t": 300.6696428571429,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 420,
+      "t": 300.6696428571429,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 420,
+      "t": 300.6696428571429,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 421,
+      "t": 301.3392857142857,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 424,
+      "t": 303.125,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 437,
+      "t": 312.2767857142857,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 438,
+      "t": 313.08035714285717,
       "event": "start",
       "name": "Assimilator"
     },
     {
-      "t": 439,
+      "t": 314.01785714285717,
       "event": "start",
       "name": "Assimilator"
     },
     {
-      "t": 441,
+      "t": 315.2232142857143,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 443,
+      "t": 316.83035714285717,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 443,
+      "t": 316.83035714285717,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 445,
+      "t": 318.125,
       "event": "start",
       "name": "Assimilator"
     },
     {
-      "t": 450,
+      "t": 321.83035714285717,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 450,
+      "t": 321.9642857142857,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 451,
+      "t": 322.36607142857144,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 454,
+      "t": 324.375,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 456,
+      "t": 325.84821428571433,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 456,
+      "t": 325.9821428571429,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 456,
+      "t": 326.3839285714286,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 457,
+      "t": 326.83035714285717,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 460,
+      "t": 329.01785714285717,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 465,
+      "t": 332.8125,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 468,
+      "t": 334.5089285714286,
       "event": "done",
       "name": "Assimilator"
     },
     {
-      "t": 468,
+      "t": 334.91071428571433,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 469,
+      "t": 335.4464285714286,
       "event": "done",
       "name": "Assimilator"
     },
     {
-      "t": 471,
+      "t": 336.47321428571433,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 471,
+      "t": 336.83035714285717,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 475,
+      "t": 339.55357142857144,
       "event": "done",
       "name": "Assimilator"
     },
     {
-      "t": 480,
+      "t": 342.99107142857144,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 485,
+      "t": 346.9642857142857,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 490,
+      "t": 350.3125,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 490,
+      "t": 350.3571428571429,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 495,
+      "t": 353.61607142857144,
       "event": "start",
       "name": "Pylon"
     },
     {
-      "t": 495,
+      "t": 353.70535714285717,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 496,
+      "t": 354.33035714285717,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 496,
+      "t": 354.375,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 497,
+      "t": 355.0446428571429,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 497,
+      "t": 355.1339285714286,
       "event": "start",
       "name": "Pylon"
     },
     {
-      "t": 500,
+      "t": 357.36607142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 500,
+      "t": 357.36607142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 500,
+      "t": 357.36607142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 500,
+      "t": 357.36607142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 500,
+      "t": 357.36607142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 500,
+      "t": 357.36607142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 508,
+      "t": 363.4375,
       "event": "start",
       "name": "Stargate"
     },
     {
-      "t": 520,
+      "t": 371.42857142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 520,
+      "t": 371.42857142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 520,
+      "t": 371.42857142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 520,
+      "t": 371.42857142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 520,
+      "t": 371.42857142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 520,
+      "t": 371.42857142857144,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 520,
+      "t": 371.47321428571433,
       "event": "done",
       "name": "Pylon"
     },
     {
-      "t": 522,
+      "t": 372.99107142857144,
       "event": "done",
       "name": "Pylon"
     },
     {
-      "t": 531,
+      "t": 379.64285714285717,
       "event": "start",
       "name": "Pylon"
     },
     {
-      "t": 532,
+      "t": 380.49107142857144,
       "event": "start",
       "name": "Stargate"
     },
     {
-      "t": 537,
+      "t": 383.61607142857144,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 540,
+      "t": 385.84821428571433,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 555,
+      "t": 396.5625,
       "event": "start",
       "name": "Forge"
     },
     {
-      "t": 556,
+      "t": 397.5,
       "event": "done",
       "name": "Pylon"
     },
     {
-      "t": 562,
+      "t": 401.47321428571433,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 562,
+      "t": 401.47321428571433,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 562,
+      "t": 401.47321428571433,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 562,
+      "t": 401.47321428571433,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 562,
+      "t": 401.47321428571433,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 562,
+      "t": 401.6517857142857,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 564,
+      "t": 403.4375,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 568,
+      "t": 406.2946428571429,
       "event": "done",
       "name": "Stargate"
     },
     {
-      "t": 581,
+      "t": 415.4017857142857,
       "event": "start",
       "name": "FleetBeacon"
     },
     {
-      "t": 583,
+      "t": 416.51785714285717,
       "event": "start",
       "name": "Nexus"
     },
     {
-      "t": 583,
+      "t": 417.0089285714286,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 584,
+      "t": 417.6339285714286,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 585,
+      "t": 418.34821428571433,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 585,
+      "t": 418.34821428571433,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 585,
+      "t": 418.34821428571433,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 585,
+      "t": 418.34821428571433,
       "event": "born",
       "name": "AdeptPhaseShift"
     },
     {
-      "t": 585,
+      "t": 418.4375,
       "event": "start",
       "name": "Pylon"
     },
     {
-      "t": 592,
+      "t": 423.34821428571433,
       "event": "done",
       "name": "Stargate"
     },
     {
-      "t": 600,
+      "t": 428.70535714285717,
       "event": "done",
       "name": "Forge"
     },
     {
-      "t": 604,
+      "t": 431.9196428571429,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 608,
+      "t": 434.7321428571429,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 610,
+      "t": 436.2946428571429,
       "event": "done",
       "name": "Pylon"
     },
     {
-      "t": 612,
+      "t": 437.5892857142857,
       "event": "start",
       "name": "ShieldBattery"
     },
     {
-      "t": 612,
+      "t": 437.8125,
       "event": "start",
       "name": "Pylon"
     },
     {
-      "t": 620,
+      "t": 443.03571428571433,
       "event": "born",
       "name": "VoidRay"
     },
     {
-      "t": 621,
+      "t": 444.01785714285717,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 623,
+      "t": 445.22321428571433,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 625,
+      "t": 446.83035714285717,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 628,
+      "t": 449.24107142857144,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 637,
+      "t": 455.62500000000006,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 637,
+      "t": 455.6696428571429,
       "event": "done",
       "name": "Pylon"
     },
     {
-      "t": 638,
+      "t": 456.11607142857144,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 641,
+      "t": 458.2589285714286,
       "event": "done",
       "name": "FleetBeacon"
     },
     {
-      "t": 648,
+      "t": 462.9464285714286,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 649,
+      "t": 463.66071428571433,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 649,
+      "t": 463.97321428571433,
       "event": "start",
       "name": "Adept"
     },
     {
-      "t": 650,
+      "t": 464.28571428571433,
       "event": "start",
       "name": "Zealot"
     },
     {
-      "t": 651,
+      "t": 465.4017857142857,
       "event": "born",
       "name": "VoidRay"
     },
     {
-      "t": 654,
+      "t": 467.67857142857144,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 655,
+      "t": 467.99107142857144,
       "event": "done",
       "name": "Adept"
     },
     {
-      "t": 655,
+      "t": 468.2142857142857,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 655,
+      "t": 468.30357142857144,
       "event": "done",
       "name": "Zealot"
     },
     {
-      "t": 665,
+      "t": 475.0446428571429,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 672,
+      "t": 480.31250000000006,
       "event": "born",
       "name": "Probe"
     },
     {
-      "t": 673,
+      "t": 481.3392857142857,
       "event": "born",
       "name": "VoidRay"
     }
   ],
   "economy": [
     {
-      "t": 0,
+      "t": 0.044642857142857144,
       "minerals": 50,
       "gas": 0,
       "mineralRate": 0,
@@ -1047,7 +1048,7 @@
       "workers": 8
     },
     {
-      "t": 10,
+      "t": 7.142857142857143,
       "minerals": 35,
       "gas": 0,
       "mineralRate": 293,
@@ -1057,7 +1058,7 @@
       "workers": 8
     },
     {
-      "t": 20,
+      "t": 14.285714285714286,
       "minerals": 30,
       "gas": 0,
       "mineralRate": 447,
@@ -1067,7 +1068,7 @@
       "workers": 9
     },
     {
-      "t": 30,
+      "t": 21.42857142857143,
       "minerals": 45,
       "gas": 0,
       "mineralRate": 503,
@@ -1077,7 +1078,7 @@
       "workers": 10
     },
     {
-      "t": 40,
+      "t": 28.571428571428573,
       "minerals": 70,
       "gas": 0,
       "mineralRate": 559,
@@ -1087,7 +1088,7 @@
       "workers": 11
     },
     {
-      "t": 50,
+      "t": 35.714285714285715,
       "minerals": 35,
       "gas": 0,
       "mineralRate": 615,
@@ -1097,7 +1098,7 @@
       "workers": 11
     },
     {
-      "t": 60,
+      "t": 42.85714285714286,
       "minerals": 50,
       "gas": 0,
       "mineralRate": 587,
@@ -1107,7 +1108,7 @@
       "workers": 12
     },
     {
-      "t": 70,
+      "t": 50.0,
       "minerals": 90,
       "gas": 0,
       "mineralRate": 699,
@@ -1117,7 +1118,7 @@
       "workers": 12
     },
     {
-      "t": 80,
+      "t": 57.142857142857146,
       "minerals": 20,
       "gas": 0,
       "mineralRate": 671,
@@ -1127,7 +1128,7 @@
       "workers": 13
     },
     {
-      "t": 90,
+      "t": 64.28571428571429,
       "minerals": 60,
       "gas": 0,
       "mineralRate": 755,
@@ -1137,7 +1138,7 @@
       "workers": 14
     },
     {
-      "t": 100,
+      "t": 71.42857142857143,
       "minerals": 15,
       "gas": 0,
       "mineralRate": 699,
@@ -1147,7 +1148,7 @@
       "workers": 14
     },
     {
-      "t": 110,
+      "t": 78.57142857142857,
       "minerals": 110,
       "gas": 0,
       "mineralRate": 783,
@@ -1157,7 +1158,7 @@
       "workers": 15
     },
     {
-      "t": 120,
+      "t": 85.71428571428572,
       "minerals": 160,
       "gas": 0,
       "mineralRate": 839,
@@ -1167,7 +1168,7 @@
       "workers": 15
     },
     {
-      "t": 130,
+      "t": 92.85714285714286,
       "minerals": 260,
       "gas": 0,
       "mineralRate": 839,
@@ -1177,7 +1178,7 @@
       "workers": 16
     },
     {
-      "t": 140,
+      "t": 100.0,
       "minerals": 155,
       "gas": 0,
       "mineralRate": 867,
@@ -1187,7 +1188,7 @@
       "workers": 17
     },
     {
-      "t": 150,
+      "t": 107.14285714285715,
       "minerals": 105,
       "gas": 4,
       "mineralRate": 839,
@@ -1197,7 +1198,7 @@
       "workers": 17
     },
     {
-      "t": 160,
+      "t": 114.28571428571429,
       "minerals": 60,
       "gas": 12,
       "mineralRate": 867,
@@ -1207,7 +1208,7 @@
       "workers": 18
     },
     {
-      "t": 170,
+      "t": 121.42857142857143,
       "minerals": 145,
       "gas": 28,
       "mineralRate": 811,
@@ -1217,7 +1218,7 @@
       "workers": 18
     },
     {
-      "t": 180,
+      "t": 128.57142857142858,
       "minerals": 195,
       "gas": 48,
       "mineralRate": 811,
@@ -1227,7 +1228,7 @@
       "workers": 19
     },
     {
-      "t": 190,
+      "t": 135.71428571428572,
       "minerals": 305,
       "gas": 68,
       "mineralRate": 867,
@@ -1237,7 +1238,7 @@
       "workers": 19
     },
     {
-      "t": 200,
+      "t": 142.85714285714286,
       "minerals": 150,
       "gas": 38,
       "mineralRate": 839,
@@ -1247,7 +1248,7 @@
       "workers": 20
     },
     {
-      "t": 210,
+      "t": 150.0,
       "minerals": 215,
       "gas": 4,
       "mineralRate": 895,
@@ -1257,7 +1258,7 @@
       "workers": 21
     },
     {
-      "t": 220,
+      "t": 157.14285714285714,
       "minerals": 335,
       "gas": 24,
       "mineralRate": 923,
@@ -1267,7 +1268,7 @@
       "workers": 21
     },
     {
-      "t": 230,
+      "t": 164.2857142857143,
       "minerals": 335,
       "gas": 19,
       "mineralRate": 867,
@@ -1277,7 +1278,7 @@
       "workers": 21
     },
     {
-      "t": 240,
+      "t": 171.42857142857144,
       "minerals": 30,
       "gas": 14,
       "mineralRate": 895,
@@ -1287,7 +1288,7 @@
       "workers": 21
     },
     {
-      "t": 250,
+      "t": 178.57142857142858,
       "minerals": 105,
       "gas": 34,
       "mineralRate": 951,
@@ -1297,7 +1298,7 @@
       "workers": 21
     },
     {
-      "t": 260,
+      "t": 185.71428571428572,
       "minerals": 55,
       "gas": 50,
       "mineralRate": 951,
@@ -1307,7 +1308,7 @@
       "workers": 22
     },
     {
-      "t": 270,
+      "t": 192.85714285714286,
       "minerals": 75,
       "gas": 66,
       "mineralRate": 979,
@@ -1317,7 +1318,7 @@
       "workers": 22
     },
     {
-      "t": 280,
+      "t": 200.0,
       "minerals": 95,
       "gas": 61,
       "mineralRate": 979,
@@ -1327,7 +1328,7 @@
       "workers": 23
     },
     {
-      "t": 290,
+      "t": 207.14285714285717,
       "minerals": 50,
       "gas": 81,
       "mineralRate": 1007,
@@ -1337,7 +1338,7 @@
       "workers": 23
     },
     {
-      "t": 300,
+      "t": 214.2857142857143,
       "minerals": 170,
       "gas": 97,
       "mineralRate": 1007,
@@ -1347,7 +1348,7 @@
       "workers": 23
     },
     {
-      "t": 310,
+      "t": 221.42857142857144,
       "minerals": 95,
       "gas": 117,
       "mineralRate": 1035,
@@ -1357,7 +1358,7 @@
       "workers": 23
     },
     {
-      "t": 320,
+      "t": 228.57142857142858,
       "minerals": 50,
       "gas": 108,
       "mineralRate": 979,
@@ -1367,7 +1368,7 @@
       "workers": 23
     },
     {
-      "t": 330,
+      "t": 235.71428571428572,
       "minerals": 65,
       "gas": 128,
       "mineralRate": 951,
@@ -1377,7 +1378,7 @@
       "workers": 24
     },
     {
-      "t": 340,
+      "t": 242.85714285714286,
       "minerals": 95,
       "gas": 148,
       "mineralRate": 979,
@@ -1387,7 +1388,7 @@
       "workers": 25
     },
     {
-      "t": 350,
+      "t": 250.00000000000003,
       "minerals": 145,
       "gas": 139,
       "mineralRate": 1063,
@@ -1397,7 +1398,7 @@
       "workers": 25
     },
     {
-      "t": 360,
+      "t": 257.14285714285717,
       "minerals": 155,
       "gas": 109,
       "mineralRate": 1091,
@@ -1407,7 +1408,7 @@
       "workers": 27
     },
     {
-      "t": 370,
+      "t": 264.2857142857143,
       "minerals": 195,
       "gas": 79,
       "mineralRate": 1315,
@@ -1417,7 +1418,7 @@
       "workers": 28
     },
     {
-      "t": 380,
+      "t": 271.42857142857144,
       "minerals": 20,
       "gas": 45,
       "mineralRate": 1259,
@@ -1427,7 +1428,7 @@
       "workers": 28
     },
     {
-      "t": 390,
+      "t": 278.5714285714286,
       "minerals": 35,
       "gas": 40,
       "mineralRate": 1371,
@@ -1437,7 +1438,7 @@
       "workers": 30
     },
     {
-      "t": 400,
+      "t": 285.7142857142857,
       "minerals": 160,
       "gas": 60,
       "mineralRate": 1315,
@@ -1447,7 +1448,7 @@
       "workers": 30
     },
     {
-      "t": 410,
+      "t": 292.8571428571429,
       "minerals": 85,
       "gas": 30,
       "mineralRate": 1455,
@@ -1457,7 +1458,7 @@
       "workers": 32
     },
     {
-      "t": 420,
+      "t": 300.0,
       "minerals": 165,
       "gas": 50,
       "mineralRate": 1539,
@@ -1467,7 +1468,7 @@
       "workers": 32
     },
     {
-      "t": 430,
+      "t": 307.14285714285717,
       "minerals": 270,
       "gas": 70,
       "mineralRate": 1623,
@@ -1477,7 +1478,7 @@
       "workers": 34
     },
     {
-      "t": 440,
+      "t": 314.2857142857143,
       "minerals": 190,
       "gas": 86,
       "mineralRate": 1707,
@@ -1487,7 +1488,7 @@
       "workers": 35
     },
     {
-      "t": 450,
+      "t": 321.42857142857144,
       "minerals": 280,
       "gas": 106,
       "mineralRate": 1623,
@@ -1497,7 +1498,7 @@
       "workers": 36
     },
     {
-      "t": 460,
+      "t": 328.5714285714286,
       "minerals": 180,
       "gas": 51,
       "mineralRate": 1735,
@@ -1507,7 +1508,7 @@
       "workers": 38
     },
     {
-      "t": 470,
+      "t": 335.7142857142857,
       "minerals": 210,
       "gas": 46,
       "mineralRate": 1819,
@@ -1517,7 +1518,7 @@
       "workers": 39
     },
     {
-      "t": 480,
+      "t": 342.8571428571429,
       "minerals": 315,
       "gas": 82,
       "mineralRate": 1763,
@@ -1527,7 +1528,7 @@
       "workers": 40
     },
     {
-      "t": 490,
+      "t": 350.0,
       "minerals": 465,
       "gas": 126,
       "mineralRate": 1707,
@@ -1537,7 +1538,7 @@
       "workers": 42
     },
     {
-      "t": 500,
+      "t": 357.14285714285717,
       "minerals": 255,
       "gas": 148,
       "mineralRate": 1595,
@@ -1547,7 +1548,7 @@
       "workers": 44
     },
     {
-      "t": 510,
+      "t": 364.28571428571433,
       "minerals": 300,
       "gas": 78,
       "mineralRate": 1651,
@@ -1557,7 +1558,7 @@
       "workers": 44
     },
     {
-      "t": 520,
+      "t": 371.42857142857144,
       "minerals": 515,
       "gas": 150,
       "mineralRate": 1763,
@@ -1567,7 +1568,7 @@
       "workers": 44
     },
     {
-      "t": 530,
+      "t": 378.5714285714286,
       "minerals": 420,
       "gas": 76,
       "mineralRate": 1763,
@@ -1577,7 +1578,7 @@
       "workers": 44
     },
     {
-      "t": 540,
+      "t": 385.7142857142857,
       "minerals": 615,
       "gas": 156,
       "mineralRate": 1651,
@@ -1587,7 +1588,7 @@
       "workers": 45
     },
     {
-      "t": 550,
+      "t": 392.8571428571429,
       "minerals": 570,
       "gas": 236,
       "mineralRate": 1707,
@@ -1597,7 +1598,7 @@
       "workers": 46
     },
     {
-      "t": 560,
+      "t": 400.0,
       "minerals": 680,
       "gas": 212,
       "mineralRate": 1735,
@@ -1607,7 +1608,7 @@
       "workers": 46
     },
     {
-      "t": 570,
+      "t": 407.14285714285717,
       "minerals": 795,
       "gas": 292,
       "mineralRate": 1791,
@@ -1617,7 +1618,7 @@
       "workers": 48
     },
     {
-      "t": 580,
+      "t": 414.28571428571433,
       "minerals": 475,
       "gas": 22,
       "mineralRate": 1847,
@@ -1627,7 +1628,7 @@
       "workers": 48
     },
     {
-      "t": 590,
+      "t": 421.42857142857144,
       "minerals": 130,
       "gas": 94,
       "mineralRate": 1847,
@@ -1637,7 +1638,7 @@
       "workers": 50
     },
     {
-      "t": 600,
+      "t": 428.5714285714286,
       "minerals": 255,
       "gas": 170,
       "mineralRate": 1847,
@@ -1647,7 +1648,7 @@
       "workers": 50
     },
     {
-      "t": 610,
+      "t": 435.7142857142857,
       "minerals": 90,
       "gas": 100,
       "mineralRate": 1847,
@@ -1657,7 +1658,7 @@
       "workers": 52
     },
     {
-      "t": 620,
+      "t": 442.8571428571429,
       "minerals": 170,
       "gas": 176,
       "mineralRate": 1931,
@@ -1667,7 +1668,7 @@
       "workers": 52
     },
     {
-      "t": 630,
+      "t": 450.00000000000006,
       "minerals": 60,
       "gas": 81,
       "mineralRate": 1931,
@@ -1677,7 +1678,7 @@
       "workers": 54
     },
     {
-      "t": 640,
+      "t": 457.14285714285717,
       "minerals": 360,
       "gas": 136,
       "mineralRate": 2043,
@@ -1687,7 +1688,7 @@
       "workers": 54
     },
     {
-      "t": 650,
+      "t": 464.28571428571433,
       "minerals": 215,
       "gas": 37,
       "mineralRate": 1987,
@@ -1697,7 +1698,7 @@
       "workers": 54
     },
     {
-      "t": 660,
+      "t": 471.42857142857144,
       "minerals": 255,
       "gas": 109,
       "mineralRate": 2015,
@@ -1707,7 +1708,7 @@
       "workers": 55
     },
     {
-      "t": 670,
+      "t": 478.5714285714286,
       "minerals": 215,
       "gas": 39,
       "mineralRate": 2015,
@@ -1717,7 +1718,7 @@
       "workers": 56
     },
     {
-      "t": 672,
+      "t": 480.0892857142857,
       "minerals": 275,
       "gas": 55,
       "mineralRate": 2239,
@@ -1727,7 +1728,7 @@
       "workers": 56
     },
     {
-      "t": 672,
+      "t": 480.0892857142857,
       "minerals": 275,
       "gas": 55,
       "mineralRate": 2239,

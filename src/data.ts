@@ -19,9 +19,10 @@ import type { GameData, EntityData } from "./engine.js";
  * │  supply 15->13. Chrono Boost: 50 energy, +50% for 20s; Nexus starts     │
  * │  50 energy, 200 max, regen 0.5625/s.                                     │
  * │                                                                         │
- * │  ⚠️ Still calibration targets (NOT in the game data — they come from     │
- * │  mining behavior): mineralRate*, gasRatePerWorker, probeBuildOccupancy.  │
- * │  Tune these against headless SC2 (see README "Validation").              │
+ * │  ⚠️ Still a calibration target (NOT in the game data — comes from        │
+ * │  mining behavior, hard to isolate from replay bank data alone):          │
+ * │  probeBuildOccupancy. mineralRate* and gasRatePerWorker are now fit      │
+ * │  directly from replay income data — see the economy block below.        │
  * └───────────────────────────────────────────────────────────────────────┘
  */
 
@@ -111,31 +112,44 @@ export const PROTOSS: GameData = {
     mineralPatchesPerBase: 8,
     gasGeysersPerBase: 2,
 
-    // Mineral rates (min/sec per worker). STRUCTURE from the "Treatise on the
-    // Economy of SCII" (tl.net/forum/legacy-of-the-void/482775): income is linear
-    // to the 16th worker with the 1st and 2nd worker on a patch mining EQUALLY;
-    // the 3rd worker (oversaturation) is ~half.
-    //   The treatise's absolute figure is 42 min/min (0.70/s) — but that's the
-    //   HotS saturated average. LotV's economy is faster, and pro early-game
-    //   (close patches + hand-mining) is faster still: the published 5.0.16 builds
-    //   only match at ~55 min/min (at 0.70 the sim is 24s off; see git history).
-    //   So we use the ground-truth-calibrated ~0.925/s, scaled by miningMicro.
-    mineralRateFirstWorker: 0.925, // ~55/min
-    mineralRateSecondWorker: 0.925, // ~55/min (equal to 1st, per the treatise)
-    mineralRateThirdWorker: 0.33, // ~20/min, 3rd worker (oversaturation)
-    // tools/mining_rate.py measured ~52/min steady-state across 4 real 5.0.16
-    // replays (n=40 gas-free samples) — below this 55.5/min figure, consistent
-    // with 55.5 modeling THEORETICAL-PERFECT hand-mining and real pro play
-    // landing at miningMicro ≈ 52/55.5 ≈ 0.94. Tried lowering the base rate
-    // itself instead: it made the fit to the hand-transcribed builds below
-    // WORSE (5.0s → 9.2s MAE) and barely changed replay-diff timing, because
-    // early Probe cadence turns out to be Nexus-QUEUE-limited (one probe
-    // every buildTime, back to back) not income-limited — the bank never
-    // runs dry that early regardless of which of these two rates is used.
-    // So: keep 1.0 as "theoretical perfect", and use ~0.94 (not the older
-    // ~0.9 guess) if you want a "real pro game" miningMicro preset.
-    miningMicro: 1.0, // 1.0 = pro hand-mining; ~0.9 = a-move ladder play; ~0.94 = replay-measured avg pro game
-    gasRatePerWorker: 0.63, // ~38/min; replay-measured steady-state median ~37/min, matches closely
+    // Mineral rates (min/sec per worker), FIT DIRECTLY from replay income data
+    // via tools/calibrate_income.py: a tiered (rate1==rate2, distinct rate3)
+    // ordinary-least-squares fit against every steady-state PlayerStatsEvent
+    // sample (t <= 300s, >=25s after the last Assimilator/Nexus change) across
+    // all 4 real 5.0.16 replays in replays/parsed/ (115 mineral samples, 23 of
+    // them exercising the oversaturation tier). R² = 0.979.
+    //   This superseded an EARLIER attempt at this same fit that used
+    //   tools/parse_replay.py's raw sc2reader timestamps directly and landed on
+    //   0.925/0.33 (see git history) — those timestamps turned out to be in
+    //   sc2reader's fixed-16fps convention (Normal-speed-equivalent seconds),
+    //   ~40% too large versus the Faster-clock seconds this engine uses
+    //   everywhere else (verified: parsed Gateway start->done was 65s, a raw/
+    //   Normal nominal value, not the 46.4 Faster value it should be). Fixed in
+    //   parse_replay.py (see its module docstring); every *.json under
+    //   replays/parsed/ was regenerated afterward. The old treatise-based
+    //   starting point (tl.net/forum/legacy-of-the-void/482775, HotS-era 0.70/s
+    //   saturated average) undershoots LotV pro early-game; this fit replaces it.
+    //   ⚠️ Known open tension: npm run validate's two hand-transcribed Spawning
+    //   Tool builds now show MORE deviation than before (1.9s/7.8s MAE -> 4.3s/
+    //   12.9s), because 0.925 had been tuned to fit those exact two milestone
+    //   lists directly (see git history) — good for those two games, but only
+    //   2 data points, and circular as a calibration target. This fit instead
+    //   regresses directly against 115 real income samples across 4 INDEPENDENT
+    //   replays, which is less overfit-prone even though it now tracks those
+    //   two specific published builds a bit less tightly (plausibly because
+    //   those two games individually had cleaner-than-average probe micro).
+    //   Worth another pass once more replays are available.
+    mineralRateFirstWorker: 0.871, // ~52.3/min
+    mineralRateSecondWorker: 0.871, // ~52.3/min (equal to 1st; fit assumes this per the treatise's structure)
+    mineralRateThirdWorker: 0.652, // ~39.1/min — oversaturated workers mine far closer to full rate than
+    // the old 0.33 guess assumed (0.652/0.871 ≈ 75%, not ~36%); only 23 real
+    // samples exercise this tier so treat it as lower-confidence than tier 1/2.
+    miningMicro: 1.0, // 1.0 = the replay-fit average pro game above; ~0.9 for scrappier a-move ladder play
+    // Gas: single-tier fit (no oversaturation concept — gas workers cap at 3/geyser),
+    // same replays/methodology as above. R² = 0.918. This is a big correction:
+    // the old 0.63/s guess was ~38% too low — real gas income is nearly on par
+    // with mineral income per worker, not the historically-slower-gas folk model.
+    gasRatePerWorker: 0.871, // ~52.2/min; was 0.63 (~38/min)
 
     // Chrono Boost / Nexus energy (confirmed LotV):
     nexusStartEnergy: 50,
