@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SC2 Build-Order Simulator (Protoss · 5.0.16)</title>
+    <style>
+      :root {
+        --bg: #0e1116;
+        --panel: #161b22;
+        --line: #262d38;
+        --fg: #e6edf3;
+        --muted: #8b98a9;
+        --accent: #4aa8ff;
+        --mineral: #59b0ff;
+        --gas: #47d16a;
+        --supply: #e0a030;
+        --err: #ff6b6b;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f6f8fa;
+          --panel: #ffffff;
+          --line: #d8dee4;
+          --fg: #1f2328;
+          --muted: #656d76;
+          --accent: #0969da;
+          --mineral: #0969da;
+          --gas: #1a7f37;
+          --supply: #9a6700;
+          --err: #cf222e;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      .wrap { max-width: 1000px; margin: 0 auto; padding: 28px 20px 60px; }
+      h1 { font-size: 22px; margin: 0 0 4px; }
+      .sub { color: var(--muted); margin: 0 0 24px; font-size: 14px; }
+      .sub code { background: var(--panel); padding: 1px 5px; border-radius: 4px; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+      @media (max-width: 780px) { .grid { grid-template-columns: 1fr; } }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 16px;
+      }
+      label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; }
+      select, textarea, button {
+        font: inherit; color: var(--fg); background: var(--bg);
+        border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%;
+      }
+      textarea { min-height: 260px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+      button {
+        background: var(--accent); color: #fff; border: none; cursor: pointer;
+        font-weight: 600; margin-top: 12px; padding: 10px;
+      }
+      button:hover { filter: brightness(1.08); }
+      .row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+      .desc { font-size: 13px; color: var(--muted); min-height: 34px; margin: 8px 0 0; }
+      table { border-collapse: collapse; width: 100%; font-size: 13px; }
+      th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+      th { color: var(--muted); font-weight: 600; }
+      td.mono, th.mono { font-family: ui-monospace, Menlo, monospace; white-space: nowrap; }
+      .tag { font-size: 11px; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+      .tag.unit { color: var(--mineral); border-color: var(--mineral); }
+      .tag.structure { color: var(--gas); border-color: var(--gas); }
+      .tag.chrono { color: var(--supply); border-color: var(--supply); }
+      .summary { font-size: 14px; margin: 4px 0 14px; }
+      .summary b { color: var(--accent); }
+      .err { color: var(--err); font-weight: 600; }
+      canvas { width: 100%; height: 220px; display: block; }
+      .legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+      .legend span::before { content: "■ "; }
+      .lm::before { color: var(--mineral); } .lg::before { color: var(--gas); } .ls::before { color: var(--supply); }
+      .warn { font-size: 12px; color: var(--muted); border-left: 3px solid var(--supply); padding: 6px 10px; margin-top: 20px; background: var(--panel); border-radius: 0 6px 6px 0; }
+      a { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>StarCraft II Build-Order Simulator</h1>
+      <p class="sub">
+        Protoss · patch <code>5.0.16</code> (8-worker start). Event-driven economy sim — no opponent, no combat.
+        Type a build order (one action per line); <code>chrono:X</code> casts Chrono Boost on the in-production <code>X</code>.
+      </p>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="row">
+            <div style="flex:1">
+              <label for="preset">Preset build</label>
+              <select id="preset"></select>
+            </div>
+          </div>
+          <p class="desc" id="desc"></p>
+          <label for="order">Build order</label>
+          <textarea id="order" spellcheck="false"></textarea>
+          <button id="run">▶ Simulate</button>
+        </div>
+
+        <div class="panel">
+          <div class="summary" id="summary"></div>
+          <canvas id="chart" width="900" height="440"></canvas>
+          <div class="legend">
+            <span class="lm">Minerals</span><span class="lg">Gas</span><span class="ls">Supply used / cap</span>
+          </div>
+          <div style="max-height: 300px; overflow: auto; margin-top: 14px;">
+            <table id="timeline">
+              <thead><tr><th class="mono">Start</th><th>Action</th><th class="mono">Done</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <p class="warn">
+        ⚠️ Unit build times &amp; income rates in <code>src/data.ts</code> are best-effort LotV values, not yet calibrated
+        to 5.0.16. Regenerate authoritatively from <a href="https://github.com/BurnySc2/sc2-techtree">sc2-techtree</a>
+        and calibrate income against headless SC2 (see the project README). The engine is correct regardless of these constants.
+      </p>
+    </div>
+
+    <script type="module">
+      import { simulate, fmt } from "./dist/engine.js";
+      import { PROTOSS } from "./dist/data.js";
+      import { BUILDS } from "./dist/builds.js";
+
+      const $ = (id) => document.getElementById(id);
+      const presetSel = $("preset"), orderTa = $("order"), descEl = $("desc");
+
+      BUILDS.forEach((b, i) => {
+        const o = document.createElement("option");
+        o.value = i; o.textContent = b.name; presetSel.appendChild(o);
+      });
+
+      function loadPreset(i) {
+        const b = BUILDS[i];
+        descEl.textContent = b.description;
+        orderTa.value = b.order.join("\n");
+      }
+      presetSel.addEventListener("change", () => loadPreset(+presetSel.value));
+
+      function run() {
+        const order = orderTa.value.split("\n").map((l) => l.trim()).filter(Boolean);
+        const res = simulate(PROTOSS, order);
+        const s = $("summary");
+        if (!res.ok) {
+          s.innerHTML = `<span class="err">Invalid build: ${res.error}</span>`;
+        } else {
+          const f = res.final;
+          s.innerHTML =
+            `Last action at <b>${fmt(res.finishTime)}</b> — ` +
+            `supply ${Math.round(f.supplyUsed)}/${Math.round(f.supplyCap)}, ` +
+            `${f.probes} probes, ${Math.round(f.minerals)} min, ${Math.round(f.gas)} gas`;
+        }
+
+        const tb = $("timeline").querySelector("tbody");
+        tb.innerHTML = "";
+        for (const a of res.actions) {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            `<td class="mono">${fmt(a.startTime)}</td>` +
+            `<td><span class="tag ${a.kind}">${a.kind}</span> ${a.name}</td>` +
+            `<td class="mono">${fmt(a.finishTime)}</td>`;
+          tb.appendChild(tr);
+        }
+        drawChart(res.snapshots);
+      }
+      $("run").addEventListener("click", run);
+
+      function drawChart(snaps) {
+        const cv = $("chart"), ctx = cv.getContext("2d");
+        const W = cv.width, H = cv.height, pad = 34;
+        ctx.clearRect(0, 0, W, H);
+        if (!snaps.length) return;
+        const tMax = Math.max(1, snaps[snaps.length - 1].t);
+        const resMax = Math.max(50, ...snaps.map((s) => Math.max(s.minerals, s.gas)));
+        const supMax = Math.max(15, ...snaps.map((s) => s.supplyCap));
+        const css = getComputedStyle(document.documentElement);
+        const x = (t) => pad + (t / tMax) * (W - pad * 2);
+        const yRes = (v) => H - pad - (v / resMax) * (H - pad * 2);
+        const ySup = (v) => H - pad - (v / supMax) * (H - pad * 2);
+
+        // axes
+        ctx.strokeStyle = css.getPropertyValue("--line"); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(pad, H - pad); ctx.lineTo(W - pad, H - pad); ctx.stroke();
+        ctx.fillStyle = css.getPropertyValue("--muted"); ctx.font = "11px sans-serif";
+        for (let t = 0; t <= tMax; t += Math.max(30, Math.round(tMax / 6 / 30) * 30)) {
+          ctx.fillText(fmt(t), x(t) - 10, H - pad + 16);
+        }
+
+        const line = (key, y, color) => {
+          ctx.strokeStyle = css.getPropertyValue(color); ctx.lineWidth = 2; ctx.beginPath();
+          snaps.forEach((s, i) => { const px = x(s.t), py = y(s[key]); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+          ctx.stroke();
+        };
+        line("minerals", yRes, "--mineral");
+        line("gas", yRes, "--gas");
+        // supply cap (dashed) + used (solid)
+        ctx.setLineDash([4, 4]); line("supplyCap", ySup, "--supply"); ctx.setLineDash([]);
+        line("supplyUsed", ySup, "--supply");
+      }
+
+      loadPreset(0); run();
+    </script>
+  </body>
+</html>

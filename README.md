@@ -1,0 +1,117 @@
+# sc2sim — StarCraft II build-order simulator (Protoss)
+
+An event-driven economy simulator for StarCraft II build orders, written in
+TypeScript so it can run both in Node and directly in the browser on this site.
+Currently models **Protoss** on patch **5.0.16** (the 8-worker-start economy).
+
+> **Goal:** a fast, deterministic simulator you can call millions of times inside
+> a search loop, so an optimizer can *discover* build orders instead of us
+> hand-writing them. This repo is milestone 1–2 (a correct, validated simulator).
+> Milestone 3 is the optimizer (see Roadmap).
+
+## What it does
+
+Given a build order like:
+
+```
+Probe
+chrono:Probe
+Probe
+Pylon
+Gateway
+Assimilator
+CyberneticsCore
+Stalker
+```
+
+it computes **when** each action happens, respecting minerals, gas, supply,
+worker saturation, production-building availability, tech prerequisites, and
+Chrono Boost / Nexus energy. `chrono:X` casts Chrono Boost on the in-production `X`.
+
+## Run it
+
+```bash
+npm install        # just TypeScript
+npm run demo       # compile + run the sample builds in Node
+```
+
+Open the interactive version in a browser (after `npm run build`, which emits
+`dist/`): serve the folder and visit `index.html`. On this site it's published at
+`/sc2sim/`.
+
+## Why no full game engine?
+
+Build-order optimization needs **one player, no opponent, no combat, no map** —
+just the economy and tech tree. That abstraction (from Churchill & Buro's
+*Build Order Optimization in StarCraft*, and the BOSS project) is what makes the
+sim small and fast enough to search over.
+
+## Architecture
+
+| File | Responsibility |
+|------|----------------|
+| `src/engine.ts` | Race-agnostic **event-driven simulator**. Fast-forwards the clock to the next moment something can happen; never ticks per-frame. |
+| `src/data.ts`   | **All the numbers** — costs, build times, supply, tech requirements, income + Chrono constants. Swap this per patch; the engine never changes. |
+| `src/builds.ts` | Sample hand-written build orders used to exercise the sim. |
+| `src/cli.ts`    | Node runner that prints timelines. |
+| `index.html`    | Self-contained browser UI (timeline + resource chart) importing `dist/`. |
+
+The simulation loop, per action: compute the earliest time all preconditions
+(money, supply, a free producer, met prerequisites) are satisfied → jump the
+clock there, accruing income over the interval → start the action, occupying its
+producer and scheduling its completion.
+
+## ⚠️ Data accuracy
+
+- **Confirmed for 5.0.16:** 8-worker start, Nexus supply 13, and the Chrono Boost
+  / Nexus-energy numbers (50 energy, +50% for 20s, 200 max, 0.5625/s regen).
+- **Approximate — verify before trusting timings:** unit/structure build times,
+  costs, and the income rates (`mineralRate*`, `gasRatePerWorker`) in `data.ts`.
+  These are best-effort LotV values. Regenerate the authoritative numbers from
+  [BurnySc2/sc2-techtree](https://github.com/BurnySc2/sc2-techtree)'s `data.json`
+  and drop them into `data.ts`. **The engine is correct regardless** — the
+  constants are pure data.
+
+An optimizer is adversarial against wrong constants: if the income model is off,
+the "optimal" build will be one that abuses the error. So validation comes before
+optimization.
+
+## Validation — including running SC2 headless (yes, this is possible)
+
+You can get **ground-truth timings** by scripting build orders in an actual
+headless StarCraft II instance and comparing against this sim:
+
+- **Headless Linux build.** Blizzard ships self-contained **Linux SC2 binaries**
+  specifically for the ML/AI community — they run with no rendering. Combined with
+  [BurnySc2/python-sc2](https://github.com/BurnySc2/python-sc2) (or DeepMind's
+  [pysc2](https://github.com/google-deepmind/pysc2)), you can spawn a bot on an
+  empty map **with no opponent**, execute a scripted build via the raw API, and
+  read back the exact game-time each unit/structure completes.
+- **Faster than real time.** Run stepped (non-realtime) mode and it simulates far
+  quicker than a played game; you can batch many builds in parallel.
+- **The calibration loop:** script a known build in headless SC2 → record real
+  completion times → tune `data.ts` (build times + the income curve) until this
+  sim matches within ~1–2s → *then* trust the optimizer's outputs.
+- **⚠️ Patch-version caveat:** the published Linux headless build usually **lags
+  the live ladder patch**. Check its version before calibrating — its economy
+  constants may still be the 12-worker pre-5.0.16 numbers, in which case
+  calibrate `data.ts` to *that* version, or wait for the matching Linux build.
+
+## Roadmap
+
+1. ✅ Event-driven economy simulator (this).
+2. ✅ Chrono Boost / Nexus energy, sample builds, browser UI.
+3. ⏭️ **Calibrate** `data.ts` from sc2-techtree + headless SC2.
+4. ⏭️ **Optimizer.** Start with a genetic algorithm over the sim (build order =
+   chromosome, fitness = time-to-goal or army-value-at-T). Watch it rediscover
+   known builds first, then explore. Later: depth-first branch & bound (BOSS-style)
+   with an admissible makespan bound for provably-fast min-time openers.
+5. ⏭️ Terran & Zerg data (Zerg needs larva/inject modeling).
+6. ⏭️ Auto-insert workers/supply so the search only decides the interesting actions.
+
+## References
+
+- Churchill & Buro, *Build Order Optimization in StarCraft* (AAAI 2011)
+- BOSS — Build Order Search System (David Churchill)
+- [BurnySc2/sc2-planner](https://github.com/BurnySc2/sc2-planner) — a build calculator on GitHub Pages
+- [Blizzard 5.0.16 patch notes](https://news.blizzard.com/en-us/article/24259080/starcraft-ii-5-0-16-patch-notes)
