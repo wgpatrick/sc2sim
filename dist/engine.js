@@ -42,12 +42,17 @@ function parseAction(raw) {
         return { chrono: true, name: a.slice(a.indexOf(":") + 1).trim(), location: "auto" };
     }
     const at = a.indexOf("@");
+    const base = (at >= 0 ? a.slice(0, at) : a).trim();
+    const loc = at >= 0 && a.slice(at + 1).trim().toLowerCase() === "proxy" ? "proxy" : "home";
+    if (base.toLowerCase() === "mule")
+        return { chrono: false, special: "mule", name: base, location: loc };
+    if (base.toLowerCase() === "injectlarva")
+        return { chrono: false, special: "inject", name: base, location: loc };
     if (at >= 0) {
-        const loc = a.slice(at + 1).trim().toLowerCase();
         return {
             chrono: false,
-            name: a.slice(0, at).trim(),
-            location: loc === "proxy" ? "proxy" : "home",
+            name: base,
+            location: loc,
         };
     }
     return { chrono: false, name: a, location: "auto" };
@@ -69,6 +74,13 @@ class State {
         /** Zerg only: stored larva per location, and pending regen events. */
         this.larva = { home: 0, proxy: 0 };
         this.larvaRegens = [];
+        /** Generic per-caster-type energy (see EconomyConfig.casters), keyed by
+         * caster entity name. */
+        this.casterEnergy = {};
+        /** Terran only: active MULE income boosts (see EconomyConfig.mule). */
+        this.mules = [];
+        /** Zerg only: pending Queen inject larva deliveries (see EconomyConfig.inject). */
+        this.injects = [];
         const e = data.economy;
         this.minerals = e.startingMinerals;
         this.gas = e.startingGas;
@@ -83,6 +95,13 @@ class State {
         }
         if (e.larvaRegenSeconds != null)
             this.larva.home = e.larvaCapPerTownhall ?? 3;
+    }
+    /** True if `name` is this race's harvesting worker (Probe/SCV/Drone). */
+    isWorker(name) {
+        return this.data.entities[name]?.isWorker ?? false;
+    }
+    supplyCostOf(name) {
+        return this.data.entities[name]?.supplyCost ?? 0;
     }
     get eco() {
         return this.data.economy;
@@ -127,13 +146,26 @@ class State {
         const raw = t1 * e.mineralRateFirstWorker +
             t2 * e.mineralRateSecondWorker +
             t3 * e.mineralRateThirdWorker;
-        return raw * e.miningMicro;
+        return raw * e.miningMicro + this.muleBonus;
+    }
+    /** Sum of currently-active MULE mineral rates (Terran only, see EconomyConfig.mule). */
+    get muleBonus() {
+        return this.mules.reduce((sum, m) => (m.until > this.time + EPS ? sum + m.rate : sum), 0);
     }
     get gasRate() {
         return this.gasWorkers * this.eco.gasRatePerWorker;
     }
     get energyRate() {
         return this.townhallCount * this.eco.nexusEnergyRegen;
+    }
+    /** Regen rate for a generic caster-energy pool (see EconomyConfig.casters). */
+    casterEnergyRate(type) {
+        const cfg = this.eco.casters?.[type];
+        return cfg ? this.count(type) * cfg.regenPerCaster : 0;
+    }
+    casterEnergyCap(type) {
+        const cfg = this.eco.casters?.[type];
+        return cfg ? this.count(type) * cfg.maxEnergyPerCaster : 0;
     }
     freeProducers(type, loc) {
         const done = this.completedLoc[type]?.[loc] ?? 0;
@@ -182,6 +214,10 @@ function nextEventTime(s) {
         t = Math.min(t, r.until);
     for (const r of s.larvaRegens)
         t = Math.min(t, r.at);
+    for (const m of s.mules)
+        t = Math.min(t, m.until);
+    for (const r of s.injects)
+        t = Math.min(t, r.at);
     return t;
 }
 /** Consuming a larva always opens room for one more, up to the per-location
@@ -199,8 +235,21 @@ function advanceBy(s, dt, snaps) {
     s.minerals += s.mineralRate * dt;
     s.gas += s.gasRate * dt;
     s.energy = Math.min(s.eco.nexusMaxEnergy, s.energy + s.energyRate * dt);
+    for (const type of Object.keys(s.eco.casters ?? {})) {
+        const have = s.casterEnergy[type] ?? 0;
+        s.casterEnergy[type] = Math.min(s.casterEnergyCap(type), have + s.casterEnergyRate(type) * dt);
+    }
     s.time += dt;
     snap(s, snaps);
+}
+/** A newly-completed caster instance immediately contributes its startEnergy
+ * (e.g. a fresh Orbital Command starts with 50 energy, a fresh Queen with 25). */
+function bumpCasterEnergyOnComplete(s, name) {
+    const cfg = s.eco.casters?.[name];
+    if (!cfg)
+        return;
+    const have = s.casterEnergy[name] ?? 0;
+    s.casterEnergy[name] = Math.min(s.casterEnergyCap(name), have + cfg.startEnergy);
 }
 function advanceToNextEvent(s, snaps) {
     var _a, _b, _c, _d, _e, _f;
@@ -221,6 +270,7 @@ function advanceToNextEvent(s, snaps) {
             ((_a = s.completedLoc)[_b = p.producer] ?? (_a[_b] = { home: 0, proxy: 0 }))[p.location] -= 1;
             s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
             ((_c = s.completedLoc)[_d = p.name] ?? (_c[_d] = { home: 0, proxy: 0 }))[p.location] += 1;
+            bumpCasterEnergyOnComplete(s, p.name);
             continue;
         }
         s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
@@ -228,8 +278,9 @@ function advanceToNextEvent(s, snaps) {
         // later be consumed as a morphFrom source (e.g. Zergling -> Baneling),
         // which checks freeProducers()/completedLoc same as a building would.
         ((_e = s.completedLoc)[_f = p.name] ?? (_e[_f] = { home: 0, proxy: 0 }))[p.location] += 1;
-        if (p.name === "Probe")
+        if (s.isWorker(p.name))
             s.probesTotal += 1;
+        bumpCasterEnergyOnComplete(s, p.name);
     }
     s.probeReleases = s.probeReleases.filter((r) => r > s.time + EPS);
     s.producerReleases = s.producerReleases.filter((r) => r.until > s.time + EPS);
@@ -238,6 +289,14 @@ function advanceToNextEvent(s, snaps) {
             s.larva[r.loc] += 1;
     }
     s.larvaRegens = s.larvaRegens.filter((r) => r.at > s.time + EPS);
+    s.mules = s.mules.filter((m) => m.until > s.time + EPS);
+    const injectLarva = s.eco.inject?.larvaCount ?? 0;
+    for (const r of s.injects) {
+        // Inject deliberately bypasses larvaCap -- see EconomyConfig.inject.
+        if (r.at <= s.time + EPS)
+            s.larva[r.loc] += injectLarva;
+    }
+    s.injects = s.injects.filter((r) => r.at > s.time + EPS);
     snap(s, snaps);
     return true;
 }
@@ -319,6 +378,18 @@ export function simulate(data, order, map) {
                 break;
             continue;
         }
+        if (pa.special === "mule") {
+            castMule(s, log, snaps);
+            if (++guard > SAFETY)
+                break;
+            continue;
+        }
+        if (pa.special === "inject") {
+            castInject(s, pa.location === "proxy" ? "proxy" : "home", log, snaps);
+            if (++guard > SAFETY)
+                break;
+            continue;
+        }
         const ent = data.entities[pa.name];
         if (!ent)
             return fail(s, log, snaps, actions, `Unknown entity "${pa.name}"`, data, map);
@@ -391,20 +462,27 @@ function startEntity(s, ent, plan, map, actions, log) {
             producerForItem = plan.producerType; // occupies the Gateway being morphed
             verb = "morph";
             break;
-        case "build":
+        case "build": {
+            let occupancy = s.eco.probeBuildOccupancy;
             if (loc === "proxy") {
                 // First proxy building pays the cross-map probe walk once; later proxy
                 // buildings start locally (a probe is already out there).
                 const travel = s.proxyEstablished ? 0 : map.proxyProbeTravelSeconds;
-                const occupancy = s.proxyEstablished ? s.eco.probeBuildOccupancy : map.proxyProbeTravelSeconds;
+                occupancy = s.proxyEstablished ? s.eco.probeBuildOccupancy : map.proxyProbeTravelSeconds;
                 s.proxyEstablished = true;
-                s.probeReleases.push(s.time + occupancy);
                 finishTime = s.time + travel + ent.buildTime;
             }
+            if (ent.consumesBuilder) {
+                // Every Zerg structure morphs from and permanently consumes a Drone
+                // (unlike Probe/SCV, which return to mining) -- see EntityData.
+                s.probesTotal -= 1;
+                s.supplyUsed -= s.supplyCostOf(ent.producer); // the consumed worker's own supply cost
+            }
             else {
-                s.probeReleases.push(s.time + s.eco.probeBuildOccupancy);
+                s.probeReleases.push(s.time + occupancy);
             }
             break;
+        }
         case "gate":
             s.supplyUsed += ent.supplyCost;
             producerForItem = plan.producerType; // Gateway/Stargate/Robo, busy until done
@@ -483,6 +561,62 @@ function castChrono(s, target, log, snaps) {
         else
             advanceToNextEvent(s, snaps);
     }
+}
+/** Wait for a generic caster-energy pool (see EconomyConfig.casters) to
+ * afford `cost`, then spend it. Returns false (and logs why) if the caster
+ * doesn't exist yet and never will, or if the sim runs out of future events
+ * to advance through while waiting -- mirrors castChrono's wait loop, but
+ * generalized past the single Nexus/Chrono energy pool. */
+function castCasterAbility(s, casterType, cost, label, log, snaps) {
+    let guard = 0;
+    while (true) {
+        if (++guard > 100000)
+            return false;
+        const have = s.casterEnergy[casterType] ?? 0;
+        if (have >= cost - EPS) {
+            s.casterEnergy[casterType] = have - cost;
+            return true;
+        }
+        const rate = s.casterEnergyRate(casterType);
+        const tEnergy = rate > 0 ? (cost - have) / rate : Infinity;
+        const tEvent = nextEventTime(s) - s.time;
+        if (isFinite(tEnergy) && tEnergy <= tEvent + EPS) {
+            advanceBy(s, tEnergy, snaps);
+        }
+        else if (isFinite(tEvent)) {
+            advanceToNextEvent(s, snaps);
+        }
+        else {
+            log.push(`${fmt(s.time)}  ${label} SKIPPED (never available)`);
+            return false;
+        }
+    }
+}
+/** Terran: Calldown MULE from Orbital Command energy (see EconomyConfig.mule). */
+function castMule(s, log, snaps) {
+    const mule = s.eco.mule;
+    if (!mule || !s.eco.casters?.["OrbitalCommand"]) {
+        log.push(`${fmt(s.time)}  MULE SKIPPED (not modeled for this race)`);
+        return false;
+    }
+    if (!castCasterAbility(s, "OrbitalCommand", mule.cost, "MULE", log, snaps))
+        return false;
+    s.mules.push({ until: s.time + mule.durationSeconds, rate: mule.mineralRate });
+    log.push(`${fmt(s.time)}  MULE called down  (+${mule.mineralRate.toFixed(2)}/s minerals for ${mule.durationSeconds.toFixed(0)}s)`);
+    return true;
+}
+/** Zerg: Queen Spawn Larvae inject (see EconomyConfig.inject). */
+function castInject(s, loc, log, snaps) {
+    const inject = s.eco.inject;
+    if (!inject || !s.eco.casters?.["Queen"]) {
+        log.push(`${fmt(s.time)}  InjectLarva SKIPPED (not modeled for this race)`);
+        return false;
+    }
+    if (!castCasterAbility(s, "Queen", inject.cost, "InjectLarva", log, snaps))
+        return false;
+    s.injects.push({ loc, at: s.time + inject.delaySeconds });
+    log.push(`${fmt(s.time)}  InjectLarva${loc === "proxy" ? " @proxy" : ""}  (+${inject.larvaCount} larva in ${inject.delaySeconds.toFixed(1)}s)`);
+    return true;
 }
 function fail(s, log, snaps, actions, error, data, map) {
     log.push(`ERROR: ${error}`);

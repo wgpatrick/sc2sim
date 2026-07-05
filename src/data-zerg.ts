@@ -32,21 +32,42 @@ import type { GameData, EntityData } from "./engine.js";
  * │  Zergling, Roach, Baneling, Queen) are well-established LotV-stable      │
  * │  book values, not individually replay-verified.                         │
  * │                                                                         │
- * │  NOT MODELED (documented gap): Lair/Hive tech tiers and everything      │
- * │  gated behind them (Hydralisk, Mutalisk, ...), Queen larva injects      │
- * │  (the engine's larva regen is the BASELINE passive rate only — real     │
- * │  play roughly doubles effective larva throughput via injects, so        │
- * │  Zerg army timings from this model will run consistently LATE relative  │
- * │  to a played game that injects on cooldown), creep spread/speed,        │
+ * │  Queen inject (2026-07-05): "InjectLarva" is now MODELED as an engine    │
+ * │  mechanic (see engine.ts's generic per-caster energy pool --             │
+ * │  EconomyConfig.casters/.inject). Cost (25 energy), delay (29s Normal /    │
+ * │  20.7s Faster), yield (+3 larva), and the universal 0.5625/s energy      │
+ * │  regen are well-known SC2 ability constants, NOT independently replay-   │
+ * │  calibrated -- parse_replay.py doesn't yet detect real Spawn Larvae       │
+ * │  casts, so a REPLAYED real game's threat curve (opponent.ts) still only   │
+ * │  reflects passive larva regen, not real injects. The MECHANIC is real     │
+ * │  and usable in a hand-written or searched build order now; historical     │
+ * │  replay-derived curves are not yet inject-aware.                        │
+ * │                                                                         │
+ * │  Lair tier (2026-07-05): Lair (Hatchery morph) + HydraliskDen/Spire +    │
+ * │  Hydralisk/Mutalisk are now modeled. Costs/buildTimes/combat stats        │
+ * │  pulled from Liquipedia (current LotV), NOT replay-verified. Mutalisk's   │
+ * │  bounce attack (Glave Wurm: 9/3/1 dmg across up to 3 targets) is modeled   │
+ * │  as single-target-only dps (9/1.09s ≈ 8.3) for consistency with this       │
+ * │  project's no-splash-modeled convention elsewhere -- understates its       │
+ * │  real value against groups, same caveat as Baneling/other AoE units.       │
+ * │                                                                         │
+ * │  NOT MODELED (documented gap): Hive tier (Ultralisk Cavern, Infestation   │
+ * │  Pit, Ultralisk, Infestor, Viper, Lurker Den/Lurker, Overseer, ...),      │
+ * │  creep spread/speed,                                                     │
  * │  multi-hatchery larva accounting (the engine's regen scheduling is      │
  * │  consumption-triggered — see scheduleLarvaRegen — so a newly-finished   │
  * │  2nd Hatchery's extra capacity only fills in once something is          │
  * │  actually being produced afterward, not immediately on completion).     │
- * │  The Drone consumed by morphing into a Hatchery is NOT modeled as       │
- * │  consumed (this engine's generic "build" mode assumes the builder       │
- * │  survives, true for Probe/SCV but not for a Zerg expansion) -- only     │
- * │  matters for expansions, out of scope this pass (techClosure-style      │
- * │  single-base timings only, same scope limit as the Protoss optimizer).  │
+ * │                                                                         │
+ * │  FIXED 2026-07-05: every structure below now correctly consumes its      │
+ * │  builder Drone (EntityData.consumesBuilder) -- this was a real, not      │
+ * │  cosmetic, gap: it was ALSO discovered that engine.ts's probesTotal      │
+ * │  tracker had a hardcoded `name === "Probe"` check, meaning trained        │
+ * │  Drones/SCVs never grew the available-worker count for ANY non-Protoss   │
+ * │  race at all (a much bigger bug than just the consumesBuilder gap this    │
+ * │  entry used to describe) -- see engine.ts's State.isWorker(). Both are    │
+ * │  fixed now; Terran/Zerg economies actually grow past their starting 8     │
+ * │  workers in simulation, not just in the replay data they're fit from.    │
  * └───────────────────────────────────────────────────────────────────────┘
  */
 
@@ -78,16 +99,22 @@ function add(e: EntityData) {
 }
 
 // --- Structures (buildTime = replay-measured Faster-clock seconds) --------
-// Hatchery's real-game morph-from-Drone is not modeled (see header) --
-// treated as an ordinary Drone-built structure like a Nexus/CommandCenter.
-add(ent("Hatchery", 300, 0, 71.4, "Drone", { supplyProvided: 4, isStructure: true }));
-add(ent("Extractor", 25, 0, 21.4, "Drone", { isStructure: true }));
-add(ent("SpawningPool", 200, 0, 46.4, "Drone", { isStructure: true }));
-add(ent("RoachWarren", 150, 0, 39.3, "Drone", { isStructure: true, requires: ["SpawningPool"] }));
-add(ent("EvolutionChamber", 75, 0, 25.0, "Drone", { isStructure: true }));
+// Every Zerg structure morphs from and PERMANENTLY CONSUMES a Drone (fixed
+// 2026-07-05 -- see engine.ts's EntityData.consumesBuilder / State.probesTotal;
+// previously modeled like a Nexus/CommandCenter where the builder survives).
+add(ent("Hatchery", 300, 0, 71.4, "Drone", { supplyProvided: 4, isStructure: true, consumesBuilder: true }));
+add(ent("Extractor", 25, 0, 21.4, "Drone", { isStructure: true, consumesBuilder: true }));
+add(ent("SpawningPool", 200, 0, 46.4, "Drone", { isStructure: true, consumesBuilder: true }));
+add(ent("RoachWarren", 150, 0, 39.3, "Drone", { isStructure: true, requires: ["SpawningPool"], consumesBuilder: true }));
+add(ent("EvolutionChamber", 75, 0, 25.0, "Drone", { isStructure: true, consumesBuilder: true }));
 // Replay-confirmed 2026-07-05: 42.9 exactly, 4/4 samples in the expanded
 // 12-replay corpus (was a 32.1 book-value guess before this corpus existed).
-add(ent("BanelingNest", 100, 50, 42.9, "Drone", { isStructure: true, requires: ["SpawningPool"] }));
+add(ent("BanelingNest", 100, 50, 42.9, "Drone", { isStructure: true, requires: ["SpawningPool"], consumesBuilder: true }));
+// Lair tier (see header) — Liquipedia LotV values, not replay-verified.
+// Lair morphs from HATCHERY, not Drone -- no builder to consume (already a morph).
+add(ent("Lair", 150, 100, 40.7, "Hatchery", { isStructure: true, morphFrom: "Hatchery", requires: ["SpawningPool"] }));
+add(ent("HydraliskDen", 100, 100, 20.7, "Drone", { isStructure: true, requires: ["Lair"], consumesBuilder: true })); // 29s Normal -> 20.7 Faster
+add(ent("Spire", 150, 150, 47.1, "Drone", { isStructure: true, requires: ["Lair"], consumesBuilder: true })); // 66s Normal -> 47.1 Faster
 
 // --- Drone (worker) --------------------------------------------------------
 add(ent("Drone", 50, 0, 12.1, "Larva", { supplyCost: 1, isWorker: true, moveSpeed: 2.8125 }));
@@ -97,6 +124,11 @@ add(ent("Drone", 50, 0, 12.1, "Larva", { supplyCost: 1, isWorker: true, moveSpee
 add(ent("Overlord", 100, 0, 17.9, "Larva", { supplyProvided: 8, moveSpeed: 0.8203, hp: 200, shields: 0 }));
 add(ent("Zergling", 25, 0, 17.1, "Larva", { supplyCost: 0.5, requires: ["SpawningPool"], moveSpeed: 4.13, dps: 10.0, hp: 35, shields: 0 }));
 add(ent("Roach", 75, 25, 20.7, "Larva", { supplyCost: 2, requires: ["RoachWarren"], moveSpeed: 2.25, dps: 14.6, hp: 145, shields: 0 }));
+// Lair-tier (see header) — Liquipedia LotV: Hydralisk 100/50/2 supply, 24s
+// (Faster 17.1), 90 HP, 12 dmg/0.59s -> 20.4 dps. Mutalisk 100/100/2 supply,
+// 24s (Faster 17.1), 120 HP, 9 dmg (first bounce only, see header) /1.09s -> 8.3 dps.
+add(ent("Hydralisk", 100, 50, 17.1, "Larva", { supplyCost: 2, requires: ["HydraliskDen"], moveSpeed: 3.15, dps: 20.4, hp: 90, shields: 0 }));
+add(ent("Mutalisk", 100, 100, 17.1, "Larva", { supplyCost: 2, requires: ["Spire"], moveSpeed: 5.6, dps: 8.3, hp: 120, shields: 0 }));
 
 // --- Morph (from an existing unit, not larva) ------------------------------
 add(ent("Baneling", 25, 25, 10.0, "Zergling", { supplyCost: 0, morphFrom: "Zergling", requires: ["BanelingNest"], moveSpeed: 4.13, dps: 20.0, hp: 30, shields: 0 }));
@@ -147,9 +179,21 @@ export const ZERG: GameData = {
     probeBuildOccupancy: 4,
     warpInTime: 4,
     // Larva: measured directly from replays (see header) — baseline passive
-    // regen only, NOT accounting for Queen inject (see header caveat).
+    // regen only. Queen inject is now a separate additive mechanic below,
+    // not folded into this rate (see header).
     larvaRegenSeconds: 9.51,
     larvaCapPerTownhall: 3,
+
+    // Queen inject (see header): energy pool + "InjectLarva" action. Universal
+    // 0.5625/s regen (same rate as Nexus's), 25 start energy per Queen.
+    casters: {
+      Queen: { startEnergy: 25, maxEnergyPerCaster: 200, regenPerCaster: 0.5625 },
+    },
+    inject: {
+      cost: 25,
+      larvaCount: 3,
+      delaySeconds: 20.7, // 29s Normal / 1.4 (Faster clock, same convention as buildTime)
+    },
   },
   entities,
 };

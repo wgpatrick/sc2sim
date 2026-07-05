@@ -57,6 +57,13 @@ export function valueAt(curve, t) {
 export function assessDanger(myResult, data, curve) {
     const mine = valueOverTime(myResult, data);
     const sampleTimes = [...new Set([...mine.map((p) => p.t), ...curve.points.map((p) => p.t)])].sort((a, b) => a - b);
+    if (sampleTimes.length === 0) {
+        // Neither curve ever delivered anything (e.g. a replay that deadlocks at
+        // t=0 -- see opponent-cli.ts's discovery notes). There's no data to be
+        // "behind" on, so 0 (neutral) is the honest answer, not -Infinity, which
+        // would misleadingly read as "infinitely safe".
+        return { worstDeficit: 0, worstDeficitTime: 0, myFinalValue: 0, opponentFinalValue: 0 };
+    }
     const myValueAt = (t) => {
         let v = 0;
         for (const p of mine) {

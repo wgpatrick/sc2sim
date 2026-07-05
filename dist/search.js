@@ -36,12 +36,18 @@ function techClosure(target, data, extra = []) {
     }
     for (const x of extra)
         addStruct(x);
+    // Pylon is auto-inserted by generateBuild's supply logic, not a discovery
+    // target for the GA to place itself.
     need.delete("Pylon");
-    need.delete("Nexus");
     return [...need];
 }
 export function buildVocabulary(target, data, warp) {
-    const structures = techClosure(target, data, warp ? ["CyberneticsCore"] : []);
+    // The townhall (Nexus/CommandCenter/Hatchery) is included so the GA can
+    // discover taking a natural expansion -- previously hardcoded out (see git
+    // history), which silently made "build a 2nd base" undiscoverable no
+    // matter how much it would have helped a longer-horizon/safety objective.
+    const extra = [data.economy.startingTownhall, ...(warp ? ["CyberneticsCore"] : [])];
+    const structures = techClosure(target, data, extra);
     const units = Object.keys(target);
     const chronoTargets = ["Probe", ...structures, ...units, ...(warp ? ["WarpGateResearch"] : [])];
     return { structures, units, chronoTargets, warp };

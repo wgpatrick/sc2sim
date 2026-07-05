@@ -133,6 +133,21 @@ producer and scheduling its completion.
   fixture was regenerated. This was silently inflating the diff harness's
   reported error (Gateway sim 1:47 vs "real" 2:32) in a way that looked like
   an income-model problem but wasn't.
+- **Found and fixed a worker-count bug affecting every non-Protoss sim.**
+  `engine.ts`'s tracker for "how many workers are available to mine" only
+  ever incremented on a completed unit literally named `"Probe"` -- so
+  trained SCVs and Drones never grew Terran/Zerg's available-worker count
+  past the starting 8 in ANY simulation, including everything built earlier
+  this session (income calibration itself was unaffected, since that's fit
+  directly against replay-recorded worker counts, not the engine's own
+  tracking -- but every Terran/Zerg *simulated* build was quietly running on
+  a frozen 8-worker economy forever). Fixed by checking `EntityData.isWorker`
+  instead of the hardcoded name (2026-07-05). Also fixed: every Zerg
+  structure now correctly consumes its builder Drone permanently (morphing
+  a Drone into a building removes it from the mining pool in the real
+  game; the engine previously treated every race's builder as surviving,
+  true for Probe/SCV but not Zerg). Both fixes changed the diff harness's
+  bank MAE (see below) -- not a regression, a more honestly-grounded number.
 
 An optimizer is adversarial against wrong constants: if the income model is off,
 the "optimal" build will be one that abuses the error. So validation comes before
@@ -162,8 +177,15 @@ then re-run `tools/calibrate_income.py` against fresh replays of that patch.
   picks Protoss/Terran/Zerg data per replay's own player race, added
   2026-07-05 alongside the corpus expansion — previously hardcoded to
   Protoss, which would have silently mis-simulated the new Terran/Zerg-side
-  files): **81 minerals / 48 gas mean bank error across all 26 parsed replay
-  sides** (Protoss, Terran, and Zerg together). Individual-game timing MAE
+  files): **92 minerals / 58 gas mean bank error across all 26 parsed replay
+  sides** (Protoss, Terran, and Zerg together; Terran ~93/38, Zerg ~94/85 --
+  Zerg's gas number is the weak spot, consistent with its still-unadopted
+  gas-income fit, see "Data accuracy"). This number moved from an initial
+  81/48 after fixing the worker-count and Drone-consumption bugs above —
+  those two fixes pull in opposite directions (more countable workers raises
+  simulated income, correctly-consumed builder Drones lowers it for Zerg),
+  and the fixed number is the honest one, not the earlier coincidentally-
+  lower one. Individual-game timing MAE
   ranges from ~1s to a couple minutes — real games diverge from any fixed
   build order once scouting/tech decisions kick in, which is exactly why the
   bank comparison (not raw timing MAE) is the metric to trust, and why the
@@ -335,38 +357,58 @@ hand-authored archetype:
 3. **`dangerScorer()`** is a `Scorer` (pluggable into the GA search above)
    that ranks Protoss builds by the worst moment they're ever behind that
    curve, instead of by raw arrival time.
+4. **MULE and Queen inject are now modeled** (2026-07-05): Terran's Orbital
+   Command + Calldown: MULE and Zerg's Queen + Spawn Larvae inject both run
+   on the same generalized mechanic in `engine.ts` (a per-caster-type energy
+   pool that scales with how many casters exist — `EconomyConfig.casters` —
+   plus a race-specific effect: `.mule` adds a temporary flat mineral-income
+   bonus, `.inject` adds a delayed larva batch). Action syntax: `"MULE"` and
+   `"InjectLarva"`. Ability constants (cost, duration/delay, universal
+   0.5625/s energy regen) are well-known SC2 values, not independently
+   replay-calibrated — `parse_replay.py` doesn't yet detect real ability
+   casts, so a REPLAYED real game's threat curve still only reflects passive
+   income/larva, not real MULEs/injects. The mechanic is real and usable in
+   a hand-written or searched build order now; historical replay-derived
+   curves aren't ability-aware yet.
+5. **Addon-gated units + Lair tier** (2026-07-05): Terran Tech Lab unlocks
+   Marauder/Siege Tank/Banshee (modeled as their own producer-type entity —
+   `BarracksTechLab` etc. — since the engine only tracks aggregate structure
+   counts, not which specific building has an addon attached); Zerg Lair
+   unlocks HydraliskDen/Spire and Hydralisk/Mutalisk. Costs/stats pulled from
+   Liquipedia, not replay-verified. Hive tier, Reactor's parallel-queue
+   effect, and Battlecruiser remain out of scope (see the data files' headers).
 
-`npm run opponent` runs both scorers against 3 real games and compares. The
-clearest result, against the Krystianer/Solar Zerg replay:
+`npm run opponent` auto-discovers every Terran/Zerg-side replay in
+`replays/parsed/` (20 as of 2026-07-05 — 8 Terran, 12 Zerg — up from 3
+hardcoded games) and runs both scorers against each, printing a summary
+table across all of them. The clearest single result, against the
+Krystianer/Solar Zerg replay:
 
 ```
 fastest-arrival build (ignores opponent):
-  worst deficit vs this opponent: +12.1 value at 17:52
+  worst deficit vs this opponent: +53.9 value at 16:38
 
 danger-scored build (optimized against this specific real game):
-  worst deficit vs this opponent: -41.8 value at 2:39
-  -> danger-scoring reduced the worst deficit by 53.9 value
+  worst deficit vs this opponent: -41.8 value at 2:52
+  -> danger-scoring reduced the worst deficit by 95.7 value
 ```
 
 The "fastest" build is a burst rush that produces a handful of units and then
-stops — by minute 18 a real Zerg's macro has snowballed past its total value
+stops — by minute 16 a real Zerg's macro has snowballed past its total value
 entirely (a positive deficit = behind). The danger-scored search instead
 found a build that keeps producing and stays ahead of that specific game's
 value curve the whole way through. **This is the concrete case for why
 "fastest" and "safest" are different objectives**, and why ranking builds
 only against each other (as the template optimizer and plain GA search do)
-misses it.
+misses it. Across all 18 opponents with a usable curve (2 of the 20 replay
+straight into a deadlock at t=0 and are skipped — no signal to score
+against), danger-scoring improves the worst deficit for 9/18 and the mean
+worst deficit drops from +61.2 (fastest-arrival) to -4.0 (danger-scored).
 
-Known limitations, honestly: `npm run opponent` itself still replays only 3
-specific recorded games (1 Terran, 2 Zerg), so "the opponent" here means 3
-specific games, not a statistical archetype of a matchup — even though the
-underlying Terran/Zerg economy data now draws on a much larger 8/12-replay
-corpus (see "Data accuracy" above), nobody has wired the expanded corpus into
-`npm run opponent`'s own game list yet. Terran/Zerg data covers non-addon-gated
-units only (see those files' headers for the full gap list — Orbital
-Command/MULEs and Queen larva injects are the biggest ones, meaning Terran's
-real economy and Zerg's real production throughput are both modeled as
-somewhat slower than a game with those mechanics active). And the danger
+Known limitations, honestly: Terran/Zerg data still covers non-addon-gated
+units plus Tech Lab/Lair-tier only (see those files' headers for the full
+gap list — Hive tier, Reactor's parallel-queue effect, Battlecruiser). And
+the danger
 score still uses `unitValue()`'s crude combat ranking (see "The value
 frontier" above) on both sides — it's a better question than pure arrival
 time, but still not real combat resolution.
@@ -404,13 +446,23 @@ time, but still not real combat resolution.
     `npm run opponent`): replay a REAL recorded opponent build to get a value
     curve, then search for the Protoss build that never falls behind it.
     Zerg needed a genuine larva-pool production model, added to the engine
-    and calibrated from replay data (9.51s regen, cap 3). Still open: Orbital
-    Command/MULEs, Queen larva injects, Lair/Hive tech tier, addon-gated
-    units (Marauder, Siege Tank, Banshee, ...), and a statistical opponent
-    archetype instead of "whichever 3-4 replays happen to be in this repo".
+    and calibrated from replay data (9.51s regen, cap 3). MULE/Queen inject
+    and Tech Lab/Lair-tier addon-gated units are now modeled too (2026-07-05
+    — see "Modeling the opponent"), and `npm run opponent` now draws on 20
+    replays instead of 3. Still open: Hive tier, Reactor's parallel-queue
+    effect, Battlecruiser, replay-detection of real ability casts (MULE/
+    inject), and a statistical opponent archetype instead of "whichever
+    replays happen to be in this repo".
 13. ⏭️ Multi-objective / game-theoretic framing: search for the build robust
     across a *distribution* of opponent openings (regret-minimization),
     not just safe against one specific recorded game at a time.
+14. ✅ **Expansions as a real search dimension** (2026-07-05): the GA's
+    vocabulary previously hardcoded out the townhall entity, so "take a
+    natural expansion" was undiscoverable no matter how much it would have
+    helped — confirmed fixed by observing the GA now takes an early Nexus
+    when the target composition is large enough to make it worth it (e.g.
+    40 Stalkers). Also fixed alongside it: every Zerg structure now
+    correctly consumes its builder Drone (`EntityData.consumesBuilder`).
 
 ## References
 
