@@ -161,6 +161,9 @@ export const TERRAN: GameData = {
     gasGeysersPerBase: 2,
     startingTownhall: "CommandCenter",
     gasStructure: "Refinery",
+    supplyStructure: "SupplyDepot",
+    hasChrono: false,
+    hasWarpGate: false,
     // Independent Terran fit (2026-07-05), via tools/calibrate_income.py
     // --townhall CommandCenter --gas Refinery, across 8 real 5.0.16 Terran-
     // side replays (191 mineral / 127 gas samples): rateAB=0.980, rateC=0.132,

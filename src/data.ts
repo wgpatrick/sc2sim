@@ -113,6 +113,9 @@ export const PROTOSS: GameData = {
     gasGeysersPerBase: 2,
     startingTownhall: "Nexus",
     gasStructure: "Assimilator",
+    supplyStructure: "Pylon",
+    hasChrono: true,
+    hasWarpGate: true,
 
     // Mineral rates (min/sec per worker), FIT DIRECTLY from replay income data
     // via tools/calibrate_income.py: a tiered (rate1==rate2, distinct rate3)

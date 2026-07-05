@@ -147,6 +147,9 @@ export const ZERG: GameData = {
     gasGeysersPerBase: 2,
     startingTownhall: "Hatchery",
     gasStructure: "Extractor",
+    supplyStructure: "Overlord",
+    hasChrono: false,
+    hasWarpGate: false,
     startingUnits: { Overlord: 1 }, // the free starting Overlord: supply 8, not from Hatchery(4)
     // Independent Zerg fit (2026-07-05), via tools/calibrate_income.py
     // --townhall Hatchery --gas Extractor, across 12 real 5.0.16 Zerg-side

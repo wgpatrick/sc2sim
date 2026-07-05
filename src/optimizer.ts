@@ -15,10 +15,17 @@
  * (Next step: a GA over raw sequences to explore orderings the template can't.)
  */
 import type { GameData, MapConfig, Composition, Action, SimResult } from "./engine.js";
-import { simulate, compositionArrivalTime, valueOverTime, fmt } from "./engine.js";
+import { simulate, compositionArrivalTime, valueOverTime, fmt, workerNameOf } from "./engine.js";
 
 export type Strategy = "home" | "proxyWalk" | "proxyWarp";
 export const STRATEGIES: Strategy[] = ["home", "proxyWalk", "proxyWarp"];
+
+/** The strategies worth searching for this race -- excludes proxyWarp for
+ * anything without Warp Gate tech, since generateBuild() would otherwise
+ * just silently downgrade it to a "home" build with wasted search budget. */
+export function defaultStrategies(data: GameData): Strategy[] {
+  return data.economy.hasWarpGate ? STRATEGIES : STRATEGIES.filter((s) => s !== "proxyWarp");
+}
 
 function range(lo: number, hi: number): number[] {
   const out: number[] = [];
@@ -66,8 +73,13 @@ export interface OptimizeResult {
   evaluated: number;
 }
 
-/** Structures required to produce a composition, ordered by dependency depth. */
-function techClosure(target: Composition, data: GameData, extra: string[] = []): string[] {
+/**
+ * Structures required to produce a composition, ordered by dependency depth.
+ * The single canonical implementation -- search.ts imports this rather than
+ * keeping its own copy (the two drifted once already: search.ts's copy got
+ * race-agnostic treatment of the townhall exclusion before this one did).
+ */
+export function techClosure(target: Composition, data: GameData, extra: string[] = []): string[] {
   const need = new Set<string>();
   const addStruct = (name: string) => {
     const e = data.entities[name];
@@ -82,8 +94,10 @@ function techClosure(target: Composition, data: GameData, extra: string[] = []):
     for (const r of e.requires) addStruct(r);
   }
   for (const x of extra) addStruct(x);
-  need.delete("Pylon");
-  need.delete("Nexus");
+  // The supply structure is auto-inserted by generateBuild's own supply
+  // logic, not a discovery target; the townhall is deliberately NOT excluded
+  // (see buildVocabulary in search.ts) so the GA can discover expansions.
+  need.delete(data.economy.supplyStructure);
   const depth = (name: string): number => {
     const e = data.entities[name];
     const reqs = e.requires.filter((r) => data.entities[r]?.isStructure);
@@ -92,29 +106,39 @@ function techClosure(target: Composition, data: GameData, extra: string[] = []):
   return [...need].sort((a, b) => depth(a) - depth(b));
 }
 
-/** Turn a parameter set into a valid, supply-correct action list. */
+/** Turn a parameter set into a valid, supply-correct action list. Works for
+ * any race: names are all derived from `data` (worker via workerNameOf(),
+ * supply/gas/townhall via data.economy) rather than hardcoded Protoss
+ * entity names, and Chrono/Warp-Gate steps are gated behind
+ * data.economy.hasChrono/hasWarpGate so they're simply no-ops (never
+ * emitted) for races that don't have those mechanics -- see the 2026-07-05
+ * fix (this used to crash immediately for Terran/Zerg on `E("Nexus")`). */
 export function generateBuild(target: Composition, data: GameData, p: BuildParams): Action[] {
   const A: Action[] = [];
   const E = (n: string) => data.entities[n];
-  const pylonSupply = E("Pylon").supplyProvided;
+  const worker = workerNameOf(data);
+  const supplyStruct = data.economy.supplyStructure;
+  const supplyPerStructure = E(supplyStruct).supplyProvided;
   let supUsed = data.economy.startingWorkers;
-  let supCap = E("Nexus").supplyProvided;
+  let supCap = E(data.economy.startingTownhall).supplyProvided;
   let probes = supUsed;
 
-  const warp = p.strategy === "proxyWarp";
+  // Defensive: only ever true for a race that actually has Warp Gate tech,
+  // regardless of what strategy the caller passed in.
+  const warp = p.strategy === "proxyWarp" && data.economy.hasWarpGate;
   const proxyProd = p.strategy === "proxyWalk";
   const prodTag = proxyProd ? "@proxy" : "";
   const unitTag = proxyProd ? "@proxy" : ""; // warp units are untagged (auto warp-in)
 
   const ensureSupply = (cost: number) => {
     while (supUsed + cost > supCap) {
-      A.push("Pylon");
-      supCap += pylonSupply;
+      A.push(supplyStruct);
+      supCap += supplyPerStructure;
     }
   };
   const addProbe = () => {
     ensureSupply(1);
-    A.push("Probe");
+    A.push(worker);
     supUsed += 1;
     probes += 1;
   };
@@ -128,14 +152,14 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
     if (probes < p.probeTarget) addProbe();
   };
 
-  A.push("Probe");
+  A.push(worker);
   supUsed += 1;
   probes += 1;
-  A.push("chrono:Probe");
+  if (data.economy.hasChrono) A.push(`chrono:${worker}`);
   for (let i = 0; i < p.openerProbes; i++) maybeProbe();
 
-  A.push("Pylon");
-  supCap += pylonSupply;
+  A.push(supplyStruct);
+  supCap += supplyPerStructure;
   maybeProbe();
 
   // Warp Gate research needs a Cybernetics Core even if the army itself doesn't.
@@ -146,13 +170,16 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
   const gasCount = needGas || warp ? Math.max(1, p.gasCount) : p.gasCount; // warp research needs gas
 
   for (let i = 0; i < gasCount; i++) {
-    A.push("Assimilator");
+    A.push(data.economy.gasStructure);
     maybeProbe();
   }
 
-  if (proxyProd) {
-    A.push("Pylon@proxy"); // power for proxy production buildings
-    supCap += pylonSupply;
+  if (proxyProd && data.economy.hasWarpGate) {
+    // Power for proxy production buildings -- a Protoss-only mechanic
+    // (Terran/Zerg production buildings need no nearby supply structure to
+    // function, so there's nothing to build here for them).
+    A.push(`${supplyStruct}@proxy`);
+    supCap += supplyPerStructure;
   }
 
   for (const st of structs) {
@@ -165,11 +192,12 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
   }
 
   // Second Chrono charge (~89s after the opener, from Nexus energy regen):
-  // "probe" is a no-op unless a Probe happens to be in production when the
+  // "probe" is a no-op unless a worker happens to be in production when the
   // simulator reaches this point in the sequence (harmless skip otherwise);
   // "primary" is applied below, right when the first primary-unit action is
   // emitted (chrono needs the unit already IN PROGRESS to have any target).
-  if (p.secondChrono === "probe") A.push("chrono:Probe");
+  // Both are pure no-ops (never emitted) for races without hasChrono.
+  if (data.economy.hasChrono && p.secondChrono === "probe") A.push(`chrono:${worker}`);
 
   const earlyHomeUnits = warp ? Math.min(p.earlyHomeUnits, target[primaryUnit] ?? 0) : 0;
 
@@ -180,8 +208,8 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
 
     A.push("WarpGateResearch");
     A.push("chrono:WarpGateResearch");
-    A.push("Pylon@proxy"); // warp anchor near the enemy
-    supCap += pylonSupply;
+    A.push(`${supplyStruct}@proxy`); // warp anchor near the enemy
+    supCap += supplyPerStructure;
     for (let i = 0; i < p.producerCount; i++) A.push("WarpGate"); // morph the Gateways
   }
 
@@ -199,7 +227,7 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
         addUnit(n);
         rem[n]--;
         any = true;
-        if (p.secondChrono === "primary" && n === primaryUnit && !chronoedPrimary) {
+        if (data.economy.hasChrono && p.secondChrono === "primary" && n === primaryUnit && !chronoedPrimary) {
           A.push(`chrono:${primaryUnit}`);
           chronoedPrimary = true;
         }
@@ -228,11 +256,12 @@ interface Candidate {
 function* enumerateBuilds(target: Composition, data: GameData, map: MapConfig, opts: OptimizeOptions): Generator<Candidate> {
   const maxProbes = opts.maxProbes ?? 20;
   const maxProducers = opts.maxProducers ?? 6;
-  const strategies = opts.strategies ?? STRATEGIES;
+  const strategies = opts.strategies ?? defaultStrategies(data);
   const maxEarlyHomeUnits = opts.maxEarlyHomeUnits ?? 6;
   const start = data.economy.startingWorkers;
 
-  const chronoOptions: BuildParams["secondChrono"][] = ["none", "probe", "primary"];
+  // No point enumerating 3 identical candidates for a race with no Chrono.
+  const chronoOptions: BuildParams["secondChrono"][] = data.economy.hasChrono ? ["none", "probe", "primary"] : ["none"];
 
   for (const strategy of strategies) {
     const earlyOptions = strategy === "proxyWarp" ? range(0, maxEarlyHomeUnits) : [0];

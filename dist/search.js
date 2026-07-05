@@ -1,6 +1,6 @@
-import { simulate } from "./engine.js";
+import { simulate, workerNameOf } from "./engine.js";
 import { compositionArrivalTime } from "./engine.js";
-import { generateBuild, STRATEGIES } from "./optimizer.js";
+import { generateBuild, techClosure, defaultStrategies } from "./optimizer.js";
 /** Lower is better; Infinity for a build that never delivers the target. */
 export const arrivalScorer = (result, target) => compositionArrivalTime(result, target);
 // --- Deterministic PRNG (mulberry32) — GA runs are reproducible by seed. ---
@@ -16,31 +16,6 @@ function mulberry32(seed) {
 }
 const randInt = (rng, lo, hi) => lo + Math.floor(rng() * (hi - lo + 1));
 const pick = (rng, xs) => xs[Math.floor(rng() * xs.length)];
-function techClosure(target, data, extra = []) {
-    const need = new Set();
-    const addStruct = (name) => {
-        const e = data.entities[name];
-        if (!e || !e.isStructure || need.has(name))
-            return;
-        for (const r of e.requires)
-            addStruct(r);
-        need.add(name);
-    };
-    for (const u of Object.keys(target)) {
-        const e = data.entities[u];
-        if (!e)
-            continue;
-        addStruct(e.producer);
-        for (const r of e.requires)
-            addStruct(r);
-    }
-    for (const x of extra)
-        addStruct(x);
-    // Pylon is auto-inserted by generateBuild's supply logic, not a discovery
-    // target for the GA to place itself.
-    need.delete("Pylon");
-    return [...need];
-}
 export function buildVocabulary(target, data, warp) {
     // The townhall (Nexus/CommandCenter/Hatchery) is included so the GA can
     // discover taking a natural expansion -- previously hardcoded out (see git
@@ -49,7 +24,9 @@ export function buildVocabulary(target, data, warp) {
     const extra = [data.economy.startingTownhall, ...(warp ? ["CyberneticsCore"] : [])];
     const structures = techClosure(target, data, extra);
     const units = Object.keys(target);
-    const chronoTargets = ["Probe", ...structures, ...units, ...(warp ? ["WarpGateResearch"] : [])];
+    // No Chrono, no chrono targets -- keeps tweakChrono() from ever inserting
+    // a "chrono:X" action for a race that can't use it (see mutate() below).
+    const chronoTargets = data.economy.hasChrono ? [workerNameOf(data), ...structures, ...units, ...(warp ? ["WarpGateResearch"] : [])] : [];
     return { structures, units, chronoTargets, warp };
 }
 // --- Random valid-ish seed individuals (from the template generator) ------
@@ -68,8 +45,8 @@ function randomParams(rng, strategies, start) {
     };
 }
 // --- Mutation operators: each returns a NEW array ---------------------------
-function insertAction(seq, rng, vocab) {
-    const pool = [...vocab.structures, ...vocab.units, "Probe", "Pylon", "Assimilator"];
+function insertAction(seq, rng, vocab, data) {
+    const pool = [...vocab.structures, ...vocab.units, workerNameOf(data), data.economy.supplyStructure, data.economy.gasStructure];
     const name = pick(rng, pool);
     const tag = rng() < 0.25 ? "@proxy" : "";
     const at = randInt(rng, 0, seq.length);
@@ -108,7 +85,8 @@ function duplicateAction(seq, rng) {
     return [...seq.slice(0, at), seq[i], ...seq.slice(at)];
 }
 /** Insert, retarget, or remove a chrono cast -- this is how chrono TARGET
- * becomes a first-class search dimension instead of a hardcoded opener. */
+ * becomes a first-class search dimension instead of a hardcoded opener.
+ * Never called with an empty vocab.chronoTargets -- see mutate(). */
 function tweakChrono(seq, rng, vocab) {
     const chronoIdx = seq.map((a, i) => (a.startsWith("chrono:") ? i : -1)).filter((i) => i >= 0);
     const r = rng();
@@ -146,11 +124,11 @@ function toggleProxyTag(seq, rng, data) {
 const OPERATORS = [insertAction, deleteAction, swapActions, moveAction, duplicateAction];
 function mutate(seq, rng, vocab, data) {
     const r = rng();
-    if (r < 0.25)
+    if (r < 0.25 && vocab.chronoTargets.length > 0)
         return tweakChrono(seq, rng, vocab);
     if (r < 0.35)
         return toggleProxyTag(seq, rng, data);
-    return pick(rng, OPERATORS)(seq, rng, vocab);
+    return pick(rng, OPERATORS)(seq, rng, vocab, data);
 }
 function crossover(a, b, rng) {
     if (a.length < 2 || b.length < 2)
@@ -165,7 +143,7 @@ export function searchRawSequences(target, data, map, scorer = arrivalScorer, op
     const eliteCount = Math.max(2, Math.floor(popSize * (opts.eliteFraction ?? 0.06)));
     const tournamentSize = opts.tournamentSize ?? 5;
     const crossoverRate = opts.crossoverRate ?? 0.5;
-    const strategies = opts.strategies ?? STRATEGIES;
+    const strategies = opts.strategies ?? defaultStrategies(data);
     const rng = mulberry32(opts.seed ?? 42);
     const start = data.economy.startingWorkers;
     const warpInPlay = strategies.includes("proxyWarp");

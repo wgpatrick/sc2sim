@@ -25,6 +25,15 @@ export function unitValue(ent) {
     const ehp = (ent.hp ?? 0) + (ent.shields ?? 0);
     return Math.sqrt(ent.dps * ehp);
 }
+/** This race's harvesting worker entity name (Probe/SCV/Drone), derived from
+ * `isWorker` rather than hardcoded -- see optimizer.ts/search.ts, which used
+ * to assume "Probe" unconditionally. */
+export function workerNameOf(data) {
+    const worker = Object.values(data.entities).find((e) => e.isWorker);
+    if (!worker)
+        throw new Error(`${data.race}: no entity has isWorker: true`);
+    return worker.name;
+}
 // --- Spatial / map model ------------------------------------------------
 /** Reference unit speed (Stalker). Map distances are expressed relative to it. */
 export const REF_SPEED = 2.95;
@@ -556,7 +565,14 @@ function castChrono(s, target, log, snaps) {
             log.push(`${fmt(s.time)}  chrono ${target}  (-${saved.toFixed(1)}s, done ${fmt(item.finishTime)})`);
             return true;
         }
-        const tEnergy = (e.chronoCost - s.energy) / (s.energyRate || Infinity);
+        if (s.energyRate <= 0) {
+            // Energy will never arrive (race has no Chrono-equivalent, or its
+            // Nexus/townhall was never given starting energy) -- bail instead of
+            // spinning the guard counter to its limit on every call.
+            log.push(`${fmt(s.time)}  chrono ${target} SKIPPED (energy never regenerates for this race)`);
+            return false;
+        }
+        const tEnergy = (e.chronoCost - s.energy) / s.energyRate;
         const tEvent = nextEventTime(s) - s.time;
         if (tEnergy <= tEvent + EPS)
             advanceBy(s, tEnergy, snaps);

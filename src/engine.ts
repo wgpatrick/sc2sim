@@ -63,6 +63,15 @@ export function unitValue(ent: EntityData): number {
   return Math.sqrt(ent.dps * ehp);
 }
 
+/** This race's harvesting worker entity name (Probe/SCV/Drone), derived from
+ * `isWorker` rather than hardcoded -- see optimizer.ts/search.ts, which used
+ * to assume "Probe" unconditionally. */
+export function workerNameOf(data: GameData): string {
+  const worker = Object.values(data.entities).find((e) => e.isWorker);
+  if (!worker) throw new Error(`${data.race}: no entity has isWorker: true`);
+  return worker.name;
+}
+
 export interface EconomyConfig {
   startingWorkers: number;
   startingMinerals: number;
@@ -75,6 +84,21 @@ export interface EconomyConfig {
   startingTownhall: string;
   /** The gas-extraction structure name (Assimilator / Refinery / Extractor). */
   gasStructure: string;
+  /** The supply-providing structure/unit built to avoid a supply block
+   * (Pylon / SupplyDepot / Overlord). Added 2026-07-05 so optimizer.ts's
+   * build-template generator isn't hardcoded to "Pylon" -- see
+   * search.ts/optimizer.ts's generateBuild(). */
+  supplyStructure: string;
+  /** Whether this race has a Chrono-Boost-equivalent energy ability at all.
+   * Protoss: true. Terran/Zerg: false (their nexusEnergy* fields are inert
+   * placeholders) -- gates optimizer.ts/search.ts from ever generating a
+   * "chrono:X" action for a race that can't use it (which would otherwise
+   * spin castChrono's wait loop pointlessly, see engine.ts's fix there). */
+  hasChrono: boolean;
+  /** Whether this race has Warp Gate tech (Protoss only). Gates the
+   * proxyWarp strategy and Warp Gate-specific build steps out of the
+   * search/optimizer entirely for races that don't have it. */
+  hasWarpGate: boolean;
   /** Zerg only: seconds per larva regenerated per townhall, and the per-
    * townhall storage cap (real game: ~3, refilling continuously). Leave
    * undefined for races with no "Larva"-producer entities. */
@@ -777,7 +801,14 @@ function castChrono(s: State, target: string, log: string[], snaps: Snapshot[]):
       log.push(`${fmt(s.time)}  chrono ${target}  (-${saved.toFixed(1)}s, done ${fmt(item.finishTime)})`);
       return true;
     }
-    const tEnergy = (e.chronoCost - s.energy) / (s.energyRate || Infinity);
+    if (s.energyRate <= 0) {
+      // Energy will never arrive (race has no Chrono-equivalent, or its
+      // Nexus/townhall was never given starting energy) -- bail instead of
+      // spinning the guard counter to its limit on every call.
+      log.push(`${fmt(s.time)}  chrono ${target} SKIPPED (energy never regenerates for this race)`);
+      return false;
+    }
+    const tEnergy = (e.chronoCost - s.energy) / s.energyRate;
     const tEvent = nextEventTime(s) - s.time;
     if (tEnergy <= tEvent + EPS) advanceBy(s, tEnergy, snaps);
     else advanceToNextEvent(s, snaps);
