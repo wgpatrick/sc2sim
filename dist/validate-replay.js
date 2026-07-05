@@ -5,20 +5,22 @@
  *
  *   npm run diff replays/parsed/Krystianer_vs_Solar_PvZ_Blackrock_2026-06-28.json
  *   npm run diff replays/parsed/*.json                 (all at once)
- *   npm run diff replays/parsed/foo.json --horizon 300  (first 5 min only)
+ *   npm run diff replays/parsed/foo.json --horizon 300  (override the default 3 min)
  *
  * Unlike validate.ts (hand-transcribed published builds), this derives BOTH
  * the action sequence AND the ground-truth timings straight from the replay,
  * so there's no manual transcription to get wrong — but it only covers
- * entities sc2sim actually models (data.ts), and only up to --horizon
- * seconds, since a full game quickly does things (Templar, Colossus, extra
- * bases, ...) the sim has no concept of. Longer horizons will drift.
+ * entities sc2sim actually models (data.ts), and real games only track the
+ * sim closely before scouting/harassment/decisions start diverging the two
+ * timelines. Default horizon is 3 minutes for that reason; the mineral/gas
+ * BANK comparison (not just entity timings) is the main signal to trust —
+ * it's what the sim's economy model is actually for.
  */
 import * as fs from "fs";
 import { simulate, fmt } from "./engine.js";
 import { PROTOSS } from "./data.js";
 import { MAPS } from "./maps.js";
-const DEFAULT_HORIZON = 420; // 7 minutes — opening/early-tech window sc2sim targets
+const DEFAULT_HORIZON = 180; // 3 minutes — before scouting/harassment decisions diverge the two timelines
 /**
  * Turn the replay's real events into an ordered Action[] the engine can run.
  * We only know true DECISION times for structures (Init) and morphs; units
@@ -144,18 +146,30 @@ function runOne(path, horizon) {
     console.log("  " + "-".repeat(52));
     if (n > 0)
         console.log(`  mean absolute error: ${(total / n).toFixed(1)}s over ${n} matched completions`);
-    console.log("\n  economy @ real sample times (sim vs real)");
-    console.log("  t       minerals(sim/real)   workers(sim/real)   supplyUsed(sim/real)");
-    console.log("  " + "-".repeat(64));
+    console.log("\n  bank: sim's forecast vs the real game (this is the metric that matters)");
+    console.log("  t       minerals(sim/real)   gas(sim/real)   workers(sim/real)   supplyUsed(sim/real)");
+    console.log("  " + "-".repeat(80));
+    let mineralErr = 0;
+    let gasErr = 0;
+    let bankSamples = 0;
     for (const e of replay.economy) {
         if (e.t > horizon || e.t === 0)
             continue;
         const simAt = snapshotAt(result.snapshots, e.t);
+        mineralErr += Math.abs(simAt.minerals - e.minerals);
+        gasErr += Math.abs(simAt.gas - e.gas);
+        bankSamples++;
         console.log(`  ${fmt(e.t).padStart(5)}   ${simAt.minerals.toFixed(0).padStart(5)} / ${String(e.minerals).padStart(5)}` +
+            `        ${simAt.gas.toFixed(0).padStart(4)} / ${String(e.gas).padStart(4)}` +
             `        ${simAt.probes.toFixed(0).padStart(3)} / ${String(e.workers).padStart(3)}` +
             `           ${simAt.supplyUsed.toFixed(0).padStart(3)} / ${String(e.supplyUsed).padStart(3)}`);
     }
-    return { name: replay.source, meanAbsError: n > 0 ? total / n : null, n };
+    const mineralMAE = bankSamples > 0 ? mineralErr / bankSamples : null;
+    const gasMAE = bankSamples > 0 ? gasErr / bankSamples : null;
+    if (mineralMAE != null) {
+        console.log(`  bank MAE: ${mineralMAE.toFixed(0)} minerals, ${gasMAE.toFixed(0)} gas, over ${bankSamples} samples`);
+    }
+    return { name: replay.source, meanAbsError: n > 0 ? total / n : null, n, mineralMAE, gasMAE };
 }
 function main() {
     const args = process.argv.slice(2);
@@ -170,13 +184,19 @@ function main() {
         process.exit(1);
     }
     const summaries = args.map((p) => runOne(p, horizon));
-    const withError = summaries.filter((s) => s.meanAbsError != null);
-    if (withError.length > 1) {
+    if (summaries.length > 1) {
         console.log(`\n${"=".repeat(76)}`);
-        for (const s of withError)
-            console.log(`  ${s.name.padEnd(50)} ${s.meanAbsError.toFixed(1)}s MAE  (${s.n} completions)`);
-        const overall = withError.reduce((a, s) => a + s.meanAbsError * s.n, 0) / withError.reduce((a, s) => a + s.n, 0);
-        console.log(`\n  overall: ${overall.toFixed(1)}s mean absolute error across ${withError.length} replays`);
+        for (const s of summaries) {
+            const t = s.meanAbsError != null ? `${s.meanAbsError.toFixed(1)}s MAE (${s.n} completions)` : "n/a";
+            const bank = s.mineralMAE != null ? `${s.mineralMAE.toFixed(0)} min / ${s.gasMAE.toFixed(0)} gas bank MAE` : "n/a";
+            console.log(`  ${s.name.padEnd(50)} timing: ${t}   bank: ${bank}`);
+        }
+        const withBank = summaries.filter((s) => s.mineralMAE != null);
+        if (withBank.length > 0) {
+            const avgMineral = withBank.reduce((a, s) => a + s.mineralMAE, 0) / withBank.length;
+            const avgGas = withBank.reduce((a, s) => a + s.gasMAE, 0) / withBank.length;
+            console.log(`\n  overall bank MAE: ${avgMineral.toFixed(0)} minerals, ${avgGas.toFixed(0)} gas, across ${withBank.length} replays`);
+        }
     }
 }
 main();
