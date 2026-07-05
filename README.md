@@ -168,6 +168,32 @@ top all-in. Warp-in's real advantages — keeping production safe at home and
 continuously reinforcing the front — live in objectives this metric doesn't yet
 capture, so `proxyWarp` is modelled and evaluated but wins only when those matter.
 
+## The value frontier
+
+`compositionArrivalTime` (above) answers "when does exactly this fixed unit
+count arrive" — useful, but it's really one point on a bigger question: *how
+much fighting value can reach the enemy, as a function of time*. `npm run
+frontier` searches many target compositions (different unit types AND
+counts) and reports the **Pareto frontier** of (time, value) across every
+build evaluated — for any deadline t, the most value any searched build
+delivers by then.
+
+"Value" is `unitValue()` in `engine.ts`: `sqrt(dps * (hp + shields))`, the
+classic Lanchester-square-law approximation of fighting power (geometric
+mean of offense and defense). This is a **ranking signal, not a combat
+resolver** — it ignores range, splash, bonus damage vs. armor types,
+upgrades (Blink, Charge, +1/+1, ...), and unit counters/synergy entirely. Two
+armies with equal value do not necessarily draw; a small Immortal count can
+beat a much higher-value Zealot ball a real matchup would never predict from
+this number alone. Treat it as "which build order is worth investigating
+further", not "which build order wins."
+
+Example (standard map): the frontier over Zealot/Stalker/Adept count sweeps
+is dominated entirely by Zealots out to ~4:30 — cheap, no gas, no Cybernetics
+Core requirement — which matches the real game's well-known early Zealot
+timing-attack meta. Stalkers/Adepts only start winning value-per-time once
+gas income and Warp Gate throughput ramp up past this window.
+
 ## Roadmap
 
 1. ✅ Event-driven economy simulator.
@@ -176,10 +202,19 @@ capture, so `proxyWarp` is modelled and evaluated but wins only when those matte
 4. ✅ Spatial layer — travel time, proxies, army arrival at the enemy.
 5. ✅ Optimizer for "target army at the enemy, fastest" (3 strategies).
 6. ✅ Warp Gate tech: research → Gateway morph → warp-in; proxy-pylon delivery.
-7. ⏭️ **Calibrate** income rates + map distances against headless SC2.
-8. ⏭️ **GA over raw action sequences** — explore orderings the template can't
-   express; then branch & bound for provably-optimal min-time openers.
-9. ⏭️ Reinforcement/safety objectives where warp-in wins; Terran & Zerg.
+7. ✅ Replay-based validation (`tools/parse_replay.py`, `npm run diff`,
+   `tools/mining_rate.py`) against real pro games, not just transcribed builds.
+8. ✅ Value-over-time frontier (`npm run frontier`) — rank builds by fighting
+   value delivered by time t, not just "when does this exact count arrive".
+9. ⏭️ **Calibrate** income rates + map distances against headless SC2 (or more
+   replays — mineral rate is currently ~6-7% high vs. replay-measured income).
+10. ⏭️ **GA over raw action sequences** — explore orderings the template can't
+    express; then branch & bound for provably-optimal min-time openers.
+11. ⏭️ Real combat resolution (beyond the value heuristic) so DIFFERENT
+    build orders — including the opponent's — can be compared head-to-head,
+    not just ranked against each other in isolation. Upgrades (Blink, Charge,
+    +1/+1) as first-class modeled effects, not just static value inputs.
+12. ⏭️ Reinforcement/safety objectives where warp-in wins; Terran & Zerg.
 
 ## References
 

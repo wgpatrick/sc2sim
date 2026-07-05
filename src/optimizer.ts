@@ -15,7 +15,7 @@
  * (Next step: a GA over raw sequences to explore orderings the template can't.)
  */
 import type { GameData, MapConfig, Composition, Action, SimResult } from "./engine.js";
-import { simulate, compositionArrivalTime, fmt } from "./engine.js";
+import { simulate, compositionArrivalTime, valueOverTime, fmt } from "./engine.js";
 
 export type Strategy = "home" | "proxyWalk" | "proxyWarp";
 export const STRATEGIES: Strategy[] = ["home", "proxyWalk", "proxyWarp"];
@@ -196,21 +196,21 @@ export interface OptimizeOptions {
   maxEarlyHomeUnits?: number;
 }
 
-export function optimize(
-  target: Composition,
-  data: GameData,
-  map: MapConfig,
-  opts: OptimizeOptions = {},
-): OptimizeResult {
+interface Candidate {
+  params: BuildParams;
+  order: Action[];
+  result: SimResult;
+}
+
+/** The full parameterized search space for one target composition. Shared by
+ * optimize() (scores by arrival time) and valueFrontier() (scores by value
+ * delivered over time) so both stay in sync as the template evolves. */
+function* enumerateBuilds(target: Composition, data: GameData, map: MapConfig, opts: OptimizeOptions): Generator<Candidate> {
   const maxProbes = opts.maxProbes ?? 20;
   const maxProducers = opts.maxProducers ?? 6;
   const strategies = opts.strategies ?? STRATEGIES;
   const maxEarlyHomeUnits = opts.maxEarlyHomeUnits ?? 6;
   const start = data.economy.startingWorkers;
-
-  let best: { arrival: number; params: BuildParams; order: Action[]; result: SimResult } | null = null;
-  const bestByStrategy: Partial<Record<Strategy, StrategyBest>> = {};
-  let evaluated = 0;
 
   for (const strategy of strategies) {
     const earlyOptions = strategy === "proxyWarp" ? range(0, maxEarlyHomeUnits) : [0];
@@ -222,21 +222,84 @@ export function optimize(
               const params: BuildParams = { openerProbes, probeTarget, producerCount, gasCount, strategy, earlyHomeUnits };
               const order = generateBuild(target, data, params);
               const result = simulate(data, order, map);
-              evaluated++;
-              const arrival = compositionArrivalTime(result, target);
-              if (!isFinite(arrival)) continue;
-              if (!best || arrival < best.arrival) best = { arrival, params, order, result };
-              const sb = bestByStrategy[strategy];
-              if (!sb || arrival < sb.arrival) bestByStrategy[strategy] = { arrival, params, order };
+              yield { params, order, result };
             }
           }
         }
       }
     }
   }
+}
+
+export function optimize(
+  target: Composition,
+  data: GameData,
+  map: MapConfig,
+  opts: OptimizeOptions = {},
+): OptimizeResult {
+  let best: { arrival: number; params: BuildParams; order: Action[]; result: SimResult } | null = null;
+  const bestByStrategy: Partial<Record<Strategy, StrategyBest>> = {};
+  let evaluated = 0;
+
+  for (const { params, order, result } of enumerateBuilds(target, data, map, opts)) {
+    evaluated++;
+    const arrival = compositionArrivalTime(result, target);
+    if (!isFinite(arrival)) continue;
+    if (!best || arrival < best.arrival) best = { arrival, params, order, result };
+    const sb = bestByStrategy[params.strategy];
+    if (!sb || arrival < sb.arrival) bestByStrategy[params.strategy] = { arrival, params, order };
+  }
 
   if (!best) throw new Error("No valid build found for target composition");
   return { target, arrival: best.arrival, params: best.params, order: best.order, result: best.result, bestByStrategy, evaluated };
+}
+
+export interface FrontierPoint {
+  /** Time this point on the frontier becomes achievable. */
+  t: number;
+  /** Max cumulative fighting value (unitValue(), see engine.ts) any searched
+   * build delivers to the enemy by time t. */
+  value: number;
+  /** Which unit just arrived to produce this point. */
+  name: string;
+  target: Composition;
+  params: BuildParams;
+  order: Action[];
+}
+
+/**
+ * The Pareto frontier of (time, value delivered at the enemy) across every
+ * build the search explores, for EVERY target composition given — not just
+ * one fixed unit count. Answers "what's the most fighting value achievable
+ * by time t", generalizing compositionArrivalTime (which only answers "when
+ * does exactly this composition arrive"). See engine.ts's unitValue() /
+ * valueOverTime() for what "value" means here and its limitations — this is
+ * a ranking signal, not a combat outcome predictor.
+ */
+export function valueFrontier(
+  targets: Composition[],
+  data: GameData,
+  map: MapConfig,
+  opts: OptimizeOptions = {},
+): FrontierPoint[] {
+  const pool: FrontierPoint[] = [];
+  for (const target of targets) {
+    for (const { params, order, result } of enumerateBuilds(target, data, map, opts)) {
+      for (const v of valueOverTime(result, data)) {
+        pool.push({ t: v.t, value: v.value, name: v.name, target, params, order });
+      }
+    }
+  }
+  pool.sort((a, b) => a.t - b.t || b.value - a.value);
+  const frontier: FrontierPoint[] = [];
+  let maxValue = -Infinity;
+  for (const p of pool) {
+    if (p.value > maxValue) {
+      frontier.push(p);
+      maxValue = p.value;
+    }
+  }
+  return frontier;
 }
 
 export function describeComposition(comp: Composition): string {

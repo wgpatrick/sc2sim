@@ -80,18 +80,26 @@ add(ent("Probe", 50, 0, 12.1, "Nexus", { supplyCost: 1, isWorker: true, moveSpee
 
 // --- Gateway units (warpCooldown ~ build time - 7s, per Liquipedia) -------
 // Adept pre-warpgate build time bumped 30 -> 33 by the 5.0.16 hotfix.
-add(ent("Zealot", 100, 0, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.25, warpCooldown: 20 }));
-add(ent("Stalker", 125, 50, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.9531, warpCooldown: 20, requires: ["CyberneticsCore"] }));
-add(ent("Adept", 100, 25, 33.0, "Gateway", { supplyCost: 2, moveSpeed: 2.5, warpCooldown: 26, requires: ["CyberneticsCore"] }));
-add(ent("Sentry", 50, 100, 23.3, "Gateway", { supplyCost: 2, moveSpeed: 2.5, warpCooldown: 20.3, requires: ["CyberneticsCore"] }));
+//
+// ⚠️ dps/hp/shields below are standard baseline (NO upgrades, no bonus-vs-
+// armor/light) LotV-era figures, for ranking builds by unitValue() — NOT
+// verified against 5.0.16 game data the way cost/buildTime are. Combat
+// abilities (Blink, Guardian Shield, Pulsar Beam ramp, ...) are not
+// modeled at all yet; dps is the raw autoattack only.
+add(ent("Zealot", 100, 0, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.25, warpCooldown: 20, dps: 18.6, hp: 100, shields: 50 }));
+add(ent("Stalker", 125, 50, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.9531, warpCooldown: 20, requires: ["CyberneticsCore"], dps: 9.7, hp: 100, shields: 80 }));
+add(ent("Adept", 100, 25, 33.0, "Gateway", { supplyCost: 2, moveSpeed: 2.5, warpCooldown: 26, requires: ["CyberneticsCore"], dps: 6.2, hp: 70, shields: 70 }));
+add(ent("Sentry", 50, 100, 23.3, "Gateway", { supplyCost: 2, moveSpeed: 2.5, warpCooldown: 20.3, requires: ["CyberneticsCore"], dps: 8.4, hp: 40, shields: 40 }));
 
 // --- Stargate units -----------------------------------------------------
-add(ent("Oracle", 150, 150, 37.1, "Stargate", { supplyCost: 3, moveSpeed: 4.0 }));
-add(ent("VoidRay", 250, 150, 43.0, "Stargate", { supplyCost: 4, moveSpeed: 2.75 }));
+add(ent("Oracle", 150, 150, 37.1, "Stargate", { supplyCost: 3, moveSpeed: 4.0, dps: 16.7, hp: 100, shields: 60 }));
+add(ent("VoidRay", 250, 150, 43.0, "Stargate", { supplyCost: 4, moveSpeed: 2.75, dps: 16.8, hp: 150, shields: 100 }));
 
 // --- Robotics units -----------------------------------------------------
-add(ent("Immortal", 250, 100, 39.3, "RoboticsFacility", { supplyCost: 4, moveSpeed: 2.25 }));
-add(ent("Observer", 25, 75, 17.9, "RoboticsFacility", { supplyCost: 1, moveSpeed: 2.0156 }));
+add(ent("Immortal", 250, 100, 39.3, "RoboticsFacility", { supplyCost: 4, moveSpeed: 2.25, dps: 19.2, hp: 200, shields: 100 }));
+// Observer has no weapon (pure scout/detector) — dps 0, contributes no
+// fighting VALUE by design, even though it has real strategic value.
+add(ent("Observer", 25, 75, 17.9, "RoboticsFacility", { supplyCost: 1, moveSpeed: 2.0156, hp: 40, shields: 20 }));
 
 export const PROTOSS: GameData = {
   patch: "5.0.16",

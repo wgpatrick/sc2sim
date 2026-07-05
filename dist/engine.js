@@ -10,6 +10,21 @@
  *   3. All balance numbers live in `data.ts`; map numbers in `maps.ts`.
  *      The engine holds no constants.
  */
+/**
+ * A single number standing in for "how much a unit is worth in a fight",
+ * used to compare build orders by VALUE delivered over time instead of raw
+ * unit counts. sqrt(DPS * EHP) is the classic Lanchester-square-law
+ * approximation of relative fighting power (geometric mean of offense and
+ * defense) — it is NOT a combat resolver: it ignores range, splash, bonus
+ * damage vs armor types, upgrades, and unit synergy/counters entirely.
+ * Treat it as a rough ranking signal, not a win/loss prediction.
+ */
+export function unitValue(ent) {
+    if (!ent.dps)
+        return 0;
+    const ehp = (ent.hp ?? 0) + (ent.shields ?? 0);
+    return Math.sqrt(ent.dps * ehp);
+}
 // --- Spatial / map model ------------------------------------------------
 /** Reference unit speed (Stalker). Map distances are expressed relative to it. */
 export const REF_SPEED = 2.95;
@@ -450,4 +465,25 @@ export function compositionArrivalTime(res, comp) {
         worst = Math.max(worst, arrivals[need - 1]);
     }
     return worst;
+}
+/**
+ * Cumulative fighting VALUE delivered at the enemy over time — a step curve
+ * that rises each time a unit arrives. This is the general replacement for
+ * compositionArrivalTime: instead of asking "when did exactly N of unit X
+ * arrive", it answers "how much value is at the enemy by time t", for every
+ * t, so builds can be compared across DIFFERENT compositions and unit mixes.
+ */
+export function valueOverTime(res, data) {
+    if (!res.ok)
+        return [];
+    const arrivals = res.actions
+        .filter((a) => a.kind === "unit" && a.arrivalTime !== undefined && !data.entities[a.name]?.isWorker)
+        .sort((x, y) => x.arrivalTime - y.arrivalTime);
+    const points = [];
+    let cum = 0;
+    for (const a of arrivals) {
+        cum += unitValue(data.entities[a.name]);
+        points.push({ t: a.arrivalTime, value: cum, name: a.name });
+    }
+    return points;
 }
