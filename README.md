@@ -106,10 +106,21 @@ headless StarCraft II instance and comparing against this sim:
 - **The calibration loop:** script a known build in headless SC2 → record real
   completion times → tune `data.ts` (build times + the income curve) until this
   sim matches within ~1–2s → *then* trust the optimizer's outputs.
-- **⚠️ Patch-version caveat:** the published Linux headless build usually **lags
-  the live ladder patch**. Check its version before calibrating — its economy
-  constants may still be the 12-worker pre-5.0.16 numbers, in which case
-  calibrate `data.ts` to *that* version, or wait for the matching Linux build.
+- **⚠️ Patch-version reality (checked July 2026):** the newest headless Linux
+  build Blizzard publishes is **4.10 (2019)** — `SC2.4.10.zip` downloads, but
+  `4.11`/`5.0.x` all 404 (per the [s2client-proto](https://github.com/Blizzard/s2client-proto)
+  package list). So the headless container is **~7 years / dozens of patches
+  behind 5.0.16** (12-worker economy, pre-warpgate-rework, different unit stats).
+  Consequences:
+  - Headless 4.10 can validate the **engine's logic** (event scheduling, worker
+    saturation, Chrono, warp/cooldown bookkeeping) — point `data.ts` at 4.10
+    constants, script the same builds, and confirm the sim matches.
+  - It **cannot** validate the **5.0.16 numbers**. True 5.0.16 ground truth needs
+    the **retail client** (Windows/Mac is on 5.0.16) driven by python-sc2/pysc2 —
+    that runs on your own machine, not a headless Linux box.
+  - Meanwhile, the costs/build-times here already match the community's standard
+    tool by construction (same sc2-techtree `data.json` as BuRny's planner), and
+    published pro builds give supply-count checkpoints to sanity-check against.
 
 ## The optimizer
 
