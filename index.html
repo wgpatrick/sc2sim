@@ -120,9 +120,10 @@
       </div>
 
       <p class="warn">
-        ⚠️ Unit build times &amp; income rates in <code>src/data.ts</code> are best-effort LotV values, not yet calibrated
-        to 5.0.16. Regenerate authoritatively from <a href="https://github.com/BurnySc2/sc2-techtree">sc2-techtree</a>
-        and calibrate income against headless SC2 (see the project README). The engine is correct regardless of these constants.
+        Costs, supply &amp; build times come from SC2's own game data
+        (<a href="https://github.com/BurnySc2/sc2-techtree">sc2-techtree</a>'s <code>data.json</code>, current to 5.0.16),
+        in Faster-clock seconds. The income rates are still approximate calibration targets — tune them against
+        headless SC2 to trust exact timings (see the project README).
       </p>
     </div>
 
