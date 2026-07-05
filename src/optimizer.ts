@@ -20,12 +20,26 @@ import { simulate, compositionArrivalTime, fmt } from "./engine.js";
 export type Strategy = "home" | "proxyWalk" | "proxyWarp";
 export const STRATEGIES: Strategy[] = ["home", "proxyWalk", "proxyWarp"];
 
+function range(lo: number, hi: number): number[] {
+  const out: number[] = [];
+  for (let i = lo; i <= hi; i++) out.push(i);
+  return out;
+}
+
 export interface BuildParams {
   openerProbes: number;
   probeTarget: number;
   producerCount: number;
   gasCount: number;
   strategy: Strategy;
+  /**
+   * proxyWarp only: how many of the primary unit to train NORMALLY at home
+   * (and walk across the map) before switching the Gateways over to Warp
+   * Gate production. Without this, home Gateways sit idle for the ~100s
+   * Warp Gate research takes — walking a few units home-produced in the
+   * meantime can beat waiting for every unit to warp in.
+   */
+  earlyHomeUnits: number;
 }
 
 export interface StrategyBest {
@@ -118,7 +132,8 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
 
   // Warp Gate research needs a Cybernetics Core even if the army itself doesn't.
   const structs = techClosure(target, data, warp ? ["CyberneticsCore"] : []);
-  const primary = E(Object.keys(target)[0]).producer;
+  const primaryUnit = Object.keys(target)[0];
+  const primary = E(primaryUnit).producer;
   const needGas = Object.keys(target).some((n) => E(n).gas > 0);
   const gasCount = needGas || warp ? Math.max(1, p.gasCount) : p.gasCount; // warp research needs gas
 
@@ -141,7 +156,13 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
     maybeProbe();
   }
 
+  const earlyHomeUnits = warp ? Math.min(p.earlyHomeUnits, target[primaryUnit] ?? 0) : 0;
+
   if (warp) {
+    // Keep the home Gateways producing (units walk across the map) instead of
+    // sitting idle for the ~100s Warp Gate research takes.
+    for (let i = 0; i < earlyHomeUnits; i++) addUnit(primaryUnit);
+
     A.push("WarpGateResearch");
     A.push("chrono:WarpGateResearch");
     A.push("Pylon@proxy"); // warp anchor near the enemy
@@ -152,6 +173,7 @@ export function generateBuild(target: Composition, data: GameData, p: BuildParam
   while (probes < p.probeTarget) addProbe();
 
   const rem: Composition = { ...target };
+  if (earlyHomeUnits > 0) rem[primaryUnit] -= earlyHomeUnits;
   const types = Object.keys(target);
   let any = true;
   while (any) {
@@ -171,6 +193,7 @@ export interface OptimizeOptions {
   maxProbes?: number;
   maxProducers?: number;
   strategies?: Strategy[];
+  maxEarlyHomeUnits?: number;
 }
 
 export function optimize(
@@ -182,6 +205,7 @@ export function optimize(
   const maxProbes = opts.maxProbes ?? 20;
   const maxProducers = opts.maxProducers ?? 6;
   const strategies = opts.strategies ?? STRATEGIES;
+  const maxEarlyHomeUnits = opts.maxEarlyHomeUnits ?? 6;
   const start = data.economy.startingWorkers;
 
   let best: { arrival: number; params: BuildParams; order: Action[]; result: SimResult } | null = null;
@@ -189,19 +213,22 @@ export function optimize(
   let evaluated = 0;
 
   for (const strategy of strategies) {
+    const earlyOptions = strategy === "proxyWarp" ? range(0, maxEarlyHomeUnits) : [0];
     for (let openerProbes = 0; openerProbes <= 4; openerProbes++) {
       for (let probeTarget = start; probeTarget <= maxProbes; probeTarget++) {
         for (let producerCount = 1; producerCount <= maxProducers; producerCount++) {
           for (let gasCount = 0; gasCount <= 2; gasCount++) {
-            const params: BuildParams = { openerProbes, probeTarget, producerCount, gasCount, strategy };
-            const order = generateBuild(target, data, params);
-            const result = simulate(data, order, map);
-            evaluated++;
-            const arrival = compositionArrivalTime(result, target);
-            if (!isFinite(arrival)) continue;
-            if (!best || arrival < best.arrival) best = { arrival, params, order, result };
-            const sb = bestByStrategy[strategy];
-            if (!sb || arrival < sb.arrival) bestByStrategy[strategy] = { arrival, params, order };
+            for (const earlyHomeUnits of earlyOptions) {
+              const params: BuildParams = { openerProbes, probeTarget, producerCount, gasCount, strategy, earlyHomeUnits };
+              const order = generateBuild(target, data, params);
+              const result = simulate(data, order, map);
+              evaluated++;
+              const arrival = compositionArrivalTime(result, target);
+              if (!isFinite(arrival)) continue;
+              if (!best || arrival < best.arrival) best = { arrival, params, order, result };
+              const sb = bestByStrategy[strategy];
+              if (!sb || arrival < sb.arrival) bestByStrategy[strategy] = { arrival, params, order };
+            }
           }
         }
       }

@@ -286,7 +286,8 @@
           .join(" · ");
         out.innerHTML =
           `<b>${describeComposition(comp)}</b> arrives at the enemy in <b>${fmt(r.arrival)}</b> ` +
-          `via <b>${p.strategy}</b> (${p.probeTarget} probes, ${p.producerCount} producers, ${p.gasCount} gas)<br>` +
+          `via <b>${p.strategy}</b> (${p.probeTarget} probes, ${p.producerCount} producers, ${p.gasCount} gas` +
+          `${p.earlyHomeUnits ? `, ${p.earlyHomeUnits} home-built before warp` : ""})<br>` +
           `<span style="color:var(--muted)">searched ${r.evaluated} builds · ${cmp}</span><br>` +
           `<button id="load-opt" style="width:auto;padding:6px 12px;margin-top:10px;">Load this build into the simulator ↑</button>`;
         $("load-opt").addEventListener("click", () => {

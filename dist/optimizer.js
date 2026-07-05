@@ -1,5 +1,11 @@
 import { simulate, compositionArrivalTime, fmt } from "./engine.js";
 export const STRATEGIES = ["home", "proxyWalk", "proxyWarp"];
+function range(lo, hi) {
+    const out = [];
+    for (let i = lo; i <= hi; i++)
+        out.push(i);
+    return out;
+}
 /** Structures required to produce a composition, ordered by dependency depth. */
 function techClosure(target, data, extra = []) {
     const need = new Set();
@@ -75,7 +81,8 @@ export function generateBuild(target, data, p) {
     maybeProbe();
     // Warp Gate research needs a Cybernetics Core even if the army itself doesn't.
     const structs = techClosure(target, data, warp ? ["CyberneticsCore"] : []);
-    const primary = E(Object.keys(target)[0]).producer;
+    const primaryUnit = Object.keys(target)[0];
+    const primary = E(primaryUnit).producer;
     const needGas = Object.keys(target).some((n) => E(n).gas > 0);
     const gasCount = needGas || warp ? Math.max(1, p.gasCount) : p.gasCount; // warp research needs gas
     for (let i = 0; i < gasCount; i++) {
@@ -94,7 +101,12 @@ export function generateBuild(target, data, p) {
         A.push(primary + prodTag);
         maybeProbe();
     }
+    const earlyHomeUnits = warp ? Math.min(p.earlyHomeUnits, target[primaryUnit] ?? 0) : 0;
     if (warp) {
+        // Keep the home Gateways producing (units walk across the map) instead of
+        // sitting idle for the ~100s Warp Gate research takes.
+        for (let i = 0; i < earlyHomeUnits; i++)
+            addUnit(primaryUnit);
         A.push("WarpGateResearch");
         A.push("chrono:WarpGateResearch");
         A.push("Pylon@proxy"); // warp anchor near the enemy
@@ -105,6 +117,8 @@ export function generateBuild(target, data, p) {
     while (probes < p.probeTarget)
         addProbe();
     const rem = { ...target };
+    if (earlyHomeUnits > 0)
+        rem[primaryUnit] -= earlyHomeUnits;
     const types = Object.keys(target);
     let any = true;
     while (any) {
@@ -123,27 +137,31 @@ export function optimize(target, data, map, opts = {}) {
     const maxProbes = opts.maxProbes ?? 20;
     const maxProducers = opts.maxProducers ?? 6;
     const strategies = opts.strategies ?? STRATEGIES;
+    const maxEarlyHomeUnits = opts.maxEarlyHomeUnits ?? 6;
     const start = data.economy.startingWorkers;
     let best = null;
     const bestByStrategy = {};
     let evaluated = 0;
     for (const strategy of strategies) {
+        const earlyOptions = strategy === "proxyWarp" ? range(0, maxEarlyHomeUnits) : [0];
         for (let openerProbes = 0; openerProbes <= 4; openerProbes++) {
             for (let probeTarget = start; probeTarget <= maxProbes; probeTarget++) {
                 for (let producerCount = 1; producerCount <= maxProducers; producerCount++) {
                     for (let gasCount = 0; gasCount <= 2; gasCount++) {
-                        const params = { openerProbes, probeTarget, producerCount, gasCount, strategy };
-                        const order = generateBuild(target, data, params);
-                        const result = simulate(data, order, map);
-                        evaluated++;
-                        const arrival = compositionArrivalTime(result, target);
-                        if (!isFinite(arrival))
-                            continue;
-                        if (!best || arrival < best.arrival)
-                            best = { arrival, params, order, result };
-                        const sb = bestByStrategy[strategy];
-                        if (!sb || arrival < sb.arrival)
-                            bestByStrategy[strategy] = { arrival, params, order };
+                        for (const earlyHomeUnits of earlyOptions) {
+                            const params = { openerProbes, probeTarget, producerCount, gasCount, strategy, earlyHomeUnits };
+                            const order = generateBuild(target, data, params);
+                            const result = simulate(data, order, map);
+                            evaluated++;
+                            const arrival = compositionArrivalTime(result, target);
+                            if (!isFinite(arrival))
+                                continue;
+                            if (!best || arrival < best.arrival)
+                                best = { arrival, params, order, result };
+                            const sb = bestByStrategy[strategy];
+                            if (!sb || arrival < sb.arrival)
+                                bestByStrategy[strategy] = { arrival, params, order };
+                        }
                     }
                 }
             }
