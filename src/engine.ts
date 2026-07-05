@@ -33,6 +33,12 @@ export interface EntityData {
    * structure morphs from and consumes a Drone; Probe/SCV survive normal
    * construction). Only meaningful with isStructure + a non-morph "build". */
   consumesBuilder?: boolean;
+  /** Alternate producer types that can ALSO make this unit, tried in order
+   * after `producer` if it has no free slot (e.g. SCV: producer
+   * "CommandCenter", alsoProducer ["OrbitalCommand"] -- morphing to Orbital
+   * must not stop worker production, the way a real Command Center upgrade
+   * doesn't). */
+  alsoProducer?: string[];
   moveSpeed?: number; // game units/sec; used for arrival-time (units only)
   // --- Combat stats (army units only; undefined for structures/workers) ---
   // Baseline (no upgrades), vs an unarmored target. Used only to rank builds
@@ -552,9 +558,11 @@ function chooseProduction(s: State, ent: EntityData, tag: Location | "auto"): St
     }
   }
   const order: Location[] = tag === "proxy" ? ["proxy"] : tag === "home" ? ["home"] : ["proxy", "home"];
-  for (const loc of order)
-    if (s.freeProducers(ent.producer, loc) >= 1)
-      return { mode: "gate", kind: "unit", unitLoc: loc, producerType: ent.producer, producerLoc: loc };
+  for (const producerType of [ent.producer, ...(ent.alsoProducer ?? [])]) {
+    for (const loc of order)
+      if (s.freeProducers(producerType, loc) >= 1)
+        return { mode: "gate", kind: "unit", unitLoc: loc, producerType, producerLoc: loc };
+  }
   return null;
 }
 

@@ -12,6 +12,7 @@
     "frontier": "tsc && node dist/frontier-cli.js",
     "validate": "tsc && node dist/validate.js",
     "diff": "tsc && node dist/validate-replay.js",
+    "test": "tsc && node --test dist/*.test.js",
     "watch": "tsc --watch"
   },
   "devDependencies": {

@@ -355,9 +355,11 @@ function chooseProduction(s, ent, tag) {
         }
     }
     const order = tag === "proxy" ? ["proxy"] : tag === "home" ? ["home"] : ["proxy", "home"];
-    for (const loc of order)
-        if (s.freeProducers(ent.producer, loc) >= 1)
-            return { mode: "gate", kind: "unit", unitLoc: loc, producerType: ent.producer, producerLoc: loc };
+    for (const producerType of [ent.producer, ...(ent.alsoProducer ?? [])]) {
+        for (const loc of order)
+            if (s.freeProducers(producerType, loc) >= 1)
+                return { mode: "gate", kind: "unit", unitLoc: loc, producerType, producerLoc: loc };
+    }
     return null;
 }
 export function simulate(data, order, map) {

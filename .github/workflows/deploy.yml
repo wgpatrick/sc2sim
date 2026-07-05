@@ -29,6 +29,7 @@ jobs:
           mkdir -p _site
           cp index.html _site/
           cp -r dist _site/dist
+          find _site/dist -name '*.test.js' -delete
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

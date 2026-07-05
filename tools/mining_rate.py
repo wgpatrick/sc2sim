@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 """
+⚠️ LEGACY / SUPERSEDED (2026-07-05): this is a flat per-worker average,
+Protoss-only (hardcoded "Assimilator"), and strictly weaker than
+tools/calibrate_income.py's tiered least-squares fit (which is what
+src/data.ts / src/data-terran.ts / src/data-zerg.ts are actually calibrated
+from, and which supports all three races via --townhall/--gas). Kept around
+as an independent sanity check / simpler cross-reference, not as the
+canonical calibration path -- use calibrate_income.py for that.
+
 Estimate empirical mineral/gas income PER WORKER from parsed replays, to
 check against sc2sim's calibrated economy constants (src/data.ts).
 

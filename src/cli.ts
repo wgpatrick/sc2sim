@@ -23,7 +23,7 @@ function printBuild(name: string, description: string, order: string[]) {
   }
 
   // Show arrival times for army units (the map layer in action).
-  const army = res.actions.filter((a) => a.kind === "unit" && a.name !== "Probe");
+  const army = res.actions.filter((a) => a.kind === "unit" && !PROTOSS.entities[a.name]?.isWorker);
   if (army.length) {
     console.log("\n  army arrival at enemy:");
     for (const a of army)

@@ -97,14 +97,20 @@ add(ent("Factory", 150, 100, 42.9, "SCV", { isStructure: true, requires: ["Barra
 add(ent("Starport", 150, 100, 35.7, "SCV", { isStructure: true, requires: ["Factory"] }));
 // Orbital Command: CommandCenter morph, requires a Barracks (tech, not a
 // producer dependency). Not replay-verified (see header) -- standard LotV value.
-add(ent("OrbitalCommand", 150, 0, 17.9, "CommandCenter", { isStructure: true, morphFrom: "CommandCenter", requires: ["Barracks"] }));
+// supplyProvided carries over from CommandCenter (still 13) -- an Orbital is
+// still a townhall, not a downgrade; caught by engine.test.ts's regression
+// suite (a first version of this line silently dropped supply to 0 on morph).
+add(ent("OrbitalCommand", 150, 0, 17.9, "CommandCenter", { supplyProvided: 13, isStructure: true, morphFrom: "CommandCenter", requires: ["Barracks"] }));
 // Tech Lab add-ons -- see header for the "own producer-type entity" approximation.
 // Same building/cost/buildTime regardless of which structure it attaches to.
 add(ent("BarracksTechLab", 50, 25, 12.9, "SCV", { isStructure: true, requires: ["Barracks"] }));
 add(ent("FactoryTechLab", 50, 25, 12.9, "SCV", { isStructure: true, requires: ["Factory"] }));
 add(ent("StarportTechLab", 50, 25, 12.9, "SCV", { isStructure: true, requires: ["Starport"] }));
 // --- SCV (worker) ---------------------------------------------------------
-add(ent("SCV", 50, 0, 12.1, "CommandCenter", { supplyCost: 1, isWorker: true, moveSpeed: 2.8125 }));
+// alsoProducer: morphing to Orbital Command must not stop SCV production --
+// caught by engine.test.ts (a first version of this file had no such
+// fallback, so any Orbital-teched base could NEVER train another worker).
+add(ent("SCV", 50, 0, 12.1, "CommandCenter", { supplyCost: 1, isWorker: true, moveSpeed: 2.8125, alsoProducer: ["OrbitalCommand"] }));
 // --- Barracks-tier (no add-on requirement) --------------------------------
 // ⚠️ book values, see header — not replay-verified individually.
 add(ent("Marine", 50, 0, 12.9, "Barracks", { supplyCost: 1, moveSpeed: 2.25, dps: 7.0, hp: 45, shields: 0 }));
