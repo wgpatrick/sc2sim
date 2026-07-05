@@ -8,6 +8,7 @@
     "demo": "tsc && node dist/cli.js",
     "optimize": "tsc && node dist/optimize-cli.js",
     "search": "tsc && node dist/search-cli.js",
+    "opponent": "tsc && node dist/opponent-cli.js",
     "frontier": "tsc && node dist/frontier-cli.js",
     "validate": "tsc && node dist/validate.js",
     "diff": "tsc && node dist/validate-replay.js",

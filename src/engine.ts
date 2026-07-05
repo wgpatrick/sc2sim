@@ -504,11 +504,11 @@ export function simulate(
     }
 
     const ent = data.entities[pa.name];
-    if (!ent) return fail(s, log, snaps, actions, `Unknown entity "${pa.name}"`);
+    if (!ent) return fail(s, log, snaps, actions, `Unknown entity "${pa.name}"`, data, map);
 
     while (true) {
       if (++guard > SAFETY)
-        return fail(s, log, snaps, actions, "Safety guard tripped");
+        return fail(s, log, snaps, actions, "Safety guard tripped", data, map);
 
       const reqOk = ent.requires.every((r) => s.reqMet(r));
       const plan = reqOk ? planStart(s, ent, pa.location) : null;
@@ -519,7 +519,7 @@ export function simulate(
         const tEvent = nextEventTime(s) - s.time;
         if (tAfford <= tEvent + EPS || !isFinite(tEvent)) {
           if (!isFinite(tAfford))
-            return fail(s, log, snaps, actions, `Can never afford "${ent.name}"`);
+            return fail(s, log, snaps, actions, `Can never afford "${ent.name}"`, data, map);
           advanceBy(s, tAfford, snaps);
           startEntity(s, ent, plan, map, actions, log);
           break;
@@ -532,20 +532,13 @@ export function simulate(
             : !supplyOk
               ? "supply blocked (no Pylon/Nexus queued)"
               : "no free producer";
-          return fail(s, log, snaps, actions, `Deadlocked before "${ent.name}": ${why}`);
+          return fail(s, log, snaps, actions, `Deadlocked before "${ent.name}": ${why}`, data, map);
         }
       }
     }
   }
 
-  // Post-pass: compute arrival times now that chrono has finalized finishTimes.
-  for (const a of actions) {
-    if (a.kind === "unit") {
-      const ent = data.entities[a.name];
-      if (ent.isWorker) continue; // workers aren't army
-      a.arrivalTime = a.finishTime + travelToEnemy(ent, a.location, map);
-    }
-  }
+  computeArrivalTimes(actions, data, map);
 
   return {
     ok: true,
@@ -555,6 +548,18 @@ export function simulate(
     snapshots: snaps,
     final: snaps[snaps.length - 1],
   };
+}
+
+/** Compute travel-adjusted arrival times for army units now that chrono has
+ * finalized every finishTime. Mutates `actions` in place. */
+function computeArrivalTimes(actions: StartedItem[], data: GameData, map: MapConfig): void {
+  for (const a of actions) {
+    if (a.kind === "unit") {
+      const ent = data.entities[a.name];
+      if (ent.isWorker) continue; // workers aren't army
+      a.arrivalTime = a.finishTime + travelToEnemy(ent, a.location, map);
+    }
+  }
 }
 
 function startEntity(
@@ -681,8 +686,15 @@ function fail(
   snaps: Snapshot[],
   actions: StartedItem[],
   error: string,
+  data: GameData,
+  map: MapConfig,
 ): SimResult {
   log.push(`ERROR: ${error}`);
+  // Compute arrival times for whatever DID complete before the deadlock, so
+  // callers that want a partial threat/value curve (e.g. opponent.ts,
+  // replaying a real game past the point our greedy scheduler can keep up
+  // with real injects/micro) aren't left with nothing.
+  computeArrivalTimes(actions, data, map);
   return {
     ok: false,
     error,
@@ -732,8 +744,8 @@ export interface ValuePoint {
  * arrive", it answers "how much value is at the enemy by time t", for every
  * t, so builds can be compared across DIFFERENT compositions and unit mixes.
  */
-export function valueOverTime(res: SimResult, data: GameData): ValuePoint[] {
-  if (!res.ok) return [];
+export function valueOverTime(res: SimResult, data: GameData, opts: { allowPartial?: boolean } = {}): ValuePoint[] {
+  if (!res.ok && !opts.allowPartial) return [];
   const arrivals = res.actions
     .filter((a) => a.kind === "unit" && a.arrivalTime !== undefined && !data.entities[a.name]?.isWorker)
     .sort((x, y) => x.arrivalTime! - y.arrivalTime!);

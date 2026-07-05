@@ -20,48 +20,8 @@ import * as fs from "fs";
 import { simulate, fmt } from "./engine.js";
 import { PROTOSS } from "./data.js";
 import { MAPS } from "./maps.js";
+import { sequenceFromReplay } from "./replay.js";
 const DEFAULT_HORIZON = 180; // 3 minutes — before scouting/harassment decisions diverge the two timelines
-/**
- * Turn the replay's real events into an ordered Action[] the engine can run.
- * We only know true DECISION times for structures (Init) and morphs; units
- * and upgrades only expose completion in tracker data, so we back out an
- * estimated decision time (completion - known buildTime) purely to interleave
- * the sequence realistically. The actual comparison later uses completion
- * times exclusively, which both sides genuinely have.
- */
-function buildActionSequence(replay, horizon) {
-    const entities = PROTOSS.entities;
-    const timed = [];
-    for (const e of replay.buildOrder) {
-        if (e.t <= 0 || e.t > horizon)
-            continue; // t=0 is the shared starting state
-        const ent = entities[e.name];
-        if (!ent)
-            continue; // entity sc2sim doesn't model — skip
-        if (ent.morphFrom) {
-            if (e.event !== "morph")
-                continue;
-            timed.push({ action: e.name, decisionTime: e.t });
-        }
-        else if (ent.isUpgrade) {
-            if (e.event !== "upgrade")
-                continue;
-            timed.push({ action: e.name, decisionTime: Math.max(0, e.t - ent.buildTime) });
-        }
-        else if (ent.isStructure) {
-            if (e.event !== "start")
-                continue;
-            timed.push({ action: e.name, decisionTime: e.t });
-        }
-        else {
-            if (e.event !== "born")
-                continue;
-            timed.push({ action: e.name, decisionTime: Math.max(0, e.t - ent.buildTime) });
-        }
-    }
-    timed.sort((a, b) => a.decisionTime - b.decisionTime);
-    return timed.map((x) => x.action);
-}
 /** Real completion time for the n-th occurrence of each entity, from the replay. */
 function realFinishTimes(replay, horizon) {
     const done = new Map();
@@ -112,7 +72,7 @@ function snapshotAt(snapshots, t) {
 }
 function runOne(path, horizon) {
     const replay = JSON.parse(fs.readFileSync(path, "utf8"));
-    const actions = buildActionSequence(replay, horizon);
+    const actions = sequenceFromReplay(replay, PROTOSS, horizon);
     const result = simulate(PROTOSS, actions, MAPS.standard);
     console.log(`\n${"=".repeat(76)}`);
     console.log(`${replay.source}  —  ${replay.player.name} (${replay.player.race}), ${replay.map}`);

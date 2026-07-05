@@ -321,10 +321,10 @@ export function simulate(data, order, map) {
         }
         const ent = data.entities[pa.name];
         if (!ent)
-            return fail(s, log, snaps, actions, `Unknown entity "${pa.name}"`);
+            return fail(s, log, snaps, actions, `Unknown entity "${pa.name}"`, data, map);
         while (true) {
             if (++guard > SAFETY)
-                return fail(s, log, snaps, actions, "Safety guard tripped");
+                return fail(s, log, snaps, actions, "Safety guard tripped", data, map);
             const reqOk = ent.requires.every((r) => s.reqMet(r));
             const plan = reqOk ? planStart(s, ent, pa.location) : null;
             const supplyOk = s.supplyUsed + ent.supplyCost <= s.supplyCap + EPS;
@@ -333,7 +333,7 @@ export function simulate(data, order, map) {
                 const tEvent = nextEventTime(s) - s.time;
                 if (tAfford <= tEvent + EPS || !isFinite(tEvent)) {
                     if (!isFinite(tAfford))
-                        return fail(s, log, snaps, actions, `Can never afford "${ent.name}"`);
+                        return fail(s, log, snaps, actions, `Can never afford "${ent.name}"`, data, map);
                     advanceBy(s, tAfford, snaps);
                     startEntity(s, ent, plan, map, actions, log);
                     break;
@@ -347,20 +347,12 @@ export function simulate(data, order, map) {
                         : !supplyOk
                             ? "supply blocked (no Pylon/Nexus queued)"
                             : "no free producer";
-                    return fail(s, log, snaps, actions, `Deadlocked before "${ent.name}": ${why}`);
+                    return fail(s, log, snaps, actions, `Deadlocked before "${ent.name}": ${why}`, data, map);
                 }
             }
         }
     }
-    // Post-pass: compute arrival times now that chrono has finalized finishTimes.
-    for (const a of actions) {
-        if (a.kind === "unit") {
-            const ent = data.entities[a.name];
-            if (ent.isWorker)
-                continue; // workers aren't army
-            a.arrivalTime = a.finishTime + travelToEnemy(ent, a.location, map);
-        }
-    }
+    computeArrivalTimes(actions, data, map);
     return {
         ok: true,
         finishTime: s.time,
@@ -369,6 +361,18 @@ export function simulate(data, order, map) {
         snapshots: snaps,
         final: snaps[snaps.length - 1],
     };
+}
+/** Compute travel-adjusted arrival times for army units now that chrono has
+ * finalized every finishTime. Mutates `actions` in place. */
+function computeArrivalTimes(actions, data, map) {
+    for (const a of actions) {
+        if (a.kind === "unit") {
+            const ent = data.entities[a.name];
+            if (ent.isWorker)
+                continue; // workers aren't army
+            a.arrivalTime = a.finishTime + travelToEnemy(ent, a.location, map);
+        }
+    }
 }
 function startEntity(s, ent, plan, map, actions, log) {
     s.minerals -= ent.minerals;
@@ -480,8 +484,13 @@ function castChrono(s, target, log, snaps) {
             advanceToNextEvent(s, snaps);
     }
 }
-function fail(s, log, snaps, actions, error) {
+function fail(s, log, snaps, actions, error, data, map) {
     log.push(`ERROR: ${error}`);
+    // Compute arrival times for whatever DID complete before the deadlock, so
+    // callers that want a partial threat/value curve (e.g. opponent.ts,
+    // replaying a real game past the point our greedy scheduler can keep up
+    // with real injects/micro) aren't left with nothing.
+    computeArrivalTimes(actions, data, map);
     return {
         ok: false,
         error,
@@ -519,8 +528,8 @@ export function compositionArrivalTime(res, comp) {
  * arrive", it answers "how much value is at the enemy by time t", for every
  * t, so builds can be compared across DIFFERENT compositions and unit mixes.
  */
-export function valueOverTime(res, data) {
-    if (!res.ok)
+export function valueOverTime(res, data, opts = {}) {
+    if (!res.ok && !opts.allowPartial)
         return [];
     const arrivals = res.actions
         .filter((a) => a.kind === "unit" && a.arrivalTime !== undefined && !data.entities[a.name]?.isWorker)
