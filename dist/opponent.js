@@ -1,18 +1,3 @@
-/**
- * Opponent modeling: instead of optimizing a Protoss build order in
- * isolation ("how fast can MY army arrive"), score it against a REAL
- * opponent's recorded threat curve -- "how much fighting value does the
- * enemy have by time t, in a game someone actually played" (see
- * replays/parsed/*.opponent.json, extracted straight from this repo's
- * replay corpus, not hand-authored archetypes).
- *
- * This directly answers a sharper question than compositionArrivalTime:
- * not "when do I arrive", but "am I ever BEHIND the enemy's real value
- * curve" -- a build that's fast but leaves you with less value than a real
- * opponent had at the same timestamp is a build that loses to that opener,
- * regardless of how it ranks against other Protoss builds in isolation.
- */
-import * as fs from "fs";
 import { simulate, valueOverTime, fmt } from "./engine.js";
 import { sequenceFromReplay } from "./replay.js";
 /**
@@ -20,9 +5,14 @@ import { sequenceFromReplay } from "./replay.js";
  * through their own race's simulate(), and return their value-over-time
  * curve. `horizon` should match how far the sequence conversion trusts the
  * replay (see replay.ts / validate-replay.ts's 3-minute default rationale).
+ *
+ * Takes an already-parsed ParsedReplay object rather than a file path --
+ * this module does no file I/O itself (no `fs` import), so it works
+ * unchanged in a browser (see index.html's "Opponent" panel, which embeds
+ * replay JSON directly) as well as Node CLIs (which read the file
+ * themselves, e.g. opponent-cli.ts's `JSON.parse(fs.readFileSync(path))`).
  */
-export function threatCurveFromReplay(path, opponentData, map, horizon = 240) {
-    const replay = JSON.parse(fs.readFileSync(path, "utf8"));
+export function threatCurveFromReplay(replay, opponentData, map, horizon = 240) {
     const actions = sequenceFromReplay(replay, opponentData, horizon);
     const result = simulate(opponentData, actions, map);
     // A real build order can outrun what this engine's greedy scheduler can
@@ -30,7 +20,7 @@ export function threatCurveFromReplay(path, opponentData, map, horizon = 240) {
     // see data-zerg.ts's header) -- use whatever DID complete rather than
     // discarding the whole curve; computeArrivalTimes runs even on failure.
     if (!result.ok) {
-        console.warn(`  (note: ${path} only replays cleanly to ${fmt(result.finishTime)} -- ${result.error})`);
+        console.warn(`  (note: ${replay.source} only replays cleanly to ${fmt(result.finishTime)} -- ${result.error})`);
     }
     return {
         source: replay.source,

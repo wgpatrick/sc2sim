@@ -12,7 +12,6 @@
  * opponent had at the same timestamp is a build that loses to that opener,
  * regardless of how it ranks against other Protoss builds in isolation.
  */
-import * as fs from "fs";
 import type { Composition, GameData, MapConfig, SimResult } from "./engine.js";
 import { simulate, valueOverTime, fmt, type ValuePoint } from "./engine.js";
 import type { Scorer } from "./search.js";
@@ -32,14 +31,19 @@ export interface ThreatCurve {
  * through their own race's simulate(), and return their value-over-time
  * curve. `horizon` should match how far the sequence conversion trusts the
  * replay (see replay.ts / validate-replay.ts's 3-minute default rationale).
+ *
+ * Takes an already-parsed ParsedReplay object rather than a file path --
+ * this module does no file I/O itself (no `fs` import), so it works
+ * unchanged in a browser (see index.html's "Opponent" panel, which embeds
+ * replay JSON directly) as well as Node CLIs (which read the file
+ * themselves, e.g. opponent-cli.ts's `JSON.parse(fs.readFileSync(path))`).
  */
 export function threatCurveFromReplay(
-  path: string,
+  replay: ParsedReplay,
   opponentData: GameData,
   map: MapConfig,
   horizon = 240,
 ): ThreatCurve {
-  const replay: ParsedReplay = JSON.parse(fs.readFileSync(path, "utf8"));
   const actions = sequenceFromReplay(replay, opponentData, horizon);
   const result = simulate(opponentData, actions, map);
   // A real build order can outrun what this engine's greedy scheduler can
@@ -47,7 +51,7 @@ export function threatCurveFromReplay(
   // see data-zerg.ts's header) -- use whatever DID complete rather than
   // discarding the whole curve; computeArrivalTimes runs even on failure.
   if (!result.ok) {
-    console.warn(`  (note: ${path} only replays cleanly to ${fmt(result.finishTime)} -- ${result.error})`);
+    console.warn(`  (note: ${replay.source} only replays cleanly to ${fmt(result.finishTime)} -- ${result.error})`);
   }
   return {
     source: replay.source,

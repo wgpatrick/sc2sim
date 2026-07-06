@@ -189,6 +189,32 @@
         <div class="legend"><span style="color:var(--muted)">hover the line for the build behind each point</span></div>
       </div>
 
+      <div class="panel" style="margin-top: 20px;">
+        <h1 style="font-size: 18px;">🥊 Opponent — safety against a REAL recorded game <span style="font-size:12px; color:var(--muted); font-weight:400;">(Protoss only)</span></h1>
+        <p class="sub" style="margin-bottom: 16px;">
+          Replays a real Terran/Zerg opponent's recorded build order through their own race's simulator to get a
+          cumulative fighting-VALUE-over-time curve straight from a game someone actually played, then compares it
+          against the build order currently loaded in the simulator above (top-left panel — edit it and re-compare).
+          A build that's fast but leaves you with less value than a real opponent had at that moment is a build
+          that loses to that opener, regardless of how it ranks in isolation. These 3 sample games are trimmed to
+          their opening 5 minutes and embedded directly (this is a UI convenience subset —
+          <code>npm run opponent</code> draws on the full 20-replay corpus).
+        </p>
+        <div class="row">
+          <div style="flex:1">
+            <label for="opp-pick">Real opponent replay</label>
+            <select id="opp-pick"></select>
+          </div>
+          <button id="opp-compare" style="flex:0 0 auto; width:auto; margin-top:0; align-self:end; padding:10px 18px;">Compare ▶</button>
+        </div>
+        <div id="opp-summary" class="summary" style="margin-top:16px"></div>
+        <canvas id="opp-chart" width="900" height="300"></canvas>
+        <div class="legend">
+          <span style="color:var(--accent)">■ my build (from the simulator above)</span>
+          <span style="color:var(--err)">■ real opponent</span>
+        </div>
+      </div>
+
       <p class="warn">
         Costs, supply &amp; build times come from SC2's own game data
         (<a href="https://github.com/BurnySc2/sc2-techtree">sc2-techtree</a>'s <code>data.json</code>, current to 5.0.16),
@@ -206,6 +232,9 @@
       import { DEFAULT_MAP, MAPS } from "./dist/maps.js";
       import { optimize, valueFrontier, describeComposition } from "./dist/optimizer.js";
       import { searchRawSequences, arrivalScorer } from "./dist/search.js";
+      import { threatCurveFromReplay, assessDanger, describeCurve } from "./dist/opponent.js";
+      import { SAMPLE_REPLAYS } from "./dist/sample-replays.js";
+      import { valueOverTime } from "./dist/engine.js";
 
       const $ = (id) => document.getElementById(id);
       const presetSel = $("preset"), orderTa = $("order"), descEl = $("desc"), raceSel = $("race");
@@ -317,9 +346,15 @@
         setTimeout(() => { btn.textContent = original; }, 1500);
       });
 
+      // Tracked so the Opponent panel below can compare against "my build"
+      // currently loaded in this panel, without re-simulating.
+      let lastSimResult = null, lastSimRace = null;
+
       function run() {
         const order = orderTa.value.split("\n").map((l) => l.trim()).filter(Boolean);
         const res = simulate(activeData(), order, DEFAULT_MAP);
+        lastSimResult = res;
+        lastSimRace = raceSel.value;
         syncUrl(order);
         const s = $("summary");
         if (!res.ok) {
@@ -581,6 +616,75 @@
         if (!lastFrontier.length) return;
         const nearest = nearestFrontierPoint(ev);
         loadBuildIntoSimulator(nearest.order, `Frontier point: target ${describeComposition(nearest.target)}, value ${nearest.value.toFixed(1)} by ${fmt(nearest.t)}`);
+      });
+
+      // ---- Opponent panel ----
+      const oppPick = $("opp-pick");
+      SAMPLE_REPLAYS.forEach((s, i) => {
+        const o = document.createElement("option");
+        o.value = i; o.textContent = `${s.label}`; oppPick.appendChild(o);
+      });
+
+      function drawOpponentChart(mine, theirs) {
+        const cv = $("opp-chart"), ctx = cv.getContext("2d");
+        const W = cv.width, H = cv.height, pad = 34;
+        ctx.clearRect(0, 0, W, H);
+        const all = [...mine, ...theirs];
+        if (!all.length) return;
+        const tMax = Math.max(1, ...all.map((p) => p.t));
+        const vMax = Math.max(1, ...all.map((p) => p.value));
+        const css = getComputedStyle(document.documentElement);
+        const x = (t) => pad + (t / tMax) * (W - pad * 2);
+        const y = (v) => H - pad - (v / vMax) * (H - pad * 2);
+
+        ctx.strokeStyle = css.getPropertyValue("--line"); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(pad, H - pad); ctx.lineTo(W - pad, H - pad); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, H - pad); ctx.stroke();
+        ctx.fillStyle = css.getPropertyValue("--muted"); ctx.font = "11px sans-serif";
+        for (let t = 0; t <= tMax; t += Math.max(30, Math.round(tMax / 6 / 30) * 30)) {
+          ctx.fillText(fmt(t), x(t) - 10, H - pad + 16);
+        }
+        ctx.textAlign = "right";
+        for (let i = 0; i <= 4; i++) {
+          const v = (vMax / 4) * i;
+          ctx.fillText(v.toFixed(0), pad - 6, y(v) + 4);
+        }
+        ctx.textAlign = "left";
+
+        const drawStep = (points, color) => {
+          ctx.strokeStyle = color; ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(x(0), y(0));
+          let prevValue = 0;
+          for (const p of points) {
+            ctx.lineTo(x(p.t), y(prevValue));
+            ctx.lineTo(x(p.t), y(p.value));
+            prevValue = p.value;
+          }
+          ctx.lineTo(x(tMax), y(prevValue));
+          ctx.stroke();
+        };
+        drawStep(mine, css.getPropertyValue("--accent"));
+        drawStep(theirs, css.getPropertyValue("--err"));
+      }
+
+      $("opp-compare").addEventListener("click", () => {
+        const out = $("opp-summary");
+        if (lastSimRace !== "Protoss" || !lastSimResult || !lastSimResult.ok) {
+          out.innerHTML = '<span class="err">Switch the simulator above to Protoss and run a valid build first.</span>';
+          return;
+        }
+        const picked = SAMPLE_REPLAYS[+oppPick.value];
+        const oppData = RACE_DATA[picked.race];
+        const curve = threatCurveFromReplay(picked.replay, oppData, MAPS.standard);
+        const danger = assessDanger(lastSimResult, PROTOSS, curve);
+        const mine = valueOverTime(lastSimResult, PROTOSS);
+
+        out.innerHTML =
+          `<b>${describeCurve(curve)}</b><br>` +
+          `worst deficit vs this opponent: <b>${danger.worstDeficit.toFixed(1)}</b> value at <b>${fmt(danger.worstDeficitTime)}</b> ` +
+          `<span style="color:var(--muted)">(positive = behind the real opponent at that moment; negative = my build was ahead the whole way)</span>`;
+        drawOpponentChart(mine, curve.points);
       });
 
       if (!loadFromUrl()) loadPreset(0);

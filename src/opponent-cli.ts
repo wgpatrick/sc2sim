@@ -69,7 +69,8 @@ const rows: { source: string; race: string; fastDeficit: number; safeDeficit: nu
 
 for (const { path, data } of opponents) {
   console.log("\n" + "=".repeat(72));
-  const curve = threatCurveFromReplay(path, data, map);
+  const replay = JSON.parse(fs.readFileSync(path, "utf8"));
+  const curve = threatCurveFromReplay(replay, data, map);
   if (curve.points.length === 0) {
     // The replay-derived sequence deadlocked at t=0 (see the note printed
     // above by threatCurveFromReplay) -- no real signal to score safety
