@@ -92,3 +92,34 @@ export function describeCurve(curve) {
     const last = curve.points[curve.points.length - 1];
     return `${curve.source} (${curve.opponentRace}): ${curve.points.length} steps, final value ${last?.value.toFixed(1) ?? 0} by ${fmt(last?.t ?? 0)}`;
 }
+/**
+ * Aggregate multiple same-matchup replays' threat curves into one averaged
+ * curve with a min/max band, sampled on a common time grid -- a first step
+ * toward "the statistical archetype of a Zerg opener" instead of "whichever
+ * specific replay happens to be in this repo" (see README "Modeling the
+ * opponent", known limitation). Each input curve is resampled via valueAt()
+ * (a step-function lookup), so curves of different lengths/step counts
+ * combine cleanly; `maxT` bounds how far the grid extends regardless of
+ * how long any individual replay's curve runs.
+ */
+export function averageThreatCurve(curves, opponentRace, opts = {}) {
+    const gridStep = opts.gridStep ?? 10;
+    const maxT = opts.maxT ?? 300;
+    const points = [];
+    for (let t = 0; t <= maxT; t += gridStep) {
+        const values = curves.map((c) => valueAt(c, t));
+        const mean = values.reduce((a, b) => a + b, 0) / values.length;
+        points.push({ t, mean, min: Math.min(...values), max: Math.max(...values) });
+    }
+    return { label: `${curves.length} ${opponentRace} replays`, opponentRace, n: curves.length, points };
+}
+/** Adapts an AveragedThreatCurve into a plain ThreatCurve (mean as the
+ * value series) so it drops straight into assessDanger()/dangerScorer()
+ * unchanged -- "score against the average opener", not one specific game. */
+export function asThreatCurve(avg) {
+    return {
+        source: avg.label,
+        opponentRace: avg.opponentRace,
+        points: avg.points.map((p) => ({ t: p.t, value: p.mean, name: "average" })),
+    };
+}

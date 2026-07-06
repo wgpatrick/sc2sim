@@ -20,7 +20,7 @@ import { ZERG } from "./data-zerg.js";
 import { MAPS } from "./maps.js";
 import { describeComposition } from "./optimizer.js";
 import { searchRawSequences, arrivalScorer, type SearchOptions } from "./search.js";
-import { threatCurveFromReplay, assessDanger, dangerScorer, describeCurve } from "./opponent.js";
+import { threatCurveFromReplay, assessDanger, dangerScorer, describeCurve, averageThreatCurve, asThreatCurve, type ThreatCurve } from "./opponent.js";
 import { fmt } from "./engine.js";
 import type { Composition, GameData } from "./engine.js";
 
@@ -66,6 +66,7 @@ let sumFastDeficit = 0;
 let sumSafeDeficit = 0;
 let improvedCount = 0;
 const rows: { source: string; race: string; fastDeficit: number; safeDeficit: number }[] = [];
+const curvesByRace: Record<string, ThreatCurve[]> = { Terran: [], Zerg: [] };
 
 for (const { path, data } of opponents) {
   console.log("\n" + "=".repeat(72));
@@ -80,6 +81,7 @@ for (const { path, data } of opponents) {
   }
   console.log(`OPPONENT: ${describeCurve(curve)}`);
   console.log("=".repeat(72));
+  curvesByRace[curve.opponentRace]?.push(curve);
 
   const fastDanger = assessDanger(fast.result, PROTOSS, curve);
 
@@ -118,3 +120,22 @@ for (const r of rows) {
 }
 console.log(`\n  mean worst deficit: fastest-arrival ${(sumFastDeficit / rows.length).toFixed(1)}, danger-scored ${(sumSafeDeficit / rows.length).toFixed(1)}`);
 console.log(`  danger-scoring improved safety against ${improvedCount}/${rows.length} opponents`);
+
+// ---- Statistical archetype: score against the AVERAGE opener per race, ----
+// ---- not one specific recorded game at a time (README roadmap item 13). --
+console.log("\n" + "=".repeat(72));
+console.log("STATISTICAL ARCHETYPE: danger-scoring against the AVERAGED opponent curve per race");
+console.log("=".repeat(72));
+for (const [race, curves] of Object.entries(curvesByRace)) {
+  if (curves.length < 2) continue; // averaging 0-1 curves isn't a statistical archetype
+  const avg = averageThreatCurve(curves, race);
+  const avgCurve = asThreatCurve(avg);
+  const fastDanger = assessDanger(fast.result, PROTOSS, avgCurve);
+  const safe = searchRawSequences(target, PROTOSS, map, dangerScorer(PROTOSS, avgCurve), SEARCH_OPTS);
+  const safeDanger = assessDanger(safe.result, PROTOSS, avgCurve);
+  console.log(`\n${avg.label} averaged (min/max band across all ${avg.n}):`);
+  console.log(`  fastest-arrival worst deficit vs the AVERAGE: ${fastDanger.worstDeficit.toFixed(1)} at ${fmt(fastDanger.worstDeficitTime)}`);
+  console.log(`  danger-scored worst deficit vs the AVERAGE:   ${safeDanger.worstDeficit.toFixed(1)} at ${fmt(safeDanger.worstDeficitTime)}`);
+  console.log(`  build order: ${safe.best.join(", ")}`);
+}
+console.log(`\n  (still a first step, not a full distributional model -- see README "Modeling the opponent")`);
