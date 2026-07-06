@@ -80,6 +80,15 @@
       .lm::before { color: var(--mineral); } .lg::before { color: var(--gas); } .ls::before { color: var(--supply); }
       .warn { font-size: 12px; color: var(--muted); border-left: 3px solid var(--supply); padding: 6px 10px; margin-top: 20px; background: var(--panel); border-radius: 0 6px 6px 0; }
       a { color: var(--accent); }
+      .bb-list { display: flex; flex-direction: column; gap: 8px; }
+      .bb-card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+      .bb-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .bb-rank { color: var(--muted); font-size: 12px; font-weight: 700; flex: 0 0 auto; }
+      .bb-label { font-weight: 600; flex: 1 1 auto; }
+      .bb-time { color: var(--accent); font-weight: 700; font-family: ui-monospace, Menlo, monospace; }
+      .bb-order-preview { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--muted); margin-top: 6px; white-space: normal; word-break: break-word; }
+      .bb-card summary.bb-order-preview { cursor: pointer; margin-top: 6px; }
+      .bb-card button { width: auto; margin-top: 8px; padding: 6px 12px; font-size: 13px; }
     </style>
   </head>
   <body>
@@ -87,10 +96,32 @@
       <h1>StarCraft II Build-Order Simulator</h1>
       <p class="sub">
         Patch <code>5.0.16</code> (8-worker start). Event-driven economy sim — no opponent, no combat.
-        Type a build order (one action per line); <code>chrono:X</code> casts Chrono Boost on the in-production <code>X</code>
-        (Protoss only), <code>MULE</code> calls down a Terran MULE, <code>InjectLarva</code> casts a Zerg Queen inject.
-        The Optimizer/Value-frontier/Opponent sections below are Protoss-only for now.
+        <b>Start with "Best builds" below</b> for a ready-made answer, or use the tools further down to dig
+        in: <b>Simulator</b> (edit and inspect any build order by hand, all 3 races), <b>Optimizer</b>
+        (search a specific target army you pick), <b>Value frontier</b> (best army value at various times),
+        <b>Opponent</b> (check your build's safety against a real recorded game). Everything Protoss-specific
+        below uses <code>chrono:X</code> to cast Chrono Boost on the in-production <code>X</code>; Terran/Zerg
+        builds in the Simulator can use <code>MULE</code> / <code>InjectLarva</code>.
       </p>
+
+      <div class="panel" id="best-builds-panel">
+        <h1 style="font-size: 18px;">🏆 Best builds <span style="font-size:12px; color:var(--muted); font-weight:400;">(Protoss, auto-computed)</span></h1>
+        <p class="sub" style="margin-bottom: 16px;">
+          No configuration needed — this runs the raw-sequence GA (see "The raw-sequence search" below) against
+          a curated set of common targets and shows the fastest ones found. <b>Rushes</b> are small 1-base
+          all-ins scored purely by arrival time; <b>macro targets</b> are large armies, which is where the GA
+          starts finding it's worth taking a natural expansion — watch the "1 base" vs "2 bases" badge change
+          as the target gets bigger. Click "Load into simulator" on any card to inspect the full build order,
+          step by step, above.
+        </p>
+        <div class="row" style="margin-bottom: 4px;">
+          <button id="bb-recompute" style="flex:0 0 auto; width:auto; margin-top:0;">↻ Recompute</button>
+        </div>
+        <h2 style="font-size: 14px; margin: 16px 0 8px;">⚡ Fastest 1-base rushes</h2>
+        <div id="bb-rush" class="bb-list"></div>
+        <h2 style="font-size: 14px; margin: 16px 0 8px;">🏗 Macro targets — where expanding starts to pay off</h2>
+        <div id="bb-macro" class="bb-list"></div>
+      </div>
 
       <div class="grid">
         <div class="panel">
@@ -418,8 +449,18 @@
         line("supplyUsed", ySup, "--supply");
       }
 
+      // Every real army unit for a race, derived from the data itself (not a
+      // hand-maintained list that can silently drift out of sync as the
+      // roster grows -- this UI used to hardcode a 7-unit Protoss list that
+      // was missing Observer). Structures/workers/upgrades/morphs excluded.
+      function armyUnitNames(data) {
+        return Object.values(data.entities)
+          .filter((e) => !e.isStructure && !e.isWorker && !e.isUpgrade && !e.morphFrom)
+          .map((e) => e.name);
+      }
+
       // ---- Optimizer panel ----
-      const ARMY_UNITS = ["Zealot", "Stalker", "Adept", "Sentry", "Immortal", "Oracle", "VoidRay"];
+      const ARMY_UNITS = armyUnitNames(PROTOSS);
       const DEFAULT_ARMY = [["Zealot", 4], ["Stalker", 0], ["Adept", 0]];
       const armyRows = $("army-rows");
       DEFAULT_ARMY.forEach(([unit, count]) => {
@@ -506,7 +547,7 @@
       });
 
       // ---- Value frontier panel ----
-      const FRONTIER_UNITS = ["Zealot", "Stalker", "Adept", "Sentry", "Immortal", "Oracle", "VoidRay"];
+      const FRONTIER_UNITS = armyUnitNames(PROTOSS);
       const DEFAULT_FRONTIER_UNITS = new Set(["Zealot", "Stalker", "Adept"]);
       const frontierUnitsEl = $("frontier-units");
       FRONTIER_UNITS.forEach((u) => {
@@ -704,8 +745,92 @@
         drawOpponentChart(mine, curve.points);
       });
 
+      // ---- Best builds panel ----
+      // A curated set of common targets, not the full unit roster/count grid
+      // the Value Frontier sweeps -- rushes are small 1-base all-ins (scored
+      // purely by arrival time); macro targets are large armies, chosen to
+      // straddle the point where the GA starts finding an expansion worth it
+      // (confirmed empirically: 20/32 Stalker stay on 1 base, 40 expands).
+      const RUSH_TARGETS = [
+        { label: "4 Zealot", target: { Zealot: 4 } },
+        { label: "4 Stalker", target: { Stalker: 4 } },
+        { label: "4 Adept", target: { Adept: 4 } },
+        { label: "3 Stalker + 2 Adept", target: { Stalker: 3, Adept: 2 } },
+        { label: "6 Zealot", target: { Zealot: 6 } },
+      ];
+      const MACRO_TARGETS = [
+        { label: "20 Stalker", target: { Stalker: 20 } },
+        { label: "32 Stalker", target: { Stalker: 32 } },
+        { label: "40 Stalker", target: { Stalker: 40 } },
+      ];
+      // Same reduced budget as the "Search (GA)" button above -- these run
+      // on a cold, unwarmed JIT in the page's main thread, and there are 8
+      // of them (5 rush + 3 macro) back to back.
+      const BEST_BUILDS_OPTS = { populationSize: 120, generations: 60 };
+
+      function renderBestBuildCards(container, results, showBaseCount) {
+        container.innerHTML = "";
+        if (!results.length) {
+          container.innerHTML = '<span class="err">No valid builds found.</span>';
+          return;
+        }
+        results.forEach((r, i) => {
+          const card = document.createElement("div");
+          card.className = "bb-card";
+          const badge = showBaseCount
+            ? r.expands
+              ? '<span class="tag structure">2 bases</span>'
+              : '<span class="tag">1 base</span>'
+            : "";
+          const previewLen = 6;
+          const preview = r.order.slice(0, previewLen).join(", ") + (r.order.length > previewLen ? `, … (${r.order.length - previewLen} more)` : "");
+          card.innerHTML =
+            `<div class="bb-head">` +
+            `<span class="bb-rank">#${i + 1}</span>` +
+            `<span class="bb-label">${r.label}</span>` +
+            badge +
+            `<span class="bb-time">${fmt(r.score)}</span>` +
+            `</div>` +
+            `<details><summary class="bb-order-preview">${preview}</summary>` +
+            `<div class="bb-order-preview" style="margin-top:4px;">${r.order.join(", ")}</div></details>` +
+            `<button>Load into simulator ↑</button>`;
+          card.querySelector("button").addEventListener(
+            "click",
+            () => loadBuildIntoSimulator(r.order, `Best build: ${r.label} arrives at the enemy in ${fmt(r.score)}`),
+          );
+          container.appendChild(card);
+        });
+      }
+
+      async function computeBestBuilds() {
+        const rushEl = $("bb-rush"), macroEl = $("bb-macro"), btn = $("bb-recompute");
+        btn.disabled = true;
+        rushEl.innerHTML = '<span style="color:var(--muted)">searching…</span>';
+        macroEl.innerHTML = '<span style="color:var(--muted)">searching…</span>';
+        await new Promise((r) => setTimeout(r, 20)); // let the "searching…" message paint first
+
+        const map = MAPS.standard;
+        const rushResults = RUSH_TARGETS.map(({ label, target }) => {
+          const g = searchRawSequences(target, PROTOSS, map, arrivalScorer, BEST_BUILDS_OPTS);
+          return { label, score: g.score, order: g.best };
+        })
+          .filter((r) => isFinite(r.score))
+          .sort((a, b) => a.score - b.score);
+
+        const macroResults = MACRO_TARGETS.map(({ label, target }) => {
+          const g = searchRawSequences(target, PROTOSS, map, arrivalScorer, BEST_BUILDS_OPTS);
+          return { label, score: g.score, order: g.best, expands: g.best.some((a) => a.startsWith("Nexus")) };
+        }).filter((r) => isFinite(r.score));
+
+        renderBestBuildCards(rushEl, rushResults, false);
+        renderBestBuildCards(macroEl, macroResults, true);
+        btn.disabled = false;
+      }
+      $("bb-recompute").addEventListener("click", computeBestBuilds);
+
       if (!loadFromUrl()) loadPreset(0);
       run();
+      computeBestBuilds();
     </script>
   </body>
 </html>

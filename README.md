@@ -51,7 +51,14 @@ npm test           # unit tests for engine mechanics (Node's built-in test runne
 
 Open the interactive version in a browser (after `npm run build`, which emits
 `dist/`): serve the folder and visit `index.html`. On this site it's published at
-`/sc2sim/`.
+`/sc2sim/`. It opens on a **"Best builds" panel** (2026-07-06) that needs no
+configuration — it runs the raw-sequence GA against a curated set of common
+targets and shows the fastest ones found, split into 1-base rushes and macro
+targets (the latter chosen to straddle the point where taking an expansion
+starts paying off — watch the "1 base"/"2 bases" badge flip around 40 units).
+Click "Load into simulator" on any card to inspect the full build order.
+Everything below that (Simulator, Optimizer, Value frontier, Opponent) is
+still there for hand-editing a build or searching a specific target yourself.
 
 ## Why no full game engine?
 
@@ -563,6 +570,17 @@ positioning, range, splash, armor types, or upgrades on either side yet.
     space could grow (e.g. worker-count upper bound is a fixed 20), and the
     Terran/Zerg unit roster still leans on Liquipedia book values rather
     than replay-verified combat stats for most non-buildTime numbers.
+18. ✅ **UX pass: "just show me the good builds"** (2026-07-06) — feedback
+    that the page required already knowing what to search for before it was
+    useful, and that unit dropdowns were an incomplete hardcoded list
+    (missing Observer). Fixed the second by deriving every unit dropdown
+    from the race's own entity data instead of a hand-maintained array (the
+    same "don't hardcode a list that drifts" lesson as everywhere else this
+    project has hit it). Fixed the first with the new "Best builds" panel:
+    no configuration, runs on page load, curated rush + macro targets, top
+    results as load-into-simulator cards. Also fixed the Value Frontier
+    button freezing the page for ~24s (same root cause and fix as the GA
+    search button's tuning, just never applied there before).
 
 ## References
 
