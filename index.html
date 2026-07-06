@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SC2 Build-Order Simulator (Protoss · 5.0.16)</title>
+    <title>SC2 Build-Order Simulator (5.0.16)</title>
     <style>
       :root {
         --bg: #0e1116;
@@ -86,13 +86,23 @@
     <div class="wrap">
       <h1>StarCraft II Build-Order Simulator</h1>
       <p class="sub">
-        Protoss · patch <code>5.0.16</code> (8-worker start). Event-driven economy sim — no opponent, no combat.
-        Type a build order (one action per line); <code>chrono:X</code> casts Chrono Boost on the in-production <code>X</code>.
+        Patch <code>5.0.16</code> (8-worker start). Event-driven economy sim — no opponent, no combat.
+        Type a build order (one action per line); <code>chrono:X</code> casts Chrono Boost on the in-production <code>X</code>
+        (Protoss only), <code>MULE</code> calls down a Terran MULE, <code>InjectLarva</code> casts a Zerg Queen inject.
+        The Optimizer/Value-frontier/Opponent sections below are Protoss-only for now.
       </p>
 
       <div class="grid">
         <div class="panel">
           <div class="row">
+            <div style="flex:0 0 130px">
+              <label for="race">Race</label>
+              <select id="race">
+                <option value="Protoss">Protoss</option>
+                <option value="Terran">Terran</option>
+                <option value="Zerg">Zerg</option>
+              </select>
+            </div>
             <div style="flex:1">
               <label for="preset">Preset build</label>
               <select id="preset"></select>
@@ -105,7 +115,10 @@
             <input type="checkbox" id="micro" checked style="width:auto;" />
             Pro probe micro (hand-mining, +~12% income vs a-move)
           </label>
-          <button id="run">▶ Simulate</button>
+          <div class="row" style="margin-top:0;">
+            <button id="run" style="flex:1;">▶ Simulate</button>
+            <button id="share" title="Copy a link to this exact build" style="flex:0 0 auto; width:auto; background:var(--panel); color:var(--fg); border:1px solid var(--line);">🔗 Copy link</button>
+          </div>
         </div>
 
         <div class="panel">
@@ -120,14 +133,21 @@
               <tbody></tbody>
             </table>
           </div>
+          <details style="margin-top: 12px;">
+            <summary style="cursor:pointer; color: var(--muted); font-size: 13px;">Simulator log (chrono/MULE/inject casts, skips, warnings)</summary>
+            <pre id="simlog" style="max-height: 220px; overflow: auto; font-size: 12px; margin-top: 8px; white-space: pre-wrap;"></pre>
+          </details>
         </div>
       </div>
 
       <div class="panel" style="margin-top: 20px;">
-        <h1 style="font-size: 18px;">⚡ Optimizer — fastest army <em>at the enemy</em></h1>
+        <h1 style="font-size: 18px;">⚡ Optimizer — fastest army <em>at the enemy</em> <span style="font-size:12px; color:var(--muted); font-weight:400;">(Protoss only)</span></h1>
         <p class="sub" style="margin-bottom: 16px;">
-          Pick a target army; the optimizer searches ~31,600 build variants (worker count, production
-          buildings, gas, proxy vs. home) for the one whose army <b>arrives at the enemy</b> soonest.
+          Pick a target army. The <b>template optimizer</b> exhaustively searches ~31,600 build variants
+          (worker count, production buildings, gas, proxy vs. home) within a fixed build SHAPE -- the true
+          optimum within that template. The <b>raw-sequence GA</b> searches Action[] sequences directly (no
+          fixed shape), seeded from the template's own answer so it can never do worse, and in practice beats
+          it by 10-18s on every example in this project by discovering orderings the template can't express.
         </p>
         <div id="army-rows"></div>
         <div class="row" style="margin-top: 12px;">
@@ -135,13 +155,15 @@
             <label for="opt-map">Map</label>
             <select id="opt-map"></select>
           </div>
-          <button id="optimize" style="flex:0 0 auto; width:auto; margin-top:0; align-self:end; padding:10px 18px;">Optimize ▶</button>
+          <button id="optimize" style="flex:0 0 auto; width:auto; margin-top:0; align-self:end; padding:10px 18px;">Optimize (template) ▶</button>
+          <button id="ga-search" style="flex:0 0 auto; width:auto; margin-top:0; align-self:end; padding:10px 18px;">Search (GA) ▶</button>
         </div>
         <div id="opt-out" class="summary" style="margin-top:16px"></div>
+        <div id="ga-out" class="summary" style="margin-top:8px"></div>
       </div>
 
       <div class="panel" style="margin-top: 20px;">
-        <h1 style="font-size: 18px;">📈 Value frontier — best army <em>value</em> by time T</h1>
+        <h1 style="font-size: 18px;">📈 Value frontier — best army <em>value</em> by time T <span style="font-size:12px; color:var(--muted); font-weight:400;">(Protoss only)</span></h1>
         <p class="sub" style="margin-bottom: 16px;">
           Sweeps unit COUNTS (not just one fixed target) and reports the Pareto frontier of
           <code>unitValue()</code> — <code>sqrt(dps × (hp + shields))</code> — delivered at the enemy by time T. This is a
@@ -178,37 +200,127 @@
     <script type="module">
       import { simulate, fmt } from "./dist/engine.js";
       import { PROTOSS } from "./dist/data.js";
+      import { TERRAN } from "./dist/data-terran.js";
+      import { ZERG } from "./dist/data-zerg.js";
       import { BUILDS } from "./dist/builds.js";
       import { DEFAULT_MAP, MAPS } from "./dist/maps.js";
       import { optimize, valueFrontier, describeComposition } from "./dist/optimizer.js";
+      import { searchRawSequences, arrivalScorer } from "./dist/search.js";
 
       const $ = (id) => document.getElementById(id);
-      const presetSel = $("preset"), orderTa = $("order"), descEl = $("desc");
+      const presetSel = $("preset"), orderTa = $("order"), descEl = $("desc"), raceSel = $("race");
 
-      BUILDS.forEach((b, i) => {
-        const o = document.createElement("option");
-        o.value = i; o.textContent = b.name; presetSel.appendChild(o);
-      });
+      const RACE_DATA = { Protoss: PROTOSS, Terran: TERRAN, Zerg: ZERG };
+      // Terran/Zerg aren't a fully-searchable optimizer target yet (see README
+      // "Modeling the opponent"), but they simulate fine -- these presets exist
+      // so the browser UI can actually exercise them, including this session's
+      // new mechanics (MULE, InjectLarva, Tech Lab/Lair-tier units).
+      const RACE_BUILDS = {
+        Protoss: BUILDS,
+        Terran: [
+          {
+            name: "Marine/Marauder rush",
+            description: "Standard Terran opener: Barracks, Tech Lab, and out come Marauders alongside Marines.",
+            order: [
+              "SCV", "SupplyDepot", "SCV", "SCV", "Barracks", "SCV", "Refinery",
+              "SCV", "OrbitalCommand", "BarracksTechLab", "SupplyDepot",
+              "Marine", "Marauder", "Marine", "Marauder",
+            ],
+          },
+          {
+            name: "MULE-boosted economy",
+            description: "Rush an Orbital Command and calldown MULEs to see the mineral bank jump (watch the log).",
+            order: [
+              "SCV", "SupplyDepot", "SCV", "SCV", "Barracks", "SCV", "SupplyDepot",
+              "OrbitalCommand", "MULE", "SCV", "SCV", "SCV", "MULE",
+            ],
+          },
+        ],
+        Zerg: [
+          {
+            name: "Zergling rush",
+            description: "Pool first, straight into Zerglings -- the cheapest, fastest early pressure.",
+            order: ["Drone", "Overlord", "Drone", "SpawningPool", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling", "Zergling"],
+          },
+          {
+            name: "Queen inject economy",
+            description: "Pool into a Queen, then InjectLarva to see the +3 larva batch land on schedule (watch the log).",
+            order: ["Drone", "Overlord", "Overlord", "SpawningPool", "Queen", "InjectLarva", "Drone", "Drone", "Drone", "Overlord"],
+          },
+        ],
+      };
+
+      function currentBuilds() {
+        return RACE_BUILDS[raceSel.value];
+      }
+
+      function populatePresets() {
+        presetSel.innerHTML = "";
+        currentBuilds().forEach((b, i) => {
+          const o = document.createElement("option");
+          o.value = i; o.textContent = b.name; presetSel.appendChild(o);
+        });
+      }
+      populatePresets();
 
       function loadPreset(i) {
-        const b = BUILDS[i];
+        const b = currentBuilds()[i];
         descEl.textContent = b.description;
         orderTa.value = b.order.join("\n");
       }
       presetSel.addEventListener("change", () => { loadPreset(+presetSel.value); run(); });
+      raceSel.addEventListener("change", () => { populatePresets(); loadPreset(0); run(); });
 
       const microCb = $("micro");
       // Clone the data and apply the mining-micro toggle (1.0 = pro, 0.88 = a-move).
+      // Used by the simulator panel, which is race-aware; the Optimizer/Value
+      // Frontier panels below are Protoss-only for now (see README "Modeling
+      // the opponent" -- Terran/Zerg aren't a fully-searchable target yet),
+      // so they use protossWithMicro() instead regardless of the race picker.
       function activeData() {
+        const d = structuredClone(RACE_DATA[raceSel.value]);
+        d.economy.miningMicro = microCb.checked ? 1.0 : 0.88;
+        return d;
+      }
+      function protossWithMicro() {
         const d = structuredClone(PROTOSS);
         d.economy.miningMicro = microCb.checked ? 1.0 : 0.88;
         return d;
       }
       microCb.addEventListener("change", run);
 
+      // Shareable state: race + build order encoded into the URL query string
+      // on every run, restored on load if present -- so a specific build can
+      // be linked instead of only pasted as raw textarea contents.
+      function syncUrl(order) {
+        const params = new URLSearchParams();
+        params.set("race", raceSel.value);
+        params.set("order", order.join("|"));
+        history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
+      }
+      function loadFromUrl() {
+        const params = new URLSearchParams(location.search);
+        const order = params.get("order");
+        if (!order) return false;
+        const race = params.get("race");
+        if (race && RACE_DATA[race]) raceSel.value = race;
+        populatePresets();
+        descEl.textContent = "Loaded from a shared link.";
+        orderTa.value = order.split("|").join("\n");
+        return true;
+      }
+      $("share").addEventListener("click", async () => {
+        await navigator.clipboard.writeText(location.href);
+        const btn = $("share");
+        const original = btn.textContent;
+        btn.textContent = "✓ Copied";
+        setTimeout(() => { btn.textContent = original; }, 1500);
+      });
+
       function run() {
         const order = orderTa.value.split("\n").map((l) => l.trim()).filter(Boolean);
         const res = simulate(activeData(), order, DEFAULT_MAP);
+        syncUrl(order);
         const s = $("summary");
         if (!res.ok) {
           s.innerHTML = `<span class="err">Invalid build: ${res.error}</span>`;
@@ -233,6 +345,7 @@
             `<td class="mono">${arrive}</td>`;
           tb.appendChild(tr);
         }
+        $("simlog").textContent = res.log.join("\n") || "(no log lines)";
         drawChart(res.snapshots);
       }
       $("run").addEventListener("click", run);
@@ -296,33 +409,65 @@
         o.value = key; o.textContent = m.name; optMap.appendChild(o);
       });
 
-      $("optimize").addEventListener("click", () => {
+      function readArmyComposition() {
         const comp = {};
         document.querySelectorAll("#army-rows .row").forEach((r) => {
           const u = r.querySelector(".opt-unit").value;
           const c = parseInt(r.querySelector(".opt-count").value, 10) || 0;
           if (c > 0) comp[u] = (comp[u] || 0) + c;
         });
+        return comp;
+      }
+
+      function loadBuildIntoSimulator(order, label) {
+        raceSel.value = "Protoss";
+        populatePresets();
+        descEl.textContent = label;
+        orderTa.value = order.join("\n");
+        run();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      $("optimize").addEventListener("click", () => {
+        const comp = readArmyComposition();
         const out = $("opt-out");
         if (!Object.keys(comp).length) { out.innerHTML = '<span class="err">Pick at least one unit.</span>'; return; }
         const map = MAPS[optMap.value];
-        const r = optimize(comp, activeData(), map);
+        const r = optimize(comp, protossWithMicro(), map);
         const p = r.params;
         const cmp = Object.entries(r.bestByStrategy)
           .map(([s, b]) => `${s} ${fmt(b.arrival)}`)
           .join(" · ");
         out.innerHTML =
-          `<b>${describeComposition(comp)}</b> arrives at the enemy in <b>${fmt(r.arrival)}</b> ` +
+          `<b>Template:</b> <b>${describeComposition(comp)}</b> arrives at the enemy in <b>${fmt(r.arrival)}</b> ` +
           `via <b>${p.strategy}</b> (${p.probeTarget} probes, ${p.producerCount} producers, ${p.gasCount} gas` +
           `${p.earlyHomeUnits ? `, ${p.earlyHomeUnits} home-built before warp` : ""})<br>` +
           `<span style="color:var(--muted)">searched ${r.evaluated} builds · ${cmp}</span><br>` +
           `<button id="load-opt" style="width:auto;padding:6px 12px;margin-top:10px;">Load this build into the simulator ↑</button>`;
-        $("load-opt").addEventListener("click", () => {
-          descEl.textContent = `Optimizer result: ${describeComposition(comp)} at the enemy, ${fmt(r.arrival)}`;
-          orderTa.value = r.order.join("\n");
-          run();
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
+        $("load-opt").addEventListener("click", () => loadBuildIntoSimulator(r.order, `Optimizer result: ${describeComposition(comp)} at the enemy, ${fmt(r.arrival)}`));
+      });
+
+      $("ga-search").addEventListener("click", async () => {
+        const comp = readArmyComposition();
+        const out = $("ga-out");
+        if (!Object.keys(comp).length) { out.innerHTML = '<span class="err">Pick at least one unit.</span>'; return; }
+        out.innerHTML = '<span style="color:var(--muted)">searching…</span>';
+        // Let the "searching…" message paint before the GA blocks the main thread.
+        await new Promise((r) => setTimeout(r, 20));
+        const map = MAPS[optMap.value];
+        const t0 = performance.now();
+        // A lighter budget than search.ts's own default (250/150) -- this runs
+        // on a cold, unwarmed JIT in the page's main thread (unlike a long-
+        // lived CLI process), so the full default can take 15-20+ seconds
+        // here. Trades a bit of search thoroughness for a responsive click;
+        // see `npm run search` for the full-budget CLI result.
+        const g = searchRawSequences(comp, protossWithMicro(), map, arrivalScorer, { populationSize: 120, generations: 60 });
+        const ms = (performance.now() - t0).toFixed(0);
+        out.innerHTML =
+          `<b>GA:</b> <b>${describeComposition(comp)}</b> arrives at the enemy in <b>${fmt(g.score)}</b><br>` +
+          `<span style="color:var(--muted)">${g.evaluated} evaluations · ${g.generations} generations · ${ms}ms (lighter budget than the CLI's default -- see README)</span><br>` +
+          `<button id="load-ga" style="width:auto;padding:6px 12px;margin-top:10px;">Load this build into the simulator ↑</button>`;
+        $("load-ga").addEventListener("click", () => loadBuildIntoSimulator(g.best, `GA search result: ${describeComposition(comp)} at the enemy, ${fmt(g.score)}`));
       });
 
       // ---- Value frontier panel ----
@@ -359,7 +504,7 @@
         const map = MAPS[frMap.value];
 
         const t0 = performance.now();
-        lastFrontier = valueFrontier(targets, activeData(), map);
+        lastFrontier = valueFrontier(targets, protossWithMicro(), map);
         const ms = (performance.now() - t0).toFixed(0);
 
         out.innerHTML = lastFrontier.length
@@ -407,8 +552,7 @@
       }
 
       const frCanvas = $("fr-chart"), frTooltip = $("fr-tooltip");
-      frCanvas.addEventListener("mousemove", (ev) => {
-        if (!lastFrontier.length) return;
+      function nearestFrontierPoint(ev) {
         const rect = frCanvas.getBoundingClientRect();
         const scaleX = frCanvas.width / rect.width;
         const mx = (ev.clientX - rect.left) * scaleX;
@@ -417,16 +561,30 @@
         const t = ((mx - pad) / (W - pad * 2)) * tMax;
         let nearest = lastFrontier[0];
         for (const p of lastFrontier) if (p.t <= t) nearest = p; else break;
+        return nearest;
+      }
+      frCanvas.addEventListener("mousemove", (ev) => {
+        if (!lastFrontier.length) return;
+        const rect = frCanvas.getBoundingClientRect();
+        const nearest = nearestFrontierPoint(ev);
         frTooltip.style.display = "block";
         frTooltip.style.left = `${ev.clientX - rect.left + 12}px`;
         frTooltip.style.top = `${ev.clientY - rect.top - 12}px`;
         frTooltip.innerHTML =
           `<b>${fmt(nearest.t)}</b> · value ${nearest.value.toFixed(1)}<br>` +
-          `+${nearest.name} · ${nearest.params.strategy} · target ${describeComposition(nearest.target)}`;
+          `+${nearest.name} · ${nearest.params.strategy} · target ${describeComposition(nearest.target)}<br>` +
+          `<span style="color:var(--muted)">click to load this build ↑</span>`;
       });
       frCanvas.addEventListener("mouseleave", () => { frTooltip.style.display = "none"; });
+      frCanvas.style.cursor = "pointer";
+      frCanvas.addEventListener("click", (ev) => {
+        if (!lastFrontier.length) return;
+        const nearest = nearestFrontierPoint(ev);
+        loadBuildIntoSimulator(nearest.order, `Frontier point: target ${describeComposition(nearest.target)}, value ${nearest.value.toFixed(1)} by ${fmt(nearest.t)}`);
+      });
 
-      loadPreset(0); run();
+      if (!loadFromUrl()) loadPreset(0);
+      run();
     </script>
   </body>
 </html>
