@@ -24,6 +24,11 @@ export interface ThreatCurve {
   /** Cumulative fighting value delivered at time t, straight from a REAL
    * recorded build order replayed through that race's own simulate(). */
   points: ValuePoint[];
+  /** The underlying sim result, kept so callers can derive a full
+   * composition-at-time-t (see combat.ts's compositionAt) rather than just
+   * the scalar value points -- optional so synthetic/averaged curves (see
+   * asThreatCurve()) don't need to fabricate one. */
+  opponentResult?: SimResult;
 }
 
 /**
@@ -57,6 +62,7 @@ export function threatCurveFromReplay(
     source: replay.source,
     opponentRace: replay.player.race,
     points: valueOverTime(result, opponentData, { allowPartial: true }),
+    opponentResult: result,
   };
 }
 

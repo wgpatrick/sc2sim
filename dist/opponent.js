@@ -26,6 +26,7 @@ export function threatCurveFromReplay(replay, opponentData, map, horizon = 240) 
         source: replay.source,
         opponentRace: replay.player.race,
         points: valueOverTime(result, opponentData, { allowPartial: true }),
+        opponentResult: result,
     };
 }
 /** Step-function lookup: cumulative value the curve had reached by time t. */

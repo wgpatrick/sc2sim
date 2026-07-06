@@ -21,6 +21,7 @@ import { MAPS } from "./maps.js";
 import { describeComposition } from "./optimizer.js";
 import { searchRawSequences, arrivalScorer, type SearchOptions } from "./search.js";
 import { threatCurveFromReplay, assessDanger, dangerScorer, describeCurve, averageThreatCurve, asThreatCurve, type ThreatCurve } from "./opponent.js";
+import { compositionAt, resolveCombat, describeCombatResult } from "./combat.js";
 import { fmt } from "./engine.js";
 import type { Composition, GameData } from "./engine.js";
 
@@ -104,6 +105,20 @@ for (const { path, data } of opponents) {
     improvedCount++;
   } else {
     console.log(`\n  -> fastest-arrival build was already safe against this opponent`);
+  }
+
+  // Real combat resolution (see combat.ts) at the danger-scored build's own
+  // worst moment: unitValue()'s deficit is a scalar ranking heuristic, so
+  // sanity-check it by actually resolving a fight between both sides'
+  // compositions AT THAT INSTANT, not just comparing their value totals.
+  if (curve.opponentResult) {
+    const t = safeDanger.worstDeficitTime;
+    const mine = compositionAt(safe.result, PROTOSS, t);
+    const theirs = compositionAt(curve.opponentResult, data, t);
+    if (mine.length > 0 || theirs.length > 0) {
+      const fight = resolveCombat(mine, theirs);
+      console.log(`  combat check at ${fmt(t)} (${mine.length} of mine vs ${theirs.length} of theirs): ${describeCombatResult(fight)}`);
+    }
   }
 
   sumFastDeficit += fastDanger.worstDeficit;
