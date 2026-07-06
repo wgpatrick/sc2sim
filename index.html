@@ -529,7 +529,7 @@
 
       let lastFrontier = []; // [{t, value, name, target, params, order}, ...]
 
-      $("frontier").addEventListener("click", () => {
+      $("frontier").addEventListener("click", async () => {
         const units = [...document.querySelectorAll(".fr-unit")].filter((cb) => cb.checked).map((cb) => cb.value);
         const out = $("fr-summary");
         if (!units.length) { out.innerHTML = '<span class="err">Pick at least one unit.</span>'; return; }
@@ -538,12 +538,29 @@
         const targets = units.flatMap((u) => counts.map((n) => ({ [u]: n })));
         const map = MAPS[frMap.value];
 
+        // This sweeps EVERY target composition through the full exhaustive
+        // template search (up to ~31,600 candidates each) -- with the
+        // default 3 units x 7 counts that's 21 sweeps, ~24s fully blocking
+        // the main thread with no feedback (looks like a page hang, and can
+        // trigger the browser's own "unresponsive" warning). Disable the
+        // button, show a status line, and yield a frame before the
+        // synchronous work starts so the message actually paints; the
+        // search budget itself is also reduced per-target (same tradeoff as
+        // the GA search button) -- ~10x faster with an identical frontier
+        // shape in testing (same point count, same top value, just reached
+        // ~20s later on the time axis).
+        const btn = $("frontier");
+        btn.disabled = true;
+        out.innerHTML = `<span style="color:var(--muted)">searching ${targets.length} target compositions…</span>`;
+        await new Promise((r) => setTimeout(r, 20));
+
         const t0 = performance.now();
-        lastFrontier = valueFrontier(targets, protossWithMicro(), map);
+        lastFrontier = valueFrontier(targets, protossWithMicro(), map, { maxProbes: 14, maxProducers: 3, maxEarlyHomeUnits: 1 });
         const ms = (performance.now() - t0).toFixed(0);
+        btn.disabled = false;
 
         out.innerHTML = lastFrontier.length
-          ? `searched ${targets.length} target compositions (${ms}ms) · frontier has ${lastFrontier.length} points, ` +
+          ? `searched ${targets.length} target compositions (${ms}ms, reduced search budget for responsiveness -- see README) · frontier has ${lastFrontier.length} points, ` +
             `topping out at <b>${lastFrontier[lastFrontier.length - 1].value.toFixed(0)}</b> value by ` +
             `<b>${fmt(lastFrontier[lastFrontier.length - 1].t)}</b>`
           : '<span class="err">No valid builds found.</span>';

@@ -361,6 +361,16 @@ beat a much higher-value Zealot ball a real matchup would never predict from
 this number alone. Treat it as "which build order is worth investigating
 further", not "which build order wins."
 
+In the browser, this button sweeps every target composition through a
+**reduced search budget** (`maxProbes: 14, maxProducers: 3,
+maxEarlyHomeUnits: 1` vs. the library default) — the full default blocked
+the page for ~24s with no feedback for the default 3-unit/7-count sweep
+(21 target compositions × ~31,600 candidates each), which is long enough to
+trigger the browser's own "page unresponsive" warning. The reduced budget
+runs in ~2s with an identical frontier in testing (same point count, same
+top value, just reached a little later on the time axis) — same tradeoff
+already applied to the GA search button above.
+
 Example (standard map): the frontier over Zealot/Stalker/Adept count sweeps
 is dominated entirely by Zealots out to ~4:30 — cheap, no gas, no Cybernetics
 Core requirement — which matches the real game's well-known early Zealot
