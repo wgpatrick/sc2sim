@@ -154,6 +154,11 @@ export const SAMPLE_REPLAYS = [
                     "name": "MULE"
                 },
                 {
+                    "t": 130.75892857142858,
+                    "event": "cast",
+                    "name": "MULE"
+                },
+                {
                     "t": 136.60714285714286,
                     "event": "born",
                     "name": "Reaper"
@@ -259,6 +264,11 @@ export const SAMPLE_REPLAYS = [
                     "name": "MULE"
                 },
                 {
+                    "t": 211.02678571428572,
+                    "event": "cast",
+                    "name": "MULE"
+                },
+                {
                     "t": 215.0,
                     "event": "start",
                     "name": "Starport"
@@ -324,6 +334,11 @@ export const SAMPLE_REPLAYS = [
                     "name": "MULE"
                 },
                 {
+                    "t": 259.9107142857143,
+                    "event": "cast",
+                    "name": "MULE"
+                },
+                {
                     "t": 264.7321428571429,
                     "event": "born",
                     "name": "SCV"
@@ -376,6 +391,11 @@ export const SAMPLE_REPLAYS = [
                 {
                     "t": 299.7767857142857,
                     "event": "born",
+                    "name": "MULE"
+                },
+                {
+                    "t": 299.7767857142857,
+                    "event": "cast",
                     "name": "MULE"
                 }
             ],
@@ -1278,6 +1298,11 @@ export const SAMPLE_REPLAYS = [
                     "name": "Larva"
                 },
                 {
+                    "t": 157.23214285714286,
+                    "event": "cast",
+                    "name": "InjectLarva"
+                },
+                {
                     "t": 158.6607142857143,
                     "event": "morph",
                     "name": "Egg"
@@ -1381,6 +1406,11 @@ export const SAMPLE_REPLAYS = [
                     "t": 191.96428571428572,
                     "event": "born",
                     "name": "Queen"
+                },
+                {
+                    "t": 194.19642857142858,
+                    "event": "cast",
+                    "name": "InjectLarva"
                 },
                 {
                     "t": 196.60714285714286,
@@ -1496,6 +1526,11 @@ export const SAMPLE_REPLAYS = [
                     "t": 219.50892857142858,
                     "event": "morph",
                     "name": "Egg"
+                },
+                {
+                    "t": 221.25,
+                    "event": "cast",
+                    "name": "InjectLarva"
                 },
                 {
                     "t": 222.4107142857143,
@@ -1763,6 +1798,11 @@ export const SAMPLE_REPLAYS = [
                     "name": "Egg"
                 },
                 {
+                    "t": 262.36607142857144,
+                    "event": "cast",
+                    "name": "InjectLarva"
+                },
+                {
                     "t": 263.61607142857144,
                     "event": "born",
                     "name": "Larva"
@@ -1771,6 +1811,11 @@ export const SAMPLE_REPLAYS = [
                     "t": 264.5982142857143,
                     "event": "morph",
                     "name": "Egg"
+                },
+                {
+                    "t": 265.5357142857143,
+                    "event": "cast",
+                    "name": "InjectLarva"
                 },
                 {
                     "t": 266.74107142857144,
@@ -1968,6 +2013,11 @@ export const SAMPLE_REPLAYS = [
                     "name": "Larva"
                 },
                 {
+                    "t": 284.4196428571429,
+                    "event": "cast",
+                    "name": "InjectLarva"
+                },
+                {
                     "t": 286.6517857142857,
                     "event": "born",
                     "name": "Larva"
@@ -1981,6 +2031,11 @@ export const SAMPLE_REPLAYS = [
                     "t": 287.5,
                     "event": "born",
                     "name": "Larva"
+                },
+                {
+                    "t": 287.8125,
+                    "event": "cast",
+                    "name": "InjectLarva"
                 },
                 {
                     "t": 288.2589285714286,
@@ -2056,6 +2111,11 @@ export const SAMPLE_REPLAYS = [
                     "t": 292.76785714285717,
                     "event": "morph",
                     "name": "Larva"
+                },
+                {
+                    "t": 293.3482142857143,
+                    "event": "cast",
+                    "name": "InjectLarva"
                 },
                 {
                     "t": 294.1071428571429,
@@ -3162,9 +3222,19 @@ export const SAMPLE_REPLAYS = [
                     "name": "Larva"
                 },
                 {
+                    "t": 192.05357142857144,
+                    "event": "cast",
+                    "name": "InjectLarva"
+                },
+                {
                     "t": 193.3482142857143,
                     "event": "start",
                     "name": "Hatchery"
+                },
+                {
+                    "t": 194.24107142857144,
+                    "event": "cast",
+                    "name": "InjectLarva"
                 },
                 {
                     "t": 194.46428571428572,
@@ -3392,6 +3462,11 @@ export const SAMPLE_REPLAYS = [
                     "name": "zerglingmovementspeed"
                 },
                 {
+                    "t": 241.87500000000003,
+                    "event": "cast",
+                    "name": "InjectLarva"
+                },
+                {
                     "t": 242.27678571428572,
                     "event": "born",
                     "name": "Larva"
@@ -3485,6 +3560,11 @@ export const SAMPLE_REPLAYS = [
                     "t": 254.37500000000003,
                     "event": "morph",
                     "name": "CreepTumorBurrowed"
+                },
+                {
+                    "t": 255.62500000000003,
+                    "event": "cast",
+                    "name": "InjectLarva"
                 },
                 {
                     "t": 255.66964285714286,
@@ -3647,6 +3727,11 @@ export const SAMPLE_REPLAYS = [
                     "name": "Egg"
                 },
                 {
+                    "t": 273.75,
+                    "event": "cast",
+                    "name": "InjectLarva"
+                },
+                {
                     "t": 274.2857142857143,
                     "event": "born",
                     "name": "Larva"
@@ -3695,6 +3780,11 @@ export const SAMPLE_REPLAYS = [
                     "t": 278.4821428571429,
                     "event": "morph",
                     "name": "Larva"
+                },
+                {
+                    "t": 280.0446428571429,
+                    "event": "cast",
+                    "name": "InjectLarva"
                 },
                 {
                     "t": 280.625,
@@ -3795,6 +3885,11 @@ export const SAMPLE_REPLAYS = [
                     "t": 286.11607142857144,
                     "event": "morph",
                     "name": "CreepTumorBurrowed"
+                },
+                {
+                    "t": 289.24107142857144,
+                    "event": "cast",
+                    "name": "InjectLarva"
                 },
                 {
                     "t": 292.2767857142857,

@@ -9,8 +9,11 @@ Usage:
 
 Output: one JSON file per replay in replays/parsed/, containing:
     - map, length, patch, player {name, race, result}
-    - buildOrder: [{t, event: "start"|"done"|"morph"|"upgrade", name}], real
-      entities only (UI beacons / cosmetic sprays / reward dances excluded)
+    - buildOrder: [{t, event: "start"|"done"|"morph"|"upgrade"|"cast", name}],
+      real entities only (UI beacons / cosmetic sprays / reward dances
+      excluded). "cast" entries (2026-07-05) are real MULE/Queen-inject
+      ability casts, name is "MULE"/"InjectLarva" -- matches engine.ts's
+      action-string convention directly, see ABILITY_TO_ACTION below.
     - economy: [{t, minerals, gas, mineralRate, gasRate, supplyUsed, supplyCap,
       workers}] sampled from PlayerStatsEvent (~every 10s)
 
@@ -45,6 +48,19 @@ def to_faster_seconds(event, speed_mult: float) -> float:
     """The real, on-screen-clock time (Faster-seconds) for a sc2reader event,
     undoing its fixed-16fps `.second` assumption. See module docstring."""
     return event.frame / (16.0 * speed_mult)
+
+
+# Ability-cast detection (2026-07-05): sc2sim's engine now models MULE and
+# Queen inject as real mechanics (see engine.ts's EconomyConfig.mule/.inject),
+# but until now no replay's REAL casts were captured -- opponent.ts's threat
+# curves only ever reflected passive income/larva. Both abilities show up as
+# TargetUnitCommandEvent (MULE targets a mineral patch, inject targets a
+# Hatchery/Lair/Hive, both "unit" targets); UpdateTargetUnitCommandEvent is a
+# follow-up echo of the SAME command, not a new cast, and is ignored.
+ABILITY_TO_ACTION = {
+    "CalldownMULE": "MULE",
+    "SpawnLarva": "InjectLarva",
+}
 
 
 NOISE_PREFIXES = (
@@ -129,6 +145,11 @@ def extract_build_order(replay, player, speed_mult):
             if e.pid != player.pid or is_noise(e.upgrade_type_name):
                 continue
             events.append({"t": to_faster_seconds(e, speed_mult), "event": "upgrade", "name": e.upgrade_type_name})
+        elif e.name == "TargetUnitCommandEvent":
+            action = ABILITY_TO_ACTION.get(getattr(e, "ability_name", None))
+            if action is None or getattr(e, "player", None) != player:
+                continue
+            events.append({"t": to_faster_seconds(e, speed_mult), "event": "cast", "name": action})
     events.sort(key=lambda ev: ev["t"])
     return events
 

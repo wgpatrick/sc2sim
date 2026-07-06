@@ -601,6 +601,11 @@
       "name": "Larva"
     },
     {
+      "t": 180.89285714285717,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 182.05357142857144,
       "event": "born",
       "name": "Larva"
@@ -769,6 +774,11 @@
       "t": 213.125,
       "event": "morph",
       "name": "Larva"
+    },
+    {
+      "t": 214.50892857142858,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 215.3125,
@@ -979,6 +989,11 @@
       "t": 244.37500000000003,
       "event": "born",
       "name": "Queen"
+    },
+    {
+      "t": 244.37500000000003,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 249.68750000000003,
@@ -1236,6 +1251,11 @@
       "name": "Queen"
     },
     {
+      "t": 284.64285714285717,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 288.4375,
       "event": "start",
       "name": "CreepTumor"
@@ -1491,6 +1511,11 @@
       "name": "CreepTumorQueen"
     },
     {
+      "t": 308.61607142857144,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 309.64285714285717,
       "event": "done",
       "name": "CreepTumorQueen"
@@ -1574,6 +1599,11 @@
       "t": 313.39285714285717,
       "event": "morph",
       "name": "Egg"
+    },
+    {
+      "t": 314.5982142857143,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 314.7767857142857,
@@ -1921,6 +1951,11 @@
       "name": "CreepTumorBurrowed"
     },
     {
+      "t": 341.78571428571433,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 342.5,
       "event": "morph",
       "name": "Egg"
@@ -2019,6 +2054,16 @@
       "t": 348.97321428571433,
       "event": "born",
       "name": "Larva"
+    },
+    {
+      "t": 349.95535714285717,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
+      "t": 351.6071428571429,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 352.05357142857144,
@@ -2281,6 +2326,11 @@
       "name": "Larva"
     },
     {
+      "t": 366.78571428571433,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 367.3214285714286,
       "event": "morph",
       "name": "Egg"
@@ -2456,6 +2506,11 @@
       "name": "Larva"
     },
     {
+      "t": 376.83035714285717,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 378.34821428571433,
       "event": "born",
       "name": "Larva"
@@ -2559,6 +2614,11 @@
       "t": 384.4642857142857,
       "event": "morph",
       "name": "Larva"
+    },
+    {
+      "t": 385.53571428571433,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 388.97321428571433,
@@ -2706,6 +2766,11 @@
       "name": "Larva"
     },
     {
+      "t": 395.7142857142857,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 396.6517857142857,
       "event": "morph",
       "name": "Baneling"
@@ -2824,6 +2889,11 @@
       "t": 400.6696428571429,
       "event": "born",
       "name": "Larva"
+    },
+    {
+      "t": 400.6696428571429,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 401.47321428571433,
@@ -3006,9 +3076,19 @@
       "name": "Larva"
     },
     {
+      "t": 410.80357142857144,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 411.0267857142857,
       "event": "born",
       "name": "Larva"
+    },
+    {
+      "t": 411.78571428571433,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 413.39285714285717,
@@ -3276,6 +3356,11 @@
       "name": "Egg"
     },
     {
+      "t": 428.7946428571429,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 428.8839285714286,
       "event": "born",
       "name": "Drone"
@@ -3349,6 +3434,16 @@
       "t": 429.64285714285717,
       "event": "start",
       "name": "Hatchery"
+    },
+    {
+      "t": 429.6875,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
+      "t": 429.6875,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 429.7321428571429,
@@ -3514,6 +3609,11 @@
       "t": 443.30357142857144,
       "event": "born",
       "name": "Larva"
+    },
+    {
+      "t": 443.39285714285717,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 444.01785714285717,
@@ -3926,9 +4026,19 @@
       "name": "Larva"
     },
     {
+      "t": 458.34821428571433,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 458.8392857142857,
       "event": "morph",
       "name": "Overseer"
+    },
+    {
+      "t": 460.49107142857144,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 463.1696428571429,
@@ -4129,6 +4239,11 @@
       "t": 471.25000000000006,
       "event": "morph",
       "name": "Baneling"
+    },
+    {
+      "t": 471.2946428571429,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 471.3839285714286,
@@ -4429,6 +4544,11 @@
       "t": 483.34821428571433,
       "event": "morph",
       "name": "BanelingCocoon"
+    },
+    {
+      "t": 484.06250000000006,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 484.24107142857144,
@@ -5091,6 +5211,11 @@
       "name": "Egg"
     },
     {
+      "t": 513.1696428571429,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 513.5714285714286,
       "event": "born",
       "name": "Larva"
@@ -5339,6 +5464,11 @@
       "t": 520.1339285714286,
       "event": "morph",
       "name": "Egg"
+    },
+    {
+      "t": 521.9196428571429,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 523.0803571428572,
@@ -5839,6 +5969,11 @@
       "t": 539.3303571428572,
       "event": "born",
       "name": "Larva"
+    },
+    {
+      "t": 539.9107142857143,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 542.0089285714286,
@@ -6489,6 +6624,11 @@
       "t": 564.9553571428572,
       "event": "morph",
       "name": "BanelingCocoon"
+    },
+    {
+      "t": 565.6696428571429,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 565.9375,

@@ -436,6 +436,11 @@
       "name": "Queen"
     },
     {
+      "t": 151.65178571428572,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 153.52678571428572,
       "event": "born",
       "name": "Larva"
@@ -576,6 +581,11 @@
       "name": "Egg"
     },
     {
+      "t": 183.39285714285717,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 183.48214285714286,
       "event": "born",
       "name": "Larva"
@@ -614,6 +624,11 @@
       "t": 192.99107142857144,
       "event": "born",
       "name": "Larva"
+    },
+    {
+      "t": 194.10714285714286,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 194.41964285714286,
@@ -761,6 +776,11 @@
       "name": "Egg"
     },
     {
+      "t": 215.98214285714286,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 217.8125,
       "event": "morph",
       "name": "Egg"
@@ -769,6 +789,11 @@
       "t": 217.94642857142858,
       "event": "morph",
       "name": "Egg"
+    },
+    {
+      "t": 219.9107142857143,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 221.11607142857144,
@@ -1029,6 +1054,11 @@
       "t": 252.14285714285717,
       "event": "morph",
       "name": "Larva"
+    },
+    {
+      "t": 256.6517857142857,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 257.2321428571429,
@@ -1331,6 +1361,11 @@
       "name": "Extractor"
     },
     {
+      "t": 288.6607142857143,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 288.75,
       "event": "born",
       "name": "Larva"
@@ -1619,6 +1654,11 @@
       "t": 318.0357142857143,
       "event": "start",
       "name": "Hatchery"
+    },
+    {
+      "t": 318.5267857142857,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 319.1517857142857,
@@ -1971,6 +2011,11 @@
       "name": "Egg"
     },
     {
+      "t": 361.0714285714286,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 362.36607142857144,
       "event": "done",
       "name": "Extractor"
@@ -2064,6 +2109,11 @@
       "t": 373.7946428571429,
       "event": "morph",
       "name": "Egg"
+    },
+    {
+      "t": 375.4017857142857,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 377.8571428571429,

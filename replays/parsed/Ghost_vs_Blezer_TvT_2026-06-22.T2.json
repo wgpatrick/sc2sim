@@ -171,6 +171,11 @@
       "name": "MULE"
     },
     {
+      "t": 144.10714285714286,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 147.8125,
       "event": "born",
       "name": "Reaper"
@@ -238,6 +243,11 @@
     {
       "t": 211.60714285714286,
       "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 211.60714285714286,
+      "event": "cast",
       "name": "MULE"
     },
     {
@@ -388,6 +398,11 @@
     {
       "t": 291.1607142857143,
       "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 291.1607142857143,
+      "event": "cast",
       "name": "MULE"
     },
     {
@@ -566,6 +581,11 @@
       "name": "MULE"
     },
     {
+      "t": 368.1696428571429,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 373.5267857142857,
       "event": "done",
       "name": "BarracksReactor"
@@ -663,6 +683,11 @@
     {
       "t": 415.0446428571429,
       "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 415.0446428571429,
+      "event": "cast",
       "name": "MULE"
     },
     {
@@ -891,6 +916,11 @@
       "name": "MULE"
     },
     {
+      "t": 587.8571428571429,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 588.0357142857143,
       "event": "born",
       "name": "MULE"
@@ -1041,6 +1071,11 @@
       "name": "MULE"
     },
     {
+      "t": 661.2946428571429,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 661.4285714285714,
       "event": "born",
       "name": "MULE"
@@ -1123,6 +1158,11 @@
     {
       "t": 685.0446428571429,
       "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 685.0446428571429,
+      "event": "cast",
       "name": "MULE"
     },
     {

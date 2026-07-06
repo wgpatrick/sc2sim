@@ -136,6 +136,11 @@
       "name": "MULE"
     },
     {
+      "t": 126.47321428571429,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 134.50892857142858,
       "event": "born",
       "name": "Reaper"
@@ -236,6 +241,11 @@
       "name": "MULE"
     },
     {
+      "t": 207.14285714285717,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 210.04464285714286,
       "event": "born",
       "name": "SCV"
@@ -331,6 +341,11 @@
       "name": "MULE"
     },
     {
+      "t": 259.4642857142857,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 263.4375,
       "event": "morph",
       "name": "OrbitalCommand"
@@ -358,6 +373,11 @@
     {
       "t": 273.8839285714286,
       "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 273.8839285714286,
+      "event": "cast",
       "name": "MULE"
     },
     {
@@ -446,6 +466,11 @@
       "name": "MULE"
     },
     {
+      "t": 324.8214285714286,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 324.95535714285717,
       "event": "born",
       "name": "MULE"
@@ -463,6 +488,11 @@
     {
       "t": 332.67857142857144,
       "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 332.67857142857144,
+      "event": "cast",
       "name": "MULE"
     },
     {
@@ -691,6 +721,11 @@
       "name": "MULE"
     },
     {
+      "t": 392.5,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 392.5446428571429,
       "event": "born",
       "name": "MULE"
@@ -748,6 +783,11 @@
     {
       "t": 407.5446428571429,
       "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 407.5446428571429,
+      "event": "cast",
       "name": "MULE"
     },
     {
@@ -1021,6 +1061,11 @@
       "name": "MULE"
     },
     {
+      "t": 476.3392857142857,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 476.47321428571433,
       "event": "born",
       "name": "MULE"
@@ -1098,6 +1143,11 @@
     {
       "t": 492.81250000000006,
       "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 492.81250000000006,
+      "event": "cast",
       "name": "MULE"
     },
     {
@@ -1246,6 +1296,11 @@
       "name": "MULE"
     },
     {
+      "t": 538.3035714285714,
+      "event": "cast",
+      "name": "MULE"
+    },
+    {
       "t": 538.4821428571429,
       "event": "born",
       "name": "MULE"
@@ -1293,6 +1348,11 @@
     {
       "t": 550.1785714285714,
       "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 550.1785714285714,
+      "event": "cast",
       "name": "MULE"
     },
     {
@@ -1563,6 +1623,11 @@
     {
       "t": 613.75,
       "event": "born",
+      "name": "MULE"
+    },
+    {
+      "t": 613.75,
+      "event": "cast",
       "name": "MULE"
     },
     {

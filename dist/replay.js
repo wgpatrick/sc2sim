@@ -14,6 +14,17 @@ export function sequenceFromReplay(replay, data, horizon) {
     for (const e of replay.buildOrder) {
         if (e.t <= 0 || e.t > horizon)
             continue; // t=0 is the shared starting state
+        if (e.event === "cast") {
+            // Real MULE/Queen-inject casts (2026-07-05) -- "MULE"/"InjectLarva" are
+            // action-string names, not entities, so they're not looked up in
+            // `entities` below. Only emit if this GameData actually has the
+            // mechanic (defensive: skips silently if replay/race are mismatched).
+            if (e.name === "MULE" && data.economy.mule)
+                timed.push({ action: "MULE", decisionTime: e.t });
+            else if (e.name === "InjectLarva" && data.economy.inject)
+                timed.push({ action: "InjectLarva", decisionTime: e.t });
+            continue;
+        }
         const ent = entities[e.name];
         if (!ent)
             continue; // entity this GameData doesn't model — skip

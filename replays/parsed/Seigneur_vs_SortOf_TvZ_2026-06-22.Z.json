@@ -501,6 +501,11 @@
       "name": "Larva"
     },
     {
+      "t": 155.26785714285714,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 156.20535714285714,
       "event": "born",
       "name": "Larva"
@@ -926,6 +931,11 @@
       "name": "Egg"
     },
     {
+      "t": 234.10714285714286,
+      "event": "cast",
+      "name": "InjectLarva"
+    },
+    {
       "t": 236.7857142857143,
       "event": "born",
       "name": "Egg"
@@ -1069,6 +1079,11 @@
       "t": 249.86607142857144,
       "event": "morph",
       "name": "Egg"
+    },
+    {
+      "t": 252.63392857142858,
+      "event": "cast",
+      "name": "InjectLarva"
     },
     {
       "t": 253.48214285714286,
