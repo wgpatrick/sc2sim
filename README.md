@@ -625,6 +625,35 @@ positioning, range, splash, armor types, or upgrades on either side yet.
       the main Simulator chart gained y-axis value labels (it previously had
       none at all -- only the Frontier chart did) and a hover tooltip
       showing exact values + the most recent action.
+20. ⏭️ **Roadmap from the "Scouting Report" audit** (2026-07-06) -- a
+    from-scratch review through a pro's, a ladder player's, and a YouTube
+    fan's eyes (published as a Claude Artifact), re-verified against the
+    code before being turned into this sequence:
+    - **Phase 1, quick wins**: fix per-Nexus Chrono energy (cap should scale
+      as `townhallCount * nexusMaxEnergy`, not a flat 200 regardless of base
+      count -- same bug class as the townhall-counting fix in item 19);
+      supply-count build-order notation ("14 Pylon, 16 Gate") alongside the
+      raw timestamps; rough benchmark context ("pros hit this around X")
+      next to arrival times.
+    - **Phase 2, upgrades** (the single biggest gap: exactly 1 upgrade
+      exists anywhere in the codebase today, `WarpGateResearch`) -- add
+      Charge, Blink, and one weapon/armor tier per race; wire them into
+      `unitValue()`/`combat.ts` so a unit's effective stats depend on which
+      upgrades were researched by the time it was produced, not a static
+      baseline forever; add them to `search.ts`'s vocabulary so the GA can
+      discover *when* to research them, the same way `chrono:X` already
+      works. Scoped to 1 tier + 2 signature abilities first, not the full
+      ~27-upgrade matrix.
+    - **Phase 3, roster expansion**, ordered by real-ladder frequency:
+      Protoss Templar Archives (High Templar/Dark Templar/Archon) + Robotics
+      Bay (Colossus/Disruptor); Zerg Hive tier (Infestor/Ultralisk/Lurker);
+      Terran Ghost/Thor/Battlecruiser. Carrier/Tempest/Mothership/Viper/
+      Brood Lord/Nydus deferred as rarer/later-game.
+    - **Phase 4, accuracy**: real per-map distance data for a handful of
+      named ladder maps, replacing the 3 abstract presets.
+    - **Phase 5, engagement**: a Build A vs. Build B side-by-side race view;
+      surfacing the 26 already-collected real replays as something browsable
+      instead of only used invisibly to fit constants.
 
 ## References
 
