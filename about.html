@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How this works — SC2 Build-Order Simulator</title>
+    <style>
+      :root {
+        --bg: #0e1116;
+        --panel: #161b22;
+        --line: #262d38;
+        --fg: #e6edf3;
+        --muted: #8b98a9;
+        --accent: #4aa8ff;
+        --mineral: #59b0ff;
+        --gas: #47d16a;
+        --supply: #e0a030;
+        --err: #ff6b6b;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f6f8fa; --panel: #ffffff; --line: #d8dee4; --fg: #1f2328; --muted: #656d76;
+          --accent: #0969da; --mineral: #0969da; --gas: #1a7f37; --supply: #9a6700; --err: #cf222e;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg); color: var(--fg);
+      }
+      .wrap { max-width: 720px; margin: 0 auto; padding: 28px 20px 70px; }
+      .back { font-size: 13px; color: var(--muted); text-decoration: none; }
+      .back:hover { color: var(--accent); }
+      h1 { font-size: 24px; margin: 18px 0 6px; }
+      .sub { color: var(--muted); margin: 0 0 32px; font-size: 14px; }
+      h2 { font-size: 17px; margin: 36px 0 10px; }
+      p { margin: 0 0 14px; }
+      code { background: var(--panel); border: 1px solid var(--line); padding: 1px 5px; border-radius: 4px; font-size: 0.92em; }
+      .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 14px 0; }
+      .panel.warn { border-left: 3px solid var(--supply); border-radius: 0 10px 10px 0; }
+      a { color: var(--accent); }
+      ul { margin: 0 0 14px; padding-left: 20px; }
+      li { margin-bottom: 6px; }
+      table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 10px 0 20px; }
+      th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+      th { color: var(--muted); font-weight: 600; font-size: 13px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <a class="back" href="index.html">← Back to the simulator</a>
+      <h1>How this works</h1>
+      <p class="sub">The short version of everything the main page assumes you already know.</p>
+
+      <h2>What this actually is</h2>
+      <p>
+        An event-driven economy simulator for StarCraft II build orders. You give it a sequence of
+        actions (<code>Probe</code>, <code>Gateway</code>, <code>chrono:Stalker</code>, …) for one race,
+        and it plays out the economy second-by-second: when each thing starts, finishes, and — for army
+        units — when it would physically arrive at the enemy's base on a given map. <b>There is no
+        opponent and no combat</b> in the simulation itself; it only answers "how fast, and with what,"
+        not "who wins the fight."
+      </p>
+
+      <h2>Two ways to search for a good build</h2>
+      <p>Both answer the same question — "what's the fastest way to get this army to the enemy?" —
+      but explore the space differently:</p>
+      <table>
+        <tr><th>Exact search</th><td>Tries every combination inside one fixed <i>shape</i> of build
+          (worker count → gas → tech → units, one main production building) — a few thousand to ~30,000
+          variants. Guaranteed the best answer <i>within that shape</i>, but can't discover anything
+          the shape doesn't allow for.</td></tr>
+        <tr><th>Smart search</th><td>A genetic algorithm: it mutates and cross-breeds actual build
+          sequences directly, with no fixed shape at all. Slower per-run and not guaranteed optimal, but
+          in practice it beats the exact search by 10–20 seconds on almost every target, because it can
+          find orderings — an unusual early proxy, a chrono on the tech building instead of a probe — that
+          the exact search's shape simply can't express.</td></tr>
+      </table>
+      <p>"Best builds" on the main page runs the smart search against a curated set of common targets
+      automatically, so you don't have to pick a target yourself first.</p>
+
+      <h2>What "value" means</h2>
+      <p>
+        The Value Frontier panel ranks armies by a single number per unit:
+        <code>value = √(dps × (hp + shields))</code> — roughly, "how much sustained damage can this unit
+        deal before it dies." An army's value is just the sum of its units' values. This is a
+        <b>ranking heuristic, not a combat outcome</b> — it has no idea about range, splash damage, unit
+        counters, concave positioning, or upgrades. A maxed-out Zealot ball with +3 weapons/armor and
+        Charge researched is dramatically stronger in a real game than the same number of stock Zealots,
+        and right now this tool can't tell the difference — <b>upgrades aren't modeled anywhere yet.</b>
+        Treat "value" as "how big is this army," not "who would win."
+      </p>
+
+      <h2>What the Opponent panel is comparing</h2>
+      <p>
+        This tool has a small library of real ladder replays, parsed down to their opening build order.
+        The Opponent panel takes one of those real, recorded build orders and runs it through the same
+        simulator (as if it were just another build order you'd typed in), producing a value-over-time
+        curve for what that real player actually did. It then compares that curve against whatever build
+        you currently have loaded in the Simulator panel. If your build's cumulative value ever dips below
+        the real opponent's at the same point in time, that's a moment a real opponent's build would have
+        had more army than you — regardless of how fast your build looks in isolation.
+      </p>
+
+      <div class="panel warn">
+        <b>Known limits, honestly:</b>
+        <ul style="margin: 10px 0 0;">
+          <li>No upgrades anywhere (Charge, Blink, weapon/armor tiers, etc.) — see above.</li>
+          <li>No branching: every build is one committed sequence from minute zero. Real play reacts to
+            scouting; this only ever tests straight lines.</li>
+          <li>Combat, when modeled at all, is a simplified stat trade — no positioning, splash, or armor
+            types.</li>
+          <li>Roster is incomplete for all three races (no Colossus/Templar/Carrier for Protoss, no
+            Ghost/Thor/Battlecruiser for Terran, no Hive tier for Zerg, etc).</li>
+          <li>Map distances are 3 rough presets, not measured off real ladder maps.</li>
+        </ul>
+      </div>
+
+      <p style="margin-top: 28px; color: var(--muted); font-size: 13px;">
+        Full technical depth, data sources, and the project roadmap live in the
+        <a href="https://github.com/wgpatrick/sc2sim#readme">GitHub README</a>.
+      </p>
+    </div>
+  </body>
+</html>

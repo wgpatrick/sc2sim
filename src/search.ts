@@ -25,7 +25,7 @@
 import type { GameData, MapConfig, Composition, Action, SimResult } from "./engine.js";
 import { simulate, workerNameOf } from "./engine.js";
 import { compositionArrivalTime } from "./engine.js";
-import { generateBuild, techClosure, defaultStrategies, type BuildParams, type Strategy } from "./optimizer.js";
+import { generateBuild, techClosure, defaultStrategies, optimize, type BuildParams, type Strategy } from "./optimizer.js";
 
 export type Scorer = (result: SimResult, target: Composition, data: GameData) => number;
 
@@ -231,8 +231,27 @@ export function searchRawSequences(
 
   // Initial population: randomized-template builds, given a few mutation
   // passes each so the GA starts already exploring off-template variants.
+  //
+  // If the caller didn't supply seeds, fall back to the template optimizer's
+  // own (cheap, reduced-budget) answer -- without this, "seeded so it never
+  // regresses" was only true for callers that remembered to wire it up by
+  // hand (search-cli.ts did; opponent-cli.ts and the browser UI's GA button
+  // did not), and an unseeded population can occasionally fail to find ANY
+  // valid build within the generation budget even when one obviously exists
+  // (observed: 12 Zergling returned Infinity with the browser's reduced
+  // budget, purely because the random population never stumbled onto a
+  // supply-safe ordering in time).
+  let seeds = opts.seeds;
+  if (!seeds) {
+    try {
+      const templateResult = optimize(target, data, map, { maxProbes: 14, maxProducers: 3, maxEarlyHomeUnits: 1, strategies });
+      seeds = [templateResult.order, ...Object.values(templateResult.bestByStrategy).map((b) => b.order)];
+    } catch {
+      seeds = []; // no valid template build either (e.g. an unreachable target) -- fall through unseeded.
+    }
+  }
   let population: Action[][] = [];
-  for (const seed of opts.seeds ?? []) population.push(seed.slice());
+  for (const seed of seeds) population.push(seed.slice());
   while (population.length < popSize) {
     const params = randomParams(rng, strategies, start);
     let seq = generateBuild(target, data, params);

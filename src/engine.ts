@@ -27,6 +27,16 @@ export interface EntityData {
   isStructure: boolean;
   isWorker?: boolean; // the harvesting worker; excluded from army-arrival
   isUpgrade?: boolean; // researched at `producer`; sets a flag when done
+  /** True for every tier of this race's mining townhall (Nexus; CommandCenter
+   * AND OrbitalCommand/PlanetaryFortress; Hatchery AND Lair/Hive) -- counted
+   * together for mineralRate/larva purposes. Without this, townhallCount()
+   * only ever recognized `economy.startingTownhall` by name, so morphing
+   * CommandCenter->OrbitalCommand (or Hatchery->Lair) made mineral income
+   * (and Zerg larva regen) permanently drop to ZERO the instant the morph
+   * completed, even though the townhall never stopped mining in reality --
+   * a real, previously-undiscovered bug affecting almost every Terran/Zerg
+   * build that ever teched up its main base. */
+  isTownhall?: boolean;
   morphFrom?: string; // this building is morphed from another (Gateway->WarpGate)
   warpCooldown?: number; // if produced via warp-in, producer busy this long (Faster s)
   /** True if building this PERMANENTLY consumes the builder (every Zerg
@@ -332,7 +342,9 @@ class State {
     return this.completed[name] ?? 0;
   }
   get townhallCount(): number {
-    return this.count(this.eco.startingTownhall);
+    let n = 0;
+    for (const name in this.completed) if (this.data.entities[name]?.isTownhall) n += this.completed[name];
+    return n;
   }
   get gasStructureCount(): number {
     return this.count(this.eco.gasStructure);
@@ -400,7 +412,11 @@ class State {
     return done - busy - cooling;
   }
   larvaCap(loc: Location): number {
-    return (this.eco.larvaCapPerTownhall ?? 3) * (this.completedLoc[this.eco.startingTownhall]?.[loc] ?? 0);
+    let townhalls = 0;
+    for (const name in this.completedLoc) {
+      if (this.data.entities[name]?.isTownhall) townhalls += this.completedLoc[name][loc] ?? 0;
+    }
+    return (this.eco.larvaCapPerTownhall ?? 3) * townhalls;
   }
 
   /** Requirement met if the structure is complete OR the upgrade is researched. */

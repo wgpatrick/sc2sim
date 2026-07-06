@@ -106,6 +106,29 @@ test("assessDanger returns 0 (not -Infinity) when both value curves are empty", 
     assert.equal(d.worstDeficit, 0);
     assert.equal(d.worstDeficitTime, 0);
 });
+test("mineral income survives a townhall morph (regression: townhallCount only recognized the STARTING townhall name)", () => {
+    // Before the fix, morphing CommandCenter->OrbitalCommand (or Hatchery->
+    // Lair) made townhallCount() -- and therefore mineralRate -- permanently
+    // drop to ZERO the instant the morph completed, because it only ever
+    // counted `economy.startingTownhall` by name. This broke almost every
+    // Terran/Zerg build that ever teched up its main base, including two of
+    // the four hand-written presets shipped in the browser UI.
+    for (const [race, data, order] of [
+        ["Terran", TERRAN, ["SCV", "SupplyDepot", "SCV", "SCV", "Barracks", "SCV", "SCV", "OrbitalCommand", "SCV", "SCV", "SCV"]],
+        ["Zerg", ZERG, ["Drone", "Drone", "Overlord", "Drone", "SpawningPool", "Drone", "Drone", "Drone", "Drone", "Extractor", "Drone", "Drone", "Lair", "Drone", "Drone", "Drone"]],
+    ]) {
+        const r = simulate(data, [...order], map);
+        assert.ok(r.ok, `${race}: sim failed: ${r.error}`);
+        assert.ok(r.final.mineralRate > 0, `${race}: mineralRate should stay positive after the townhall morph, was ${r.final.mineralRate}`);
+    }
+});
+test("a townhall morph does not silently drop supply cap (regression: Lair defaulted to supplyProvided 0)", () => {
+    const withLair = simulate(ZERG, ["Drone", "Drone", "Overlord", "Drone", "SpawningPool", "Drone", "Drone", "Drone", "Drone", "Extractor", "Drone", "Drone", "Lair"], map);
+    const withoutLair = simulate(ZERG, ["Drone", "Drone", "Overlord", "Drone", "SpawningPool", "Drone", "Drone", "Drone", "Drone", "Extractor", "Drone", "Drone"], map);
+    assert.ok(withLair.ok, withLair.error ?? "");
+    assert.ok(withoutLair.ok, withoutLair.error ?? "");
+    assert.ok(withLair.final.supplyCap >= withoutLair.final.supplyCap, "morphing to Lair must not reduce supply cap versus not morphing at all");
+});
 test("Zealot warp-in delivers at the proxy distance, not the full home-to-enemy walk", () => {
     const proxyOrder = [
         "Probe", "Probe", "Probe", "Pylon", "Probe", "Assimilator", "Probe",

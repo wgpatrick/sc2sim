@@ -581,6 +581,50 @@ positioning, range, splash, armor types, or upgrades on either side yet.
     results as load-into-simulator cards. Also fixed the Value Frontier
     button freezing the page for ~24s (same root cause and fix as the GA
     search button's tuning, just never applied there before).
+19. ✅ **Second UX pass, from actually using the redesigned page** (2026-07-06)
+    — hands-on feedback surfaced both UX confusion and two real engine bugs:
+    - **Two real, previously-undiscovered engine bugs.** `townhallCount`
+      only ever recognized a race's *starting* townhall name, so morphing
+      CommandCenter→OrbitalCommand or Hatchery→Lair made mineral income (and
+      Zerg larva regen) permanently drop to **zero** the instant the morph
+      completed — silently broken for almost every Terran/Zerg build that
+      ever teched up its main base, including 2 of the 4 hand-written
+      presets shipped in the browser UI (one didn't even simulate: "Can
+      never afford Marine"). Fixed with a new `EntityData.isTownhall` flag
+      counted across every tier (Nexus; CommandCenter+OrbitalCommand;
+      Hatchery+Lair) instead of matching one hardcoded name. Separately,
+      Lair defaulted to `supplyProvided: 0` instead of matching Hatchery's
+      4, so the same morph also silently dropped supply cap (the same bug
+      class as the OrbitalCommand supply fix from item 17, just missed for
+      Zerg). Both caught by writing regression tests first — see
+      `engine.test.ts`.
+    - **`searchRawSequences` wasn't actually seeded for every caller.** The
+      module's own docstring claims results are "seeded from the template's
+      own output so it never regresses," but that only happened for callers
+      that explicitly passed `opts.seeds` (`search-cli.ts` did;
+      `opponent-cli.ts` and the entire browser UI's GA button/Best Builds
+      panel did not). An unseeded population can occasionally fail to find
+      *any* valid build within budget even when one obviously exists
+      (observed: 12 Zergling returned `Infinity`). Fixed by auto-seeding
+      from a cheap, reduced-budget `optimize()` call whenever the caller
+      doesn't supply seeds, so the "never regresses" guarantee is now
+      actually true everywhere, not just where a caller remembered to wire
+      it up.
+    - **UX**: global race selector (drives Best Builds/Optimizer/Frontier/
+      Simulator together, where they used to be Protoss-locked or
+      independently switched); split the page into "Find a build"
+      (discovery/search tools) vs. "Inspect a build" (Simulator + Opponent)
+      instead of an undifferentiated stack of panels; de-jargoned copy
+      ("Exact search"/"Smart search" instead of "template optimizer"/
+      "raw-sequence GA") and moved the detailed "how it works" explanation
+      to a new `about.html` page instead of a dense intro paragraph;
+      relabeled the Simulator's hand-written example builds so they no
+      longer read as recommended/optimal; the Opponent panel now shows
+      *which* build it's comparing inline instead of only in a parenthetical
+      referring back up the page, and dropped its Protoss-only restriction;
+      the main Simulator chart gained y-axis value labels (it previously had
+      none at all -- only the Frontier chart did) and a hover tooltip
+      showing exact values + the most recent action.
 
 ## References
 

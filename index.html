@@ -89,30 +89,61 @@
       .bb-order-preview { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--muted); margin-top: 6px; white-space: normal; word-break: break-word; }
       .bb-card summary.bb-order-preview { cursor: pointer; margin-top: 6px; }
       .bb-card button { width: auto; margin-top: 8px; padding: 6px 12px; font-size: 13px; }
+
+      .masthead { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+      .masthead .sub { margin: 0; }
+      .masthead-race { flex: 0 0 auto; min-width: 150px; }
+      .about-link { font-size: 13px; }
+      .mode-banner { display: flex; align-items: center; gap: 12px; margin: 36px 0 14px; }
+      .mode-banner:first-of-type { margin-top: 8px; }
+      .mode-icon { font-size: 22px; flex: 0 0 auto; }
+      .mode-banner h2 { font-size: 17px; margin: 0; }
+      .mode-banner p { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+      .mode-divider { border: none; border-top: 1px solid var(--line); margin: 40px 0 0; }
+      .chip { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; margin-left: 8px; }
+      #army-rows .row { position: relative; }
+      .add-unit-btn { width: auto; background: var(--panel); color: var(--fg); border: 1px dashed var(--line); margin-top: 0; padding: 8px 14px; font-weight: 500; }
+      .remove-unit-btn { flex: 0 0 auto; width: 34px; background: var(--panel); color: var(--muted); border: 1px solid var(--line); margin-top: 0; padding: 8px; }
+      .compare-note { font-size: 13px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin-bottom: 14px; }
+      .compare-note b { color: var(--accent); }
     </style>
   </head>
   <body>
     <div class="wrap">
-      <h1>StarCraft II Build-Order Simulator</h1>
-      <p class="sub">
-        Patch <code>5.0.16</code> (8-worker start). Event-driven economy sim — no opponent, no combat.
-        <b>Start with "Best builds" below</b> for a ready-made answer, or use the tools further down to dig
-        in: <b>Simulator</b> (edit and inspect any build order by hand, all 3 races), <b>Optimizer</b>
-        (search a specific target army you pick), <b>Value frontier</b> (best army value at various times),
-        <b>Opponent</b> (check your build's safety against a real recorded game). Everything Protoss-specific
-        below uses <code>chrono:X</code> to cast Chrono Boost on the in-production <code>X</code>; Terran/Zerg
-        builds in the Simulator can use <code>MULE</code> / <code>InjectLarva</code>.
-      </p>
+      <div class="masthead">
+        <div>
+          <h1>StarCraft II Build-Order Simulator</h1>
+          <p class="sub">Patch <code>5.0.16</code>, 8-worker start. Finds and checks build orders — no
+            opponent, no combat inside the sim itself. <a class="about-link" href="about.html">How this
+            works →</a></p>
+        </div>
+        <div class="masthead-race">
+          <label for="race">Race</label>
+          <select id="race">
+            <option value="Protoss">Protoss</option>
+            <option value="Terran">Terran</option>
+            <option value="Zerg">Zerg</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mode-banner">
+        <span class="mode-icon">🔍</span>
+        <div>
+          <h2>Find a build</h2>
+          <p>Let a search do the work — pick a target (or don't) and get a ranked answer.</p>
+        </div>
+      </div>
 
       <div class="panel" id="best-builds-panel">
-        <h1 style="font-size: 18px;">🏆 Best builds <span style="font-size:12px; color:var(--muted); font-weight:400;">(Protoss, auto-computed)</span></h1>
+        <h1 style="font-size: 18px;">🏆 Best builds <span class="chip" id="bb-race-chip">Protoss</span></h1>
         <p class="sub" style="margin-bottom: 16px;">
-          No configuration needed — this runs the raw-sequence GA (see "The raw-sequence search" below) against
-          a curated set of common targets and shows the fastest ones found. <b>Rushes</b> are small 1-base
-          all-ins scored purely by arrival time; <b>macro targets</b> are large armies, which is where the GA
-          starts finding it's worth taking a natural expansion — watch the "1 base" vs "2 bases" badge change
-          as the target gets bigger. Click "Load into simulator" on any card to inspect the full build order,
-          step by step, above.
+          No target to configure — this runs the <a href="about.html#smart-search">smart search</a> against
+          a curated set of common targets for the race selected above, and shows the fastest ones found.
+          <b>Rushes</b> are small 1-base all-ins scored purely by arrival time; <b>macro targets</b> are
+          large armies, which is where a search starts finding it's worth taking a natural expansion —
+          watch the "1 base" / "2 bases" badge. Click "Load into simulator" on any card to inspect the full
+          build order, step by step, below.
         </p>
         <div class="row" style="margin-bottom: 4px;">
           <button id="bb-recompute" style="flex:0 0 auto; width:auto; margin-top:0;">↻ Recompute</button>
@@ -123,82 +154,41 @@
         <div id="bb-macro" class="bb-list"></div>
       </div>
 
-      <div class="grid">
-        <div class="panel">
-          <div class="row">
-            <div style="flex:0 0 130px">
-              <label for="race">Race</label>
-              <select id="race">
-                <option value="Protoss">Protoss</option>
-                <option value="Terran">Terran</option>
-                <option value="Zerg">Zerg</option>
-              </select>
-            </div>
-            <div style="flex:1">
-              <label for="preset">Preset build</label>
-              <select id="preset"></select>
-            </div>
-          </div>
-          <p class="desc" id="desc"></p>
-          <label for="order">Build order</label>
-          <textarea id="order" spellcheck="false"></textarea>
-          <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;margin-top:10px;cursor:pointer;">
-            <input type="checkbox" id="micro" checked style="width:auto;" />
-            Pro probe micro (hand-mining, +~12% income vs a-move)
-          </label>
-          <div class="row" style="margin-top:0;">
-            <button id="run" style="flex:1;">▶ Simulate</button>
-            <button id="share" title="Copy a link to this exact build" style="flex:0 0 auto; width:auto; background:var(--panel); color:var(--fg); border:1px solid var(--line);">🔗 Copy link</button>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="summary" id="summary"></div>
-          <canvas id="chart" width="900" height="440"></canvas>
-          <div class="legend">
-            <span class="lm">Minerals</span><span class="lg">Gas</span><span class="ls">Supply used / cap</span>
-          </div>
-          <div style="max-height: 300px; overflow: auto; margin-top: 14px;">
-            <table id="timeline">
-              <thead><tr><th class="mono">Start</th><th>Action</th><th class="mono">Done</th><th class="mono">Arrives</th></tr></thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <details style="margin-top: 12px;">
-            <summary style="cursor:pointer; color: var(--muted); font-size: 13px;">Simulator log (chrono/MULE/inject casts, skips, warnings)</summary>
-            <pre id="simlog" style="max-height: 220px; overflow: auto; font-size: 12px; margin-top: 8px; white-space: pre-wrap;"></pre>
-          </details>
-        </div>
-      </div>
-
       <div class="panel" style="margin-top: 20px;">
-        <h1 style="font-size: 18px;">⚡ Optimizer — fastest army <em>at the enemy</em> <span style="font-size:12px; color:var(--muted); font-weight:400;">(Protoss only)</span></h1>
+        <h1 style="font-size: 18px;">⚡ Search for a specific army</h1>
         <p class="sub" style="margin-bottom: 16px;">
-          Pick a target army. The <b>template optimizer</b> exhaustively searches ~31,600 build variants
-          (worker count, production buildings, gas, proxy vs. home) within a fixed build SHAPE -- the true
-          optimum within that template. The <b>raw-sequence GA</b> searches Action[] sequences directly (no
-          fixed shape), seeded from the template's own answer so it can never do worse, and in practice beats
-          it by 10-18s on every example in this project by discovering orderings the template can't express.
+          Pick exactly the army you want, and compare two search strategies against each other:
+          <a href="about.html#exact-search"><b>exact search</b></a> tries every combination inside one
+          fixed build shape (~thousands of variants, guaranteed best <i>within that shape</i>);
+          <a href="about.html#smart-search"><b>smart search</b></a> evolves build sequences directly with
+          no fixed shape, and in practice beats the exact search by 10-20s on almost every target by finding
+          orderings the shape can't express.
         </p>
         <div id="army-rows"></div>
+        <button id="add-unit" class="add-unit-btn">+ Add unit</button>
         <div class="row" style="margin-top: 12px;">
           <div style="flex:1">
             <label for="opt-map">Map</label>
             <select id="opt-map"></select>
           </div>
-          <button id="optimize" style="flex:0 0 auto; width:auto; margin-top:0; align-self:end; padding:10px 18px;">Optimize (template) ▶</button>
-          <button id="ga-search" style="flex:0 0 auto; width:auto; margin-top:0; align-self:end; padding:10px 18px;">Search (GA) ▶</button>
+          <button id="optimize" style="flex:0 0 auto; width:auto; margin-top:0; align-self:end; padding:10px 18px;">Exact search ▶</button>
+          <button id="ga-search" style="flex:0 0 auto; width:auto; margin-top:0; align-self:end; padding:10px 18px;">Smart search ▶</button>
         </div>
         <div id="opt-out" class="summary" style="margin-top:16px"></div>
         <div id="ga-out" class="summary" style="margin-top:8px"></div>
       </div>
 
       <div class="panel" style="margin-top: 20px;">
-        <h1 style="font-size: 18px;">📈 Value frontier — best army <em>value</em> by time T <span style="font-size:12px; color:var(--muted); font-weight:400;">(Protoss only)</span></h1>
+        <h1 style="font-size: 18px;">📈 Value frontier — the biggest army you can have, by time T</h1>
         <p class="sub" style="margin-bottom: 16px;">
-          Sweeps unit COUNTS (not just one fixed target) and reports the Pareto frontier of
-          <code>unitValue()</code> — <code>sqrt(dps × (hp + shields))</code> — delivered at the enemy by time T. This is a
-          <b>ranking heuristic, not a combat resolver</b>: it ignores upgrades, range, splash, and unit counters entirely.
+          Given <i>only</i> the unit types you check below, this finds — for every point in time — the most
+          raw fighting power (<a href="about.html#value"><code>value</code></a>) any searched build can
+          deliver to the enemy by then. It answers "what's the strongest possible army I could have at
+          6 minutes," not "what's the best composition" — it freely mixes unit types and doesn't know about
+          countering, splash, or range.
+          <b>It also doesn't model upgrades</b> — an upgraded Zealot ball is much stronger than the same
+          count of stock Zealots, and that difference is entirely invisible here today (see
+          <a href="about.html#value">How this works</a>).
         </p>
         <div id="frontier-units"></div>
         <div class="row" style="margin-top: 12px;">
@@ -220,17 +210,67 @@
         <div class="legend"><span style="color:var(--muted)">hover the line for the build behind each point</span></div>
       </div>
 
+      <hr class="mode-divider" />
+      <div class="mode-banner">
+        <span class="mode-icon">🔬</span>
+        <div>
+          <h2>Inspect a build</h2>
+          <p>Type or load one specific build order and see exactly what happens, second by second.</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <label for="preset">Example build <span class="chip">hand-written, not optimized</span></label>
+          <select id="preset"></select>
+          <p class="desc" id="desc"></p>
+          <label for="order">Build order</label>
+          <textarea id="order" spellcheck="false"></textarea>
+          <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;margin-top:10px;cursor:pointer;">
+            <input type="checkbox" id="micro" checked style="width:auto;" />
+            Pro probe micro (hand-mining, +~12% income vs a-move)
+          </label>
+          <div class="row" style="margin-top:0;">
+            <button id="run" style="flex:1;">▶ Simulate</button>
+            <button id="share" title="Copy a link to this exact build" style="flex:0 0 auto; width:auto; background:var(--panel); color:var(--fg); border:1px solid var(--line);">🔗 Copy link</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="summary" id="summary"></div>
+          <div style="position:relative;">
+            <canvas id="chart" width="900" height="440"></canvas>
+            <div id="chart-tooltip" style="position:absolute; display:none; pointer-events:none; background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:6px 10px; font-size:12px; white-space:nowrap;"></div>
+          </div>
+          <div class="legend">
+            <span class="lm">Minerals</span><span class="lg">Gas</span><span class="ls">Supply used / cap</span>
+            <span style="color:var(--muted)">(hover for exact values + what just happened)</span>
+          </div>
+          <div style="max-height: 300px; overflow: auto; margin-top: 14px;">
+            <table id="timeline">
+              <thead><tr><th class="mono">Start</th><th>Action</th><th class="mono">Done</th><th class="mono">Arrives</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <details style="margin-top: 12px;">
+            <summary style="cursor:pointer; color: var(--muted); font-size: 13px;">Simulator log (chrono/MULE/inject casts, skips, warnings)</summary>
+            <pre id="simlog" style="max-height: 220px; overflow: auto; font-size: 12px; margin-top: 8px; white-space: pre-wrap;"></pre>
+          </details>
+        </div>
+      </div>
+
       <div class="panel" style="margin-top: 20px;">
-        <h1 style="font-size: 18px;">🥊 Opponent — safety against a REAL recorded game <span style="font-size:12px; color:var(--muted); font-weight:400;">(Protoss only)</span></h1>
+        <h1 style="font-size: 18px;">🥊 Opponent — safety against a REAL recorded game</h1>
         <p class="sub" style="margin-bottom: 16px;">
-          Replays a real Terran/Zerg opponent's recorded build order through their own race's simulator to get a
-          cumulative fighting-VALUE-over-time curve straight from a game someone actually played, then compares it
-          against the build order currently loaded in the simulator above (top-left panel — edit it and re-compare).
-          A build that's fast but leaves you with less value than a real opponent had at that moment is a build
-          that loses to that opener, regardless of how it ranks in isolation. These 3 sample games are trimmed to
-          their opening 5 minutes and embedded directly (this is a UI convenience subset —
-          <code>npm run opponent</code> draws on the full 20-replay corpus).
+          Takes a real opponent's actual recorded build order from a ladder replay and runs it through the
+          same simulator, producing a value-over-time curve for what they really did — then compares it
+          against <b>the build currently loaded in the panel above</b>. A build that's fast but leaves you
+          with less value than a real opponent had at that moment is a build that loses to that opener,
+          regardless of how it ranks in isolation. These 3 sample games are trimmed to their opening 5
+          minutes and embedded directly (a UI convenience subset — <code>npm run opponent</code> draws on
+          the full 26-replay corpus). <a href="about.html#opponent">How this comparison works →</a>
         </p>
+        <div class="compare-note" id="opp-comparing-note"></div>
         <div class="row">
           <div style="flex:1">
             <label for="opp-pick">Real opponent replay</label>
@@ -241,7 +281,7 @@
         <div id="opp-summary" class="summary" style="margin-top:16px"></div>
         <canvas id="opp-chart" width="900" height="300"></canvas>
         <div class="legend">
-          <span style="color:var(--accent)">■ my build (from the simulator above)</span>
+          <span style="color:var(--accent)">■ my build (from the panel above)</span>
           <span style="color:var(--err)">■ real opponent</span>
         </div>
       </div>
@@ -329,24 +369,30 @@
         orderTa.value = b.order.join("\n");
       }
       presetSel.addEventListener("change", () => { loadPreset(+presetSel.value); run(); });
-      raceSel.addEventListener("change", () => { populatePresets(); loadPreset(0); run(); });
+      // Race is a single global control (masthead, top of page) that drives
+      // every panel on the page: the Simulator, Best Builds, the Optimizer's
+      // Exact/Smart search, and the Value Frontier all repopulate for the
+      // newly-selected race. This used to only affect the Simulator, with
+      // the other three panels permanently hardcoded to Protoss regardless
+      // of what was picked here -- confusing, and no longer necessary now
+      // that optimizer.ts/search.ts are fully race-agnostic.
+      raceSel.addEventListener("change", () => {
+        populatePresets(); loadPreset(0); run();
+        populateArmyRows(); populateFrontierUnits();
+        computeBestBuilds();
+      });
 
       const microCb = $("micro");
       // Clone the data and apply the mining-micro toggle (1.0 = pro, 0.88 = a-move).
-      // Used by the simulator panel, which is race-aware; the Optimizer/Value
-      // Frontier panels below are Protoss-only for now (see README "Modeling
-      // the opponent" -- Terran/Zerg aren't a fully-searchable target yet),
-      // so they use protossWithMicro() instead regardless of the race picker.
-      function activeData() {
+      // One race-aware data source, shared by every panel (Simulator,
+      // Optimizer, Value Frontier, Best Builds) since they all now follow
+      // the same global race selector.
+      function currentData() {
         const d = structuredClone(RACE_DATA[raceSel.value]);
         d.economy.miningMicro = microCb.checked ? 1.0 : 0.88;
         return d;
       }
-      function protossWithMicro() {
-        const d = structuredClone(PROTOSS);
-        d.economy.miningMicro = microCb.checked ? 1.0 : 0.88;
-        return d;
-      }
+      const activeData = currentData;
       microCb.addEventListener("change", run);
 
       // Shareable state: race + build order encoded into the URL query string
@@ -412,30 +458,56 @@
           tb.appendChild(tr);
         }
         $("simlog").textContent = res.log.join("\n") || "(no log lines)";
-        drawChart(res.snapshots);
+        drawChart(res.snapshots, res.ok ? res.actions : []);
+        updateOppComparingNote();
       }
       $("run").addEventListener("click", run);
 
-      function drawChart(snaps) {
+      // Kept from the last drawChart() call so the hover tooltip can find the
+      // nearest snapshot + nearest timeline action without re-simulating.
+      let lastChartSnaps = [], lastChartActions = [];
+
+      function drawChart(snaps, actions) {
+        lastChartSnaps = snaps;
+        lastChartActions = actions ?? [];
         const cv = $("chart"), ctx = cv.getContext("2d");
-        const W = cv.width, H = cv.height, pad = 34;
+        const W = cv.width, H = cv.height, padL = 46, padR = 46, padY = 30;
         ctx.clearRect(0, 0, W, H);
         if (!snaps.length) return;
         const tMax = Math.max(1, snaps[snaps.length - 1].t);
         const resMax = Math.max(50, ...snaps.map((s) => Math.max(s.minerals, s.gas)));
         const supMax = Math.max(15, ...snaps.map((s) => s.supplyCap));
         const css = getComputedStyle(document.documentElement);
-        const x = (t) => pad + (t / tMax) * (W - pad * 2);
-        const yRes = (v) => H - pad - (v / resMax) * (H - pad * 2);
-        const ySup = (v) => H - pad - (v / supMax) * (H - pad * 2);
+        const x = (t) => padL + (t / tMax) * (W - padL - padR);
+        const yRes = (v) => H - padY - (v / resMax) * (H - padY * 2);
+        const ySup = (v) => H - padY - (v / supMax) * (H - padY * 2);
 
-        // axes
+        // x-axis (time)
         ctx.strokeStyle = css.getPropertyValue("--line"); ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(pad, H - pad); ctx.lineTo(W - pad, H - pad); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(padL, H - padY); ctx.lineTo(W - padR, H - padY); ctx.stroke();
         ctx.fillStyle = css.getPropertyValue("--muted"); ctx.font = "11px sans-serif";
         for (let t = 0; t <= tMax; t += Math.max(30, Math.round(tMax / 6 / 30) * 30)) {
-          ctx.fillText(fmt(t), x(t) - 10, H - pad + 16);
+          ctx.fillText(fmt(t), x(t) - 10, H - padY + 16);
         }
+        // left y-axis: minerals/gas scale
+        ctx.fillStyle = css.getPropertyValue("--mineral");
+        ctx.textAlign = "right";
+        for (let i = 0; i <= 4; i++) {
+          const v = (resMax / 4) * i;
+          ctx.fillText(Math.round(v), padL - 8, yRes(v) + 4);
+        }
+        ctx.save(); ctx.translate(12, H / 2); ctx.rotate(-Math.PI / 2);
+        ctx.textAlign = "center"; ctx.fillText("minerals / gas", 0, 0); ctx.restore();
+        // right y-axis: supply scale
+        ctx.fillStyle = css.getPropertyValue("--supply");
+        ctx.textAlign = "left";
+        for (let i = 0; i <= 4; i++) {
+          const v = (supMax / 4) * i;
+          ctx.fillText(Math.round(v), W - padR + 8, ySup(v) + 4);
+        }
+        ctx.save(); ctx.translate(W - 12, H / 2); ctx.rotate(Math.PI / 2);
+        ctx.textAlign = "center"; ctx.fillText("supply", 0, 0); ctx.restore();
+        ctx.textAlign = "left";
 
         const line = (key, y, color) => {
           ctx.strokeStyle = css.getPropertyValue(color); ctx.lineWidth = 2; ctx.beginPath();
@@ -447,7 +519,44 @@
         // supply cap (dashed) + used (solid)
         ctx.setLineDash([4, 4]); line("supplyCap", ySup, "--supply"); ctx.setLineDash([]);
         line("supplyUsed", ySup, "--supply");
+
+        // Tick marks + a subtle vertical guide for every action's start time,
+        // so the sawtooth dips in minerals/gas are visibly tied to something
+        // instead of looking like unexplained noise.
+        ctx.fillStyle = css.getPropertyValue("--muted");
+        for (const a of lastChartActions) {
+          const px = x(a.startTime);
+          ctx.beginPath(); ctx.arc(px, H - padY, 2.5, 0, Math.PI * 2); ctx.fill();
+        }
       }
+
+      const chartCanvas = $("chart"), chartTooltip = $("chart-tooltip");
+      function chartScales() {
+        const padL = 46, padR = 46;
+        const tMax = Math.max(1, lastChartSnaps[lastChartSnaps.length - 1]?.t ?? 1);
+        return { padL, padR, tMax, W: chartCanvas.width };
+      }
+      chartCanvas.addEventListener("mousemove", (ev) => {
+        if (!lastChartSnaps.length) return;
+        const rect = chartCanvas.getBoundingClientRect();
+        const scaleX = chartCanvas.width / rect.width;
+        const mx = (ev.clientX - rect.left) * scaleX;
+        const { padL, padR, tMax, W } = chartScales();
+        const t = ((mx - padL) / (W - padL - padR)) * tMax;
+        let nearest = lastChartSnaps[0];
+        for (const s of lastChartSnaps) if (s.t <= t) nearest = s; else break;
+        // Nearest action that had already started by this point in time.
+        const recentAction = [...lastChartActions].reverse().find((a) => a.startTime <= nearest.t);
+        chartTooltip.style.display = "block";
+        chartTooltip.style.left = `${ev.clientX - rect.left + 12}px`;
+        chartTooltip.style.top = `${ev.clientY - rect.top - 12}px`;
+        chartTooltip.innerHTML =
+          `<b>${fmt(nearest.t)}</b><br>` +
+          `${Math.round(nearest.minerals)} min · ${Math.round(nearest.gas)} gas · ` +
+          `${Math.round(nearest.supplyUsed)}/${Math.round(nearest.supplyCap)} supply` +
+          (recentAction ? `<br><span style="color:var(--muted)">most recent: ${recentAction.name} at ${fmt(recentAction.startTime)}</span>` : "");
+      });
+      chartCanvas.addEventListener("mouseleave", () => { chartTooltip.style.display = "none"; });
 
       // Every real army unit for a race, derived from the data itself (not a
       // hand-maintained list that can silently drift out of sync as the
@@ -460,24 +569,46 @@
       }
 
       // ---- Optimizer panel ----
-      const ARMY_UNITS = armyUnitNames(PROTOSS);
-      const DEFAULT_ARMY = [["Zealot", 4], ["Stalker", 0], ["Adept", 0]];
+      // The default rush unit per race, used to seed the first Optimizer row
+      // and as the primary "rush" unit for Best Builds below.
+      const PRIMARY_UNIT = { Protoss: "Zealot", Terran: "Marine", Zerg: "Zergling" };
       const armyRows = $("army-rows");
-      DEFAULT_ARMY.forEach(([unit, count]) => {
+
+      function addArmyRow(unit, count) {
+        const units = armyUnitNames(RACE_DATA[raceSel.value]);
         const row = document.createElement("div");
         row.className = "row";
         row.style.marginBottom = "8px";
         const sel = document.createElement("select");
-        ARMY_UNITS.forEach((u) => {
+        units.forEach((u) => {
           const o = document.createElement("option");
           o.value = u; o.textContent = u; if (u === unit) o.selected = true; sel.appendChild(o);
         });
         const num = document.createElement("input");
-        num.type = "number"; num.min = "0"; num.max = "12"; num.value = count;
+        num.type = "number"; num.min = "0"; num.max = "40"; num.value = count;
         num.style.maxWidth = "90px";
         sel.className = "opt-unit"; num.className = "opt-count";
-        row.appendChild(sel); row.appendChild(num); armyRows.appendChild(row);
-      });
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "×"; removeBtn.className = "remove-unit-btn"; removeBtn.title = "Remove this row";
+        removeBtn.addEventListener("click", () => {
+          if (armyRows.children.length > 1) row.remove();
+        });
+        row.appendChild(sel); row.appendChild(num); row.appendChild(removeBtn);
+        armyRows.appendChild(row);
+      }
+
+      // Rebuild the Optimizer's target-army rows for whichever race is
+      // currently selected -- each row's dropdown always lists every real
+      // combat unit for that race (see armyUnitNames), and there's no fixed
+      // row count: "+ Add unit" appends more, so any composition is
+      // reachable instead of being capped at 3 simultaneous unit types.
+      function populateArmyRows() {
+        armyRows.innerHTML = "";
+        const primary = PRIMARY_UNIT[raceSel.value] ?? armyUnitNames(RACE_DATA[raceSel.value])[0];
+        addArmyRow(primary, 4);
+      }
+      $("add-unit").addEventListener("click", () => addArmyRow(armyUnitNames(RACE_DATA[raceSel.value])[0], 0));
+      populateArmyRows();
 
       const optMap = $("opt-map");
       Object.entries(MAPS).forEach(([key, m]) => {
@@ -496,8 +627,9 @@
       }
 
       function loadBuildIntoSimulator(order, label) {
-        raceSel.value = "Protoss";
-        populatePresets();
+        // Every "Find a build" panel (Best Builds, Optimizer, Frontier) now
+        // searches whichever race is globally selected, so the build being
+        // loaded already matches raceSel -- no need to force it to Protoss.
         descEl.textContent = label;
         orderTa.value = order.join("\n");
         run();
@@ -509,7 +641,7 @@
         const out = $("opt-out");
         if (!Object.keys(comp).length) { out.innerHTML = '<span class="err">Pick at least one unit.</span>'; return; }
         const map = MAPS[optMap.value];
-        const r = optimize(comp, protossWithMicro(), map);
+        const r = optimize(comp, currentData(), map);
         const p = r.params;
         const cmp = Object.entries(r.bestByStrategy)
           .map(([s, b]) => `${s} ${fmt(b.arrival)}`)
@@ -537,30 +669,36 @@
         // lived CLI process), so the full default can take 15-20+ seconds
         // here. Trades a bit of search thoroughness for a responsive click;
         // see `npm run search` for the full-budget CLI result.
-        const g = searchRawSequences(comp, protossWithMicro(), map, arrivalScorer, { populationSize: 120, generations: 60 });
+        const g = searchRawSequences(comp, currentData(), map, arrivalScorer, { populationSize: 120, generations: 60 });
         const ms = (performance.now() - t0).toFixed(0);
         out.innerHTML =
-          `<b>GA:</b> <b>${describeComposition(comp)}</b> arrives at the enemy in <b>${fmt(g.score)}</b><br>` +
+          `<b>Smart search:</b> <b>${describeComposition(comp)}</b> arrives at the enemy in <b>${fmt(g.score)}</b><br>` +
           `<span style="color:var(--muted)">${g.evaluated} evaluations · ${g.generations} generations · ${ms}ms (lighter budget than the CLI's default -- see README)</span><br>` +
           `<button id="load-ga" style="width:auto;padding:6px 12px;margin-top:10px;">Load this build into the simulator ↑</button>`;
-        $("load-ga").addEventListener("click", () => loadBuildIntoSimulator(g.best, `GA search result: ${describeComposition(comp)} at the enemy, ${fmt(g.score)}`));
+        $("load-ga").addEventListener("click", () => loadBuildIntoSimulator(g.best, `Smart search result: ${describeComposition(comp)} at the enemy, ${fmt(g.score)}`));
       });
 
       // ---- Value frontier panel ----
-      const FRONTIER_UNITS = armyUnitNames(PROTOSS);
-      const DEFAULT_FRONTIER_UNITS = new Set(["Zealot", "Stalker", "Adept"]);
+      const DEFAULT_FRONTIER_UNITS = { Protoss: new Set(["Zealot", "Stalker", "Adept"]), Terran: new Set(["Marine", "Marauder"]), Zerg: new Set(["Zergling", "Roach"]) };
       const frontierUnitsEl = $("frontier-units");
-      FRONTIER_UNITS.forEach((u) => {
-        const label = document.createElement("label");
-        label.style.cssText = "display:inline-flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;margin:0 16px 8px 0;cursor:pointer;";
-        const cb = document.createElement("input");
-        cb.type = "checkbox"; cb.value = u; cb.style.width = "auto";
-        cb.checked = DEFAULT_FRONTIER_UNITS.has(u);
-        cb.className = "fr-unit";
-        label.appendChild(cb);
-        label.appendChild(document.createTextNode(u));
-        frontierUnitsEl.appendChild(label);
-      });
+      function populateFrontierUnits() {
+        frontierUnitsEl.innerHTML = "";
+        const race = raceSel.value;
+        const units = armyUnitNames(RACE_DATA[race]);
+        const defaults = DEFAULT_FRONTIER_UNITS[race] ?? new Set([units[0]]);
+        units.forEach((u) => {
+          const label = document.createElement("label");
+          label.style.cssText = "display:inline-flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;margin:0 16px 8px 0;cursor:pointer;";
+          const cb = document.createElement("input");
+          cb.type = "checkbox"; cb.value = u; cb.style.width = "auto";
+          cb.checked = defaults.has(u);
+          cb.className = "fr-unit";
+          label.appendChild(cb);
+          label.appendChild(document.createTextNode(u));
+          frontierUnitsEl.appendChild(label);
+        });
+      }
+      populateFrontierUnits();
 
       const frMap = $("fr-map");
       Object.entries(MAPS).forEach(([key, m]) => {
@@ -596,7 +734,7 @@
         await new Promise((r) => setTimeout(r, 20));
 
         const t0 = performance.now();
-        lastFrontier = valueFrontier(targets, protossWithMicro(), map, { maxProbes: 14, maxProducers: 3, maxEarlyHomeUnits: 1 });
+        lastFrontier = valueFrontier(targets, currentData(), map, { maxProbes: 14, maxProducers: 3, maxEarlyHomeUnits: 1 });
         const ms = (performance.now() - t0).toFixed(0);
         btn.disabled = false;
 
@@ -726,17 +864,32 @@
         drawStep(theirs, css.getPropertyValue("--err"));
       }
 
+      // Shown above the Compare button so it's never ambiguous which build
+      // gets "replayed" against the picked opponent -- it's always whatever
+      // is currently loaded in the panel above (the #desc text there IS that
+      // build's label, whether it came from a preset, a shared link, or a
+      // Best Builds/Optimizer/Frontier result loaded up from below).
+      function updateOppComparingNote() {
+        const note = $("opp-comparing-note");
+        if (!note) return;
+        const label = descEl.textContent || "the build order in the panel above";
+        note.innerHTML = lastSimResult?.ok
+          ? `Comparing against: <b>${label}</b> (${lastSimRace}, finishes ${fmt(lastSimResult.finishTime)})`
+          : `<span class="err">Run a valid build in the panel above first.</span>`;
+      }
+
       $("opp-compare").addEventListener("click", () => {
         const out = $("opp-summary");
-        if (lastSimRace !== "Protoss" || !lastSimResult || !lastSimResult.ok) {
-          out.innerHTML = '<span class="err">Switch the simulator above to Protoss and run a valid build first.</span>';
+        if (!lastSimResult || !lastSimResult.ok) {
+          out.innerHTML = '<span class="err">Run a valid build in the panel above first.</span>';
           return;
         }
+        const myData = RACE_DATA[lastSimRace];
         const picked = SAMPLE_REPLAYS[+oppPick.value];
         const oppData = RACE_DATA[picked.race];
         const curve = threatCurveFromReplay(picked.replay, oppData, MAPS.standard);
-        const danger = assessDanger(lastSimResult, PROTOSS, curve);
-        const mine = valueOverTime(lastSimResult, PROTOSS);
+        const danger = assessDanger(lastSimResult, myData, curve);
+        const mine = valueOverTime(lastSimResult, myData);
 
         out.innerHTML =
           `<b>${describeCurve(curve)}</b><br>` +
@@ -746,27 +899,68 @@
       });
 
       // ---- Best builds panel ----
-      // A curated set of common targets, not the full unit roster/count grid
-      // the Value Frontier sweeps -- rushes are small 1-base all-ins (scored
-      // purely by arrival time); macro targets are large armies, chosen to
-      // straddle the point where the GA starts finding an expansion worth it
-      // (confirmed empirically: 20/32 Stalker stay on 1 base, 40 expands).
-      const RUSH_TARGETS = [
-        { label: "4 Zealot", target: { Zealot: 4 } },
-        { label: "4 Stalker", target: { Stalker: 4 } },
-        { label: "4 Adept", target: { Adept: 4 } },
-        { label: "3 Stalker + 2 Adept", target: { Stalker: 3, Adept: 2 } },
-        { label: "6 Zealot", target: { Zealot: 6 } },
-      ];
-      const MACRO_TARGETS = [
-        { label: "20 Stalker", target: { Stalker: 20 } },
-        { label: "32 Stalker", target: { Stalker: 32 } },
-        { label: "40 Stalker", target: { Stalker: 40 } },
-      ];
-      // Same reduced budget as the "Search (GA)" button above -- these run
-      // on a cold, unwarmed JIT in the page's main thread, and there are 8
-      // of them (5 rush + 3 macro) back to back.
-      const BEST_BUILDS_OPTS = { populationSize: 120, generations: 60 };
+      // Curated sets of common targets per race, not the full unit
+      // roster/count grid the Value Frontier sweeps -- rushes are small
+      // 1-base all-ins (scored purely by arrival time); macro targets are
+      // large armies, chosen to straddle the point where a search starts
+      // finding it's worth taking an expansion (verified empirically: for
+      // Protoss, 20/32 Stalker stay 1-base, 40 expands; Terran/Zerg mass-
+      // Marine/Zergling stayed 1-base at every size tested here, which is
+      // itself an honest result, not a bug).
+      const RUSH_TARGETS_BY_RACE = {
+        Protoss: [
+          { label: "4 Zealot", target: { Zealot: 4 } },
+          { label: "4 Stalker", target: { Stalker: 4 } },
+          { label: "4 Adept", target: { Adept: 4 } },
+          { label: "3 Stalker + 2 Adept", target: { Stalker: 3, Adept: 2 } },
+          { label: "6 Zealot", target: { Zealot: 6 } },
+        ],
+        Terran: [
+          { label: "4 Marine", target: { Marine: 4 } },
+          { label: "8 Marine", target: { Marine: 8 } },
+          { label: "2 Marauder", target: { Marauder: 2 } },
+          { label: "6 Marine + 2 Marauder", target: { Marine: 6, Marauder: 2 } },
+          { label: "4 Reaper", target: { Reaper: 4 } },
+        ],
+        Zerg: [
+          { label: "6 Zergling", target: { Zergling: 6 } },
+          { label: "10 Zergling", target: { Zergling: 10 } },
+          { label: "4 Roach", target: { Roach: 4 } },
+          { label: "4 Zergling + 2 Roach", target: { Zergling: 4, Roach: 2 } },
+          { label: "12 Zergling", target: { Zergling: 12 } },
+        ],
+      };
+      const MACRO_TARGETS_BY_RACE = {
+        Protoss: [
+          { label: "20 Stalker", target: { Stalker: 20 } },
+          { label: "32 Stalker", target: { Stalker: 32 } },
+          { label: "40 Stalker", target: { Stalker: 40 } },
+        ],
+        Terran: [
+          { label: "20 Marine", target: { Marine: 20 } },
+          { label: "40 Marine", target: { Marine: 40 } },
+          { label: "60 Marine", target: { Marine: 60 } },
+        ],
+        Zerg: [
+          { label: "20 Zergling", target: { Zergling: 20 } },
+          { label: "40 Zergling", target: { Zergling: 40 } },
+          { label: "60 Zergling", target: { Zergling: 60 } },
+        ],
+      };
+      const EXPAND_STRUCTURE = { Protoss: "Nexus", Terran: "CommandCenter", Zerg: "Hatchery" };
+      // A SMALLER budget than the Smart Search button above (which is
+      // 120/60) -- there are 8 of these back to back on every page load and
+      // every race switch, and profiling found Terran/Zerg's larger macro
+      // targets (40-60 units) taking 2-5s EACH at 120/60 (up to ~16s total,
+      // a real freeze risk) purely because a bigger target means a longer
+      // action sequence, which makes every simulate() call inside the GA
+      // more expensive. At 60/30 all 8 searches total ~2s with only a
+      // modest quality cost, and are safe from ever finding zero valid
+      // builds now that searchRawSequences auto-seeds from the (cheap,
+      // reduced) template optimizer by default -- see search.ts. Anyone who
+      // wants the fuller search can always use Smart Search above on a
+      // specific composition.
+      const BEST_BUILDS_OPTS = { populationSize: 60, generations: 30 };
 
       function renderBestBuildCards(container, results, showBaseCount) {
         container.innerHTML = "";
@@ -804,22 +998,26 @@
 
       async function computeBestBuilds() {
         const rushEl = $("bb-rush"), macroEl = $("bb-macro"), btn = $("bb-recompute");
+        const race = raceSel.value;
+        $("bb-race-chip").textContent = race;
         btn.disabled = true;
         rushEl.innerHTML = '<span style="color:var(--muted)">searching…</span>';
         macroEl.innerHTML = '<span style="color:var(--muted)">searching…</span>';
         await new Promise((r) => setTimeout(r, 20)); // let the "searching…" message paint first
 
+        const data = currentData();
         const map = MAPS.standard;
-        const rushResults = RUSH_TARGETS.map(({ label, target }) => {
-          const g = searchRawSequences(target, PROTOSS, map, arrivalScorer, BEST_BUILDS_OPTS);
+        const expandStructure = EXPAND_STRUCTURE[race];
+        const rushResults = RUSH_TARGETS_BY_RACE[race].map(({ label, target }) => {
+          const g = searchRawSequences(target, data, map, arrivalScorer, BEST_BUILDS_OPTS);
           return { label, score: g.score, order: g.best };
         })
           .filter((r) => isFinite(r.score))
           .sort((a, b) => a.score - b.score);
 
-        const macroResults = MACRO_TARGETS.map(({ label, target }) => {
-          const g = searchRawSequences(target, PROTOSS, map, arrivalScorer, BEST_BUILDS_OPTS);
-          return { label, score: g.score, order: g.best, expands: g.best.some((a) => a.startsWith("Nexus")) };
+        const macroResults = MACRO_TARGETS_BY_RACE[race].map(({ label, target }) => {
+          const g = searchRawSequences(target, data, map, arrivalScorer, BEST_BUILDS_OPTS);
+          return { label, score: g.score, order: g.best, expands: g.best.some((a) => a.startsWith(expandStructure)) };
         }).filter((r) => isFinite(r.score));
 
         renderBestBuildCards(rushEl, rushResults, false);

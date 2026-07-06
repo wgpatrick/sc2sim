@@ -90,7 +90,7 @@ function add(e) {
 // Every Zerg structure morphs from and PERMANENTLY CONSUMES a Drone (fixed
 // 2026-07-05 -- see engine.ts's EntityData.consumesBuilder / State.probesTotal;
 // previously modeled like a Nexus/CommandCenter where the builder survives).
-add(ent("Hatchery", 300, 0, 71.4, "Drone", { supplyProvided: 4, isStructure: true, consumesBuilder: true }));
+add(ent("Hatchery", 300, 0, 71.4, "Drone", { supplyProvided: 4, isStructure: true, isTownhall: true, consumesBuilder: true }));
 add(ent("Extractor", 25, 0, 21.4, "Drone", { isStructure: true, consumesBuilder: true }));
 add(ent("SpawningPool", 200, 0, 46.4, "Drone", { isStructure: true, consumesBuilder: true }));
 add(ent("RoachWarren", 150, 0, 39.3, "Drone", { isStructure: true, requires: ["SpawningPool"], consumesBuilder: true }));
@@ -100,7 +100,7 @@ add(ent("EvolutionChamber", 75, 0, 25.0, "Drone", { isStructure: true, consumesB
 add(ent("BanelingNest", 100, 50, 42.9, "Drone", { isStructure: true, requires: ["SpawningPool"], consumesBuilder: true }));
 // Lair tier (see header) — Liquipedia LotV values, not replay-verified.
 // Lair morphs from HATCHERY, not Drone -- no builder to consume (already a morph).
-add(ent("Lair", 150, 100, 40.7, "Hatchery", { isStructure: true, morphFrom: "Hatchery", requires: ["SpawningPool"] }));
+add(ent("Lair", 150, 100, 40.7, "Hatchery", { supplyProvided: 4, isStructure: true, isTownhall: true, morphFrom: "Hatchery", requires: ["SpawningPool"] }));
 add(ent("HydraliskDen", 100, 100, 20.7, "Drone", { isStructure: true, requires: ["Lair"], consumesBuilder: true })); // 29s Normal -> 20.7 Faster
 add(ent("Spire", 150, 150, 47.1, "Drone", { isStructure: true, requires: ["Lair"], consumesBuilder: true })); // 66s Normal -> 47.1 Faster
 // --- Drone (worker) --------------------------------------------------------

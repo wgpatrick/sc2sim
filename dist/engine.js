@@ -119,7 +119,11 @@ class State {
         return this.completed[name] ?? 0;
     }
     get townhallCount() {
-        return this.count(this.eco.startingTownhall);
+        let n = 0;
+        for (const name in this.completed)
+            if (this.data.entities[name]?.isTownhall)
+                n += this.completed[name];
+        return n;
     }
     get gasStructureCount() {
         return this.count(this.eco.gasStructure);
@@ -183,7 +187,12 @@ class State {
         return done - busy - cooling;
     }
     larvaCap(loc) {
-        return (this.eco.larvaCapPerTownhall ?? 3) * (this.completedLoc[this.eco.startingTownhall]?.[loc] ?? 0);
+        let townhalls = 0;
+        for (const name in this.completedLoc) {
+            if (this.data.entities[name]?.isTownhall)
+                townhalls += this.completedLoc[name][loc] ?? 0;
+        }
+        return (this.eco.larvaCapPerTownhall ?? 3) * townhalls;
     }
     /** Requirement met if the structure is complete OR the upgrade is researched. */
     reqMet(name) {

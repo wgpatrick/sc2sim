@@ -1,6 +1,6 @@
 import { simulate, workerNameOf } from "./engine.js";
 import { compositionArrivalTime } from "./engine.js";
-import { generateBuild, techClosure, defaultStrategies } from "./optimizer.js";
+import { generateBuild, techClosure, defaultStrategies, optimize } from "./optimizer.js";
 /** Lower is better; Infinity for a build that never delivers the target. */
 export const arrivalScorer = (result, target) => compositionArrivalTime(result, target);
 // --- Deterministic PRNG (mulberry32) — GA runs are reproducible by seed. ---
@@ -156,8 +156,28 @@ export function searchRawSequences(target, data, map, scorer = arrivalScorer, op
     };
     // Initial population: randomized-template builds, given a few mutation
     // passes each so the GA starts already exploring off-template variants.
+    //
+    // If the caller didn't supply seeds, fall back to the template optimizer's
+    // own (cheap, reduced-budget) answer -- without this, "seeded so it never
+    // regresses" was only true for callers that remembered to wire it up by
+    // hand (search-cli.ts did; opponent-cli.ts and the browser UI's GA button
+    // did not), and an unseeded population can occasionally fail to find ANY
+    // valid build within the generation budget even when one obviously exists
+    // (observed: 12 Zergling returned Infinity with the browser's reduced
+    // budget, purely because the random population never stumbled onto a
+    // supply-safe ordering in time).
+    let seeds = opts.seeds;
+    if (!seeds) {
+        try {
+            const templateResult = optimize(target, data, map, { maxProbes: 14, maxProducers: 3, maxEarlyHomeUnits: 1, strategies });
+            seeds = [templateResult.order, ...Object.values(templateResult.bestByStrategy).map((b) => b.order)];
+        }
+        catch {
+            seeds = []; // no valid template build either (e.g. an unreachable target) -- fall through unseeded.
+        }
+    }
     let population = [];
-    for (const seed of opts.seeds ?? [])
+    for (const seed of seeds)
         population.push(seed.slice());
     while (population.length < popSize) {
         const params = randomParams(rng, strategies, start);

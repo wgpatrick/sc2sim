@@ -100,7 +100,7 @@ function add(e: EntityData) {
 }
 
 // --- Structures (buildTime = replay-measured Faster-clock seconds) --------
-add(ent("CommandCenter", 400, 0, 71.4, "SCV", { supplyProvided: 13, isStructure: true }));
+add(ent("CommandCenter", 400, 0, 71.4, "SCV", { supplyProvided: 13, isStructure: true, isTownhall: true }));
 add(ent("SupplyDepot", 100, 0, 21.4, "SCV", { supplyProvided: 8, isStructure: true }));
 add(ent("Refinery", 75, 0, 21.4, "SCV", { isStructure: true }));
 add(ent("Barracks", 150, 0, 46.4, "SCV", { isStructure: true, requires: ["SupplyDepot"] }));
@@ -112,7 +112,7 @@ add(ent("Starport", 150, 100, 35.7, "SCV", { isStructure: true, requires: ["Fact
 // supplyProvided carries over from CommandCenter (still 13) -- an Orbital is
 // still a townhall, not a downgrade; caught by engine.test.ts's regression
 // suite (a first version of this line silently dropped supply to 0 on morph).
-add(ent("OrbitalCommand", 150, 0, 17.9, "CommandCenter", { supplyProvided: 13, isStructure: true, morphFrom: "CommandCenter", requires: ["Barracks"] }));
+add(ent("OrbitalCommand", 150, 0, 17.9, "CommandCenter", { supplyProvided: 13, isStructure: true, isTownhall: true, morphFrom: "CommandCenter", requires: ["Barracks"] }));
 // Tech Lab add-ons -- see header for the "own producer-type entity" approximation.
 // Same building/cost/buildTime regardless of which structure it attaches to.
 add(ent("BarracksTechLab", 50, 25, 12.9, "SCV", { isStructure: true, requires: ["Barracks"] }));

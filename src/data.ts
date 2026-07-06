@@ -57,7 +57,7 @@ function add(e: EntityData) {
 
 // Build times are Faster-clock seconds (raw game data / 1.4). See header.
 // --- Structures ---------------------------------------------------------
-add(ent("Nexus", 400, 0, 71.4, "Probe", { supplyProvided: 13, isStructure: true }));
+add(ent("Nexus", 400, 0, 71.4, "Probe", { supplyProvided: 13, isStructure: true, isTownhall: true }));
 add(ent("Pylon", 100, 0, 17.9, "Probe", { supplyProvided: 8, isStructure: true }));
 add(ent("Assimilator", 75, 0, 21.4, "Probe", { isStructure: true }));
 add(ent("Gateway", 150, 0, 46.4, "Probe", { isStructure: true, requires: ["Pylon"] }));
