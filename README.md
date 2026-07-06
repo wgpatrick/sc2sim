@@ -5,7 +5,11 @@ TypeScript so it can run both in Node and directly in the browser on this site.
 **Protoss** (patch 5.0.16, the 8-worker-start economy) is the fully-searchable
 race; **Terran and Zerg** now have real, replay-grounded data too (see
 "Modeling the opponent"), enough to replay their actual recorded games and
-score a Protoss build's safety against them.
+score a Protoss build's safety against them. The browser UI lets you simulate
+a build order in any of the three races, run either search (the exhaustive
+template optimizer or the raw-sequence GA) on Protoss, and compare your build
+live against a real recorded opponent's value curve — no server, no signup,
+runs entirely client-side.
 
 > **Goal:** a fast, deterministic simulator you can call millions of times inside
 > a search loop, so an optimizer can *discover* build orders instead of us
@@ -42,6 +46,7 @@ npm run frontier   # Pareto frontier of (time, value) across many compositions
 npm run opponent   # score builds against a REAL recorded Terran/Zerg opponent
 npm run validate   # compare vs. published pro builds
 npm run diff replays/parsed/*.json   # compare vs. real replays directly
+npm test           # unit tests for engine mechanics (Node's built-in test runner)
 ```
 
 Open the interactive version in a browser (after `npm run build`, which emits
@@ -59,18 +64,22 @@ sim small and fast enough to search over.
 
 | File | Responsibility |
 |------|----------------|
-| `src/engine.ts` | Race-agnostic **event-driven simulator** + spatial layer (travel/arrival) + `compositionArrivalTime`. Fast-forwards the clock; never ticks per-frame. Handles Protoss/Terran/Zerg production models generically (townhall/gas-structure config, plus Zerg's larva pool — see "Modeling the opponent"). |
+| `src/engine.ts` | Race-agnostic **event-driven simulator** + spatial layer (travel/arrival) + `compositionArrivalTime`. Fast-forwards the clock; never ticks per-frame. Handles Protoss/Terran/Zerg production models generically (townhall/gas-structure config, Zerg's larva pool, and a generic per-caster energy pool shared by Chrono/MULE/Queen-inject — see "Modeling the opponent"). |
 | `src/data.ts`   | **Protoss** numbers — costs, build times, supply, move speeds, tech requirements, income + Chrono constants. Swap per patch; the engine never changes. |
-| `src/data-terran.ts` · `src/data-zerg.ts` | **Terran / Zerg** numbers, first pass — enough to replay their real recorded build orders (see "Modeling the opponent"), not yet a fully-searchable optimizer target the way Protoss is. |
+| `src/data-terran.ts` · `src/data-zerg.ts` | **Terran / Zerg** numbers — real enough to both replay their recorded games AND be searched/optimized directly (`optimizer.ts`/`search.ts` are race-agnostic as of 2026-07-05). Includes MULE/Orbital Command, Queen inject, Tech Lab-gated units (Marauder/Siege Tank/Banshee), and Lair-tier units (Hydralisk/Mutalisk). |
 | `src/maps.ts`   | **Distance presets** (travel seconds home→enemy, proxy→enemy, probe→proxy). |
-| `src/optimizer.ts` | **The template optimizer**: given a target army, exhaustively search a parameterized build template for the one that ARRIVES at the enemy fastest. |
-| `src/search.ts` | **The raw-sequence GA**: searches Action[] sequences directly (not the template), seeded from the template's own answer. Finds orderings/chrono placements the template can't express. |
-| `src/opponent.ts` | **Opponent modeling**: replay a real Terran/Zerg opponent's recorded build order through their own race data to get a value-over-time threat curve, then score Protoss builds by whether they ever fall behind it. |
-| `src/replay.ts` | Shared `ParsedReplay` type + real-build-order → `Action[]` conversion, used by both the diff harness and opponent modeling. |
+| `src/optimizer.ts` | **The template optimizer**: given a target army, exhaustively search a parameterized build template for the one that ARRIVES at the enemy fastest. Race-agnostic (derives worker/supply/gas names from `data`, gates Chrono/Warp-Gate steps behind the race actually having them). |
+| `src/search.ts` | **The raw-sequence GA**: searches Action[] sequences directly (not the template), seeded from the template's own answer. Finds orderings/chrono placements the template can't express; also the only place a natural expansion (2nd townhall) is a discoverable action. |
+| `src/opponent.ts` | **Opponent modeling**: replay a real Terran/Zerg opponent's recorded build order through their own race data to get a value-over-time threat curve, score Protoss builds by whether they ever fall behind it, or aggregate several same-race replays into an averaged "statistical archetype" curve (`averageThreatCurve`). Does no file I/O itself — works unchanged in a browser. |
+| `src/combat.ts` | **Combat resolution**: a step up from the value heuristic — `resolveCombat()` actually resolves who wins a straight fight between two compositions (simultaneous DPS exchange, focus-fire-weakest), instead of just comparing a scalar. Still not a real RTS combat sim (no positioning/range/splash/armor/upgrades). |
+| `src/economy-forecast.ts` | **Mineral-patch depletion forecast** — informational only (not enforced in `simulate()`): given a snapshot, estimates how much longer the current worker/base allocation can mine before hitting an assumed per-base capacity. |
+| `src/replay.ts` | Shared `ParsedReplay` type + real-build-order → `Action[]` conversion (including real MULE/Queen-inject ability casts), used by both the diff harness and opponent modeling. |
+| `src/sample-replays.ts` | 3 real replays' opening 5 minutes, trimmed and embedded directly (not fetched) so the browser's Opponent panel works from a plain `file://` open, no server needed. |
 | `src/builds.ts` | Sample hand-written build orders used to exercise the sim. |
 | `src/cli.ts` · `src/optimize-cli.ts` · `src/search-cli.ts` · `src/opponent-cli.ts` | Node runners (`npm run demo` / `optimize` / `search` / `opponent`). |
-| `tools/parse_replay.py` · `tools/calibrate_income.py` · `tools/mining_rate.py` | Replay-grounding pipeline: `.SC2Replay` → JSON (real build order + economy samples, both players) → fitted income constants. |
-| `index.html`    | Self-contained browser UI (timeline, chart, optimizer) importing `dist/`. |
+| `src/*.test.ts` | Unit tests (`npm test`, Node's built-in test runner) covering engine mechanics that are cheap to pin but expensive to re-discover by hand — worker-count growth, `consumesBuilder`, MULE/inject timing, combat resolution, depletion forecasting. |
+| `tools/parse_replay.py` · `tools/calibrate_income.py` | Replay-grounding pipeline: `.SC2Replay` → JSON (real build order + economy samples + real MULE/Queen-inject ability casts, both players) → fitted income constants. (`tools/mining_rate.py` is a superseded, simpler predecessor kept as an independent cross-check.) |
+| `index.html`    | Self-contained browser UI (timeline, chart, optimizer, GA search, value frontier, opponent comparison) importing `dist/` directly — no bundler. |
 
 The simulation loop, per action: compute the earliest time all preconditions
 (money, supply, a free producer, met prerequisites) are satisfied → jump the
@@ -148,6 +157,17 @@ producer and scheduling its completion.
   game; the engine previously treated every race's builder as surviving,
   true for Probe/SCV but not Zerg). Both fixes changed the diff harness's
   bank MAE (see below) -- not a regression, a more honestly-grounded number.
+- **Found and fixed two more bugs while writing the first unit tests**
+  (2026-07-05): Orbital Command's entity definition had no `supplyProvided`,
+  so morphing a CommandCenter into one silently DROPPED 13 supply cap
+  instead of carrying it over (an Orbital is still a townhall). And SCV's
+  producer was hardcoded to `"CommandCenter"` only, so once a base's CC
+  morphed into an Orbital, that base could NEVER train another SCV again in
+  simulation — a real regression for any Terran build that techs Orbital and
+  keeps macroing, which is nearly all of them. Fixed via a new
+  `EntityData.alsoProducer` field (a unit can be trained from either
+  producer type). Both caught by `npm test` before either one shipped
+  unnoticed, which is exactly the point of having that test layer now.
 
 An optimizer is adversarial against wrong constants: if the income model is off,
 the "optimal" build will be one that abuses the error. So validation comes before
@@ -177,15 +197,14 @@ then re-run `tools/calibrate_income.py` against fresh replays of that patch.
   picks Protoss/Terran/Zerg data per replay's own player race, added
   2026-07-05 alongside the corpus expansion — previously hardcoded to
   Protoss, which would have silently mis-simulated the new Terran/Zerg-side
-  files): **92 minerals / 58 gas mean bank error across all 26 parsed replay
-  sides** (Protoss, Terran, and Zerg together; Terran ~93/38, Zerg ~94/85 --
-  Zerg's gas number is the weak spot, consistent with its still-unadopted
-  gas-income fit, see "Data accuracy"). This number moved from an initial
-  81/48 after fixing the worker-count and Drone-consumption bugs above —
-  those two fixes pull in opposite directions (more countable workers raises
-  simulated income, correctly-consumed builder Drones lowers it for Zerg),
-  and the fixed number is the honest one, not the earlier coincidentally-
-  lower one. Individual-game timing MAE
+  files): **85 minerals / 58 gas mean bank error across all 26 parsed replay
+  sides** (Protoss, Terran, and Zerg together; Zerg's gas number is the weak
+  spot, consistent with its still-unadopted gas-income fit, see "Data
+  accuracy"). This number moved around some as bugs were fixed this session
+  (81→92→85 minerals) — worker-count and Drone-consumption fixes pulled in
+  opposite directions, then the Orbital Command supply/production fixes
+  pulled it back down; each change is the honest number at the time, not a
+  regression. Individual-game timing MAE
   ranges from ~1s to a couple minutes — real games diverge from any fixed
   build order once scouting/tech decisions kick in, which is exactly why the
   bank comparison (not raw timing MAE) is the metric to trust, and why the
@@ -261,6 +280,18 @@ top all-in. Warp-in's real advantages — keeping production safe at home and
 continuously reinforcing the front — live in objectives this metric doesn't yet
 capture, so `proxyWarp` is modelled and evaluated but wins only when those matter.
 
+**Race-agnostic as of 2026-07-05.** `generateBuild()` used to hardcode
+`"Nexus"`/`"Pylon"`/`"Assimilator"`/Chrono/Warp-Gate — pointing it at Terran
+or Zerg data crashed immediately. It now derives every name from `data`
+(worker via a new `workerNameOf()` helper, supply/gas/townhall via
+`EconomyConfig`) and gates Chrono/Warp-Gate steps behind the race actually
+having them, so `optimize({ Marine: 4 }, TERRAN, map)` and
+`optimize({ Zergling: 6 }, ZERG, map)` work directly — e.g. the Zerg case
+correctly discovers it doesn't need extra Overlords for just 6 Zerglings.
+The browser UI's Optimizer/Value-frontier panels are still Protoss-only for
+now (their unit dropdowns are hardcoded), but the underlying library call
+works for any race.
+
 ## The raw-sequence search (a genetic algorithm)
 
 The template optimizer above is exact *within its template* — but the
@@ -295,6 +326,20 @@ search is within its own space. But because a single `simulate()` call is
 sub-millisecond, the GA explores an evaluation budget an order of magnitude
 larger than the template's exhaustive search, which is why it keeps finding
 better answers in practice.
+
+**Expansions are a real search dimension** (2026-07-05): the vocabulary
+builder used to hardcode the townhall entity OUT of the discoverable action
+set (`need.delete("Nexus")`), so "take a natural expansion" was
+undiscoverable no matter how much it would help — confirmed fixed by
+observing the GA now takes an early Nexus (at 1:24, done 2:35) once the
+target composition is large enough to make it worth it (e.g. 40 Stalkers);
+it correctly stays on one base for the smaller example targets above, where
+expanding wouldn't help arrival time. Both the template optimizer and the GA
+are exposed side-by-side in the browser UI now ("Optimize (template)" /
+"Search (GA)" buttons) — the GA there uses a lighter search budget (120/60
+vs. this module's own 250/150 default) since it runs on a cold, unwarmed JIT
+in the page's main thread, where the full budget took ~19s and blocked the
+UI; the lighter budget runs in ~200ms with barely any quality loss.
 
 ## The value frontier
 
@@ -357,31 +402,47 @@ hand-authored archetype:
 3. **`dangerScorer()`** is a `Scorer` (pluggable into the GA search above)
    that ranks Protoss builds by the worst moment they're ever behind that
    curve, instead of by raw arrival time.
-4. **MULE and Queen inject are now modeled** (2026-07-05): Terran's Orbital
-   Command + Calldown: MULE and Zerg's Queen + Spawn Larvae inject both run
-   on the same generalized mechanic in `engine.ts` (a per-caster-type energy
-   pool that scales with how many casters exist — `EconomyConfig.casters` —
-   plus a race-specific effect: `.mule` adds a temporary flat mineral-income
-   bonus, `.inject` adds a delayed larva batch). Action syntax: `"MULE"` and
-   `"InjectLarva"`. Ability constants (cost, duration/delay, universal
-   0.5625/s energy regen) are well-known SC2 values, not independently
-   replay-calibrated — `parse_replay.py` doesn't yet detect real ability
-   casts, so a REPLAYED real game's threat curve still only reflects passive
-   income/larva, not real MULEs/injects. The mechanic is real and usable in
-   a hand-written or searched build order now; historical replay-derived
-   curves aren't ability-aware yet.
-5. **Addon-gated units + Lair tier** (2026-07-05): Terran Tech Lab unlocks
+4. **MULE and Queen inject are modeled**, and now **replay-aware** too
+   (2026-07-05): Terran's Orbital Command + Calldown: MULE and Zerg's Queen
+   + Spawn Larvae inject both run on the same generalized mechanic in
+   `engine.ts` (a per-caster-type energy pool that scales with how many
+   casters exist — `EconomyConfig.casters` — plus a race-specific effect:
+   `.mule` adds a temporary flat mineral-income bonus, `.inject` adds a
+   delayed larva batch). Action syntax: `"MULE"` and `"InjectLarva"`.
+   `tools/parse_replay.py` now detects the REAL ability casts in a replay
+   (`CalldownMULE`/`SpawnLarva` command events) and `replay.ts` translates
+   them into these actions when replaying a real game — so
+   `threatCurveFromReplay()` reflects actual recorded MULEs/injects, not
+   just passive income/larva. Re-parsing the corpus with this turned up 75
+   real MULE casts and 316 real Queen injects across 20 replays.
+5. **Addon-gated units + Lair tier**: Terran Tech Lab unlocks
    Marauder/Siege Tank/Banshee (modeled as their own producer-type entity —
    `BarracksTechLab` etc. — since the engine only tracks aggregate structure
    counts, not which specific building has an addon attached); Zerg Lair
    unlocks HydraliskDen/Spire and Hydralisk/Mutalisk. Costs/stats pulled from
    Liquipedia, not replay-verified. Hive tier, Reactor's parallel-queue
    effect, and Battlecruiser remain out of scope (see the data files' headers).
+6. **Statistical archetype, a first step** (2026-07-05): `averageThreatCurve()`
+   resamples N same-race threat curves onto a common time grid and reports
+   a mean (plus min/max band), so you can danger-score against "the average
+   Zerg opener across 10 replays" instead of one specific game — `npm run
+   opponent` demonstrates this per race after the per-opponent loop. Not a
+   full distributional model (no skill/recency weighting, no
+   regret-minimization across the distribution).
+7. **Combat-resolution sanity check** (2026-07-05, `src/combat.ts`): the
+   danger score above is still built on `unitValue()`'s scalar ranking, so
+   `resolveCombat()` adds a second, independent check — an actual
+   simultaneous-damage-exchange fight (focus-fire-weakest) between "my units
+   by time t" and "their units by time t" at each opponent's worst-deficit
+   moment. Still not a real combat sim (no positioning/range/splash/armor/
+   upgrades), but it resolves an actual winner instead of just a value gap,
+   and the two mostly agree in practice — a useful cross-check on the
+   heuristic rather than a replacement for it.
 
 `npm run opponent` auto-discovers every Terran/Zerg-side replay in
-`replays/parsed/` (20 as of 2026-07-05 — 8 Terran, 12 Zerg — up from 3
-hardcoded games) and runs both scorers against each, printing a summary
-table across all of them. The clearest single result, against the
+`replays/parsed/` (20 — 8 Terran, 12 Zerg) and runs both scorers against
+each, printing a summary table across all of them, then the statistical-
+archetype comparison per race. The clearest single result, against the
 Krystianer/Solar Zerg replay:
 
 ```
@@ -391,6 +452,7 @@ fastest-arrival build (ignores opponent):
 danger-scored build (optimized against this specific real game):
   worst deficit vs this opponent: -41.8 value at 2:52
   -> danger-scoring reduced the worst deficit by 95.7 value
+  combat check at 2:52 (5 of mine vs 4 of theirs): A wins after 6 ticks -- survivors A: Stalker, Stalker; B: (none)
 ```
 
 The "fastest" build is a burst rush that produces a handful of units and then
@@ -402,16 +464,22 @@ value curve the whole way through. **This is the concrete case for why
 only against each other (as the template optimizer and plain GA search do)
 misses it. Across all 18 opponents with a usable curve (2 of the 20 replay
 straight into a deadlock at t=0 and are skipped — no signal to score
-against), danger-scoring improves the worst deficit for 9/18 and the mean
-worst deficit drops from +61.2 (fastest-arrival) to -4.0 (danger-scored).
+against), danger-scoring improves the worst deficit for 10/18 and the mean
+worst deficit drops from +55.9 (fastest-arrival) to -4.8 (danger-scored).
+
+**All of this is in the browser too**, not just the CLI: `index.html`'s
+"Opponent" panel lets you pick one of 3 embedded real replays, click
+Compare, and see a chart of your currently-edited build's value curve
+plotted against the real opponent's — the same `assessDanger()` computation
+`npm run opponent` does, live and interactive.
 
 Known limitations, honestly: Terran/Zerg data still covers non-addon-gated
 units plus Tech Lab/Lair-tier only (see those files' headers for the full
-gap list — Hive tier, Reactor's parallel-queue effect, Battlecruiser). And
-the danger
-score still uses `unitValue()`'s crude combat ranking (see "The value
-frontier" above) on both sides — it's a better question than pure arrival
-time, but still not real combat resolution.
+gap list — Hive tier, Reactor's parallel-queue effect, Battlecruiser). The
+statistical archetype (item 6 above) is a first step, not a full
+distributional model. And `combat.ts`'s resolver (item 7) is a
+simultaneous-damage-exchange approximation, not a real RTS combat sim — no
+positioning, range, splash, armor types, or upgrades on either side yet.
 
 ## Roadmap
 
@@ -421,8 +489,8 @@ time, but still not real combat resolution.
 4. ✅ Spatial layer — travel time, proxies, army arrival at the enemy.
 5. ✅ Optimizer for "target army at the enemy, fastest" (3 strategies).
 6. ✅ Warp Gate tech: research → Gateway morph → warp-in; proxy-pylon delivery.
-7. ✅ Replay-based validation (`tools/parse_replay.py`, `npm run diff`,
-   `tools/mining_rate.py`) against real pro games, not just transcribed builds.
+7. ✅ Replay-based validation (`tools/parse_replay.py`, `npm run diff`)
+   against real pro games, not just transcribed builds.
 8. ✅ Value-over-time frontier (`npm run frontier`) — rank builds by fighting
    value delivered by time t, not just "when does this exact count arrive".
 9. ✅ **Calibrate income from real replay data** (`tools/calibrate_income.py`,
@@ -434,35 +502,57 @@ time, but still not real combat resolution.
     template's exhaustive optimum by 10-18s on every example target.
     Chrono TARGET is now a first-class search dimension (both in the GA and
     as a lightweight `secondChrono` param in the template optimizer), not a
-    hardcoded opener-Probe-only cast. ⏭️ Still open: branch & bound with an
-    admissible lower bound for *provably* min-time openers (the GA is a
+    hardcoded opener-Probe-only cast. Now exposed side-by-side with the
+    template optimizer in the browser UI. ⏭️ Still open: branch & bound with
+    an admissible lower bound for *provably* min-time openers (the GA is a
     strong stochastic search, not a proof of optimality).
-11. ⏭️ Real combat resolution (beyond the value heuristic) so DIFFERENT
-    build orders — including the opponent's — can be compared head-to-head,
-    not just ranked against each other in isolation. Upgrades (Blink, Charge,
-    +1/+1) as first-class modeled effects, not just static value inputs.
-12. 🟡 **Terran & Zerg data + opponent-threat safety objective** — first pass
-    done (`src/data-terran.ts`, `src/data-zerg.ts`, `src/opponent.ts`,
-    `npm run opponent`): replay a REAL recorded opponent build to get a value
-    curve, then search for the Protoss build that never falls behind it.
-    Zerg needed a genuine larva-pool production model, added to the engine
-    and calibrated from replay data (9.51s regen, cap 3). MULE/Queen inject
-    and Tech Lab/Lair-tier addon-gated units are now modeled too (2026-07-05
-    — see "Modeling the opponent"), and `npm run opponent` now draws on 20
-    replays instead of 3. Still open: Hive tier, Reactor's parallel-queue
-    effect, Battlecruiser, replay-detection of real ability casts (MULE/
-    inject), and a statistical opponent archetype instead of "whichever
-    replays happen to be in this repo".
-13. ⏭️ Multi-objective / game-theoretic framing: search for the build robust
-    across a *distribution* of opponent openings (regret-minimization),
-    not just safe against one specific recorded game at a time.
-14. ✅ **Expansions as a real search dimension** (2026-07-05): the GA's
-    vocabulary previously hardcoded out the townhall entity, so "take a
-    natural expansion" was undiscoverable no matter how much it would have
-    helped — confirmed fixed by observing the GA now takes an early Nexus
-    when the target composition is large enough to make it worth it (e.g.
-    40 Stalkers). Also fixed alongside it: every Zerg structure now
-    correctly consumes its builder Drone (`EntityData.consumesBuilder`).
+11. 🟡 **Combat resolution beyond the value heuristic** — `src/combat.ts`'s
+    `resolveCombat()` (2026-07-05) actually resolves who wins a straight
+    fight between two compositions (simultaneous DPS exchange, focus-fire-
+    weakest), and is wired into `npm run opponent` as a sanity check
+    alongside the value-based danger score. Still not a real combat sim —
+    positioning, range, splash, bonus damage vs. armor types, and upgrades
+    (Blink, Charge, +1/+1) remain unmodeled, and it isn't yet a pluggable
+    `Scorer` the GA can search against directly (only a post-hoc check).
+12. ✅ **Terran & Zerg data + opponent-threat safety objective** — done:
+    real replay-grounded data for both races, a genuine larva-pool
+    production model for Zerg (9.51s regen, cap 3, calibrated from replay
+    data), MULE/Queen inject and Tech Lab/Lair-tier addon-gated units all
+    modeled, `npm run opponent` drawing on 20 replays with a statistical
+    per-race archetype option, and `optimizer.ts`/`search.ts` made
+    race-agnostic so Terran/Zerg builds can be searched/optimized directly,
+    not just replayed. Still open: Hive tier, Reactor's parallel-queue
+    effect, Battlecruiser, Ghost, Planetary Fortress.
+13. 🟡 **Multi-objective / game-theoretic framing** — `averageThreatCurve()`
+    (2026-07-05) is a first step (score against the mean of N same-race
+    replays instead of one specific game), but not yet full
+    regret-minimization across a *distribution* of opponent openings, and
+    doesn't weight by skill level or patch recency.
+14. ✅ **Expansions as a real search dimension** — the GA's vocabulary
+    previously hardcoded out the townhall entity, so "take a natural
+    expansion" was undiscoverable no matter how much it would have helped —
+    confirmed fixed by observing the GA now takes an early Nexus when the
+    target composition is large enough to make it worth it (e.g. 40
+    Stalkers). Also fixed alongside it: every Zerg structure now correctly
+    consumes its builder Drone (`EntityData.consumesBuilder`), and mineral-
+    patch depletion is now at least forecast (`economy-forecast.ts`,
+    informational only, not enforced — see its own header for why).
+15. ✅ **Real MULE/Queen-inject casts detected in replays** — `parse_replay.py`
+    now captures `CalldownMULE`/`SpawnLarva` command events (75/316 real
+    casts found across the 20-opponent corpus), and `threatCurveFromReplay()`
+    reflects them, closing the gap between "the mechanic is modeled" and
+    "replayed real games actually use it".
+16. ✅ **The browser UI caught up** — race picker (Protoss/Terran/Zerg) for
+    the simulator panel, the simulator's own narration log surfaced, the
+    raw-sequence GA exposed alongside the template optimizer, shareable
+    URL-encoded build state, and a full "Opponent" comparison panel (pick a
+    real replay, see your build's value curve plotted against theirs) — all
+    of this used to be CLI-only.
+17. ⏭️ A small, ongoing punch list from a full-codebase audit (2026-07-05):
+    no CI running `tsc`/tests/validation on push, `optimizer.ts`'s search
+    space could grow (e.g. worker-count upper bound is a fixed 20), and the
+    Terran/Zerg unit roster still leans on Liquipedia book values rather
+    than replay-verified combat stats for most non-buildTime numbers.
 
 ## References
 
