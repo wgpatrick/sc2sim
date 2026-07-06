@@ -318,6 +318,9 @@ function snap(s, snaps) {
         supplyCap: s.supplyCap,
         probes: s.probesTotal,
         energy: s.energy,
+        mineralRate: s.mineralRate,
+        gasRate: s.gasRate,
+        townhalls: s.townhallCount,
     };
     const last = snaps[snaps.length - 1];
     if (last && Math.abs(last.t - cur.t) < EPS)

@@ -6,6 +6,7 @@ import { simulate, fmt } from "./engine.js";
 import { PROTOSS } from "./data.js";
 import { BUILDS } from "./builds.js";
 import { DEFAULT_MAP } from "./maps.js";
+import { forecastDepletion, describeDepletionForecast } from "./economy-forecast.js";
 function printBuild(name, description, order) {
     console.log("\n" + "=".repeat(72));
     console.log(`BUILD: ${name}   [patch ${PROTOSS.patch}, ${PROTOSS.race}]`);
@@ -29,6 +30,7 @@ function printBuild(name, description, order) {
     const f = res.final;
     console.log(`\n  Last action ${fmt(res.finishTime)}   ` +
         `(supply ${Math.round(f.supplyUsed)}/${Math.round(f.supplyCap)}, ${f.probes} probes)`);
+    console.log(`  Mineral outlook: ${describeDepletionForecast(forecastDepletion(f, PROTOSS.economy.mineralPatchesPerBase))}`);
 }
 for (const b of BUILDS)
     printBuild(b.name, b.description, b.order);

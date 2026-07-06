@@ -241,6 +241,13 @@ export interface Snapshot {
   supplyCap: number;
   probes: number;
   energy: number;
+  /** Instantaneous mineral/gas income rate (per second) at this moment, and
+   * how many townhalls that rate is being split across -- added 2026-07-05
+   * so a mineral-patch depletion forecast (see economy-forecast.ts) can use
+   * the engine's own real rate rather than reconstructing it externally. */
+  mineralRate: number;
+  gasRate: number;
+  townhalls: number;
 }
 
 export interface SimResult {
@@ -527,6 +534,9 @@ function snap(s: State, snaps: Snapshot[]): void {
     supplyCap: s.supplyCap,
     probes: s.probesTotal,
     energy: s.energy,
+    mineralRate: s.mineralRate,
+    gasRate: s.gasRate,
+    townhalls: s.townhallCount,
   };
   const last = snaps[snaps.length - 1];
   if (last && Math.abs(last.t - cur.t) < EPS) snaps[snaps.length - 1] = cur;
