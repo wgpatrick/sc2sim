@@ -103,22 +103,100 @@ add(ent("BanelingNest", 100, 50, 42.9, "Drone", { isStructure: true, requires: [
 add(ent("Lair", 150, 100, 40.7, "Hatchery", { supplyProvided: 4, isStructure: true, isTownhall: true, morphFrom: "Hatchery", requires: ["SpawningPool"] }));
 add(ent("HydraliskDen", 100, 100, 20.7, "Drone", { isStructure: true, requires: ["Lair"], consumesBuilder: true })); // 29s Normal -> 20.7 Faster
 add(ent("Spire", 150, 150, 47.1, "Drone", { isStructure: true, requires: ["Lair"], consumesBuilder: true })); // 66s Normal -> 47.1 Faster
+// --- Hive tier (Phase 3 roster expansion, 2026-07-06) ---------------------
+// Costs/times verified against Liquipedia's LotV pages (Normal -> Faster / 1.4,
+// same convention as Lair tier above), not replay-verified.
+add(ent("InfestationPit", 100, 100, 25.7, "Drone", { isStructure: true, requires: ["Lair"], consumesBuilder: true }));
+// Hive morphs from Lair (no builder to consume, same as Lair<-Hatchery) and
+// requires BOTH Lair and Infestation Pit -- a real, easy-to-miss prerequisite
+// (most players build Infestation Pit incidentally on the way to Hive).
+add(ent("Hive", 200, 150, 50.7, "Lair", { supplyProvided: 4, isStructure: true, isTownhall: true, morphFrom: "Lair", requires: ["Lair", "InfestationPit"] }));
+add(ent("UltraliskCavern", 150, 200, 32.9, "Drone", { isStructure: true, requires: ["Hive"], consumesBuilder: true }));
+add(ent("LurkerDen", 100, 150, 40.7, "Drone", { isStructure: true, requires: ["HydraliskDen"], consumesBuilder: true }));
+// --- Combat upgrades (Scouting Report Phase 2, 2026-07-06) ----------------
+// Book values (100/100, 100s Normal -> 71.4s Faster), same unverified status
+// as this file's baseline combat stats -- see data.ts's Protoss entries for
+// the full multiplier-derivation methodology (EntityData.upgrades).
+// MissileWeaponsLevel1 only affects Zerg's GROUND ranged attackers (Roach,
+// Hydralisk) -- the real game keeps Melee Weapons (Zergling/Baneling/
+// Ultralisk) and Flyer Attack (Mutalisk/Corruptor) as separate research
+// lines, both out of scope this pass (same reasoning as skipping Protoss
+// Air Weapons in data.ts). CarapaceLevel1 (Zerg Ground Carapace) DOES apply
+// universally across ground units regardless of melee/ranged, matching the
+// real game -- Mutalisk (air, Flyer Carapace) is excluded.
+add(ent("MissileWeaponsLevel1", 100, 100, 71.4, "EvolutionChamber", { isUpgrade: true, requires: ["EvolutionChamber"] }));
+add(ent("CarapaceLevel1", 100, 100, 71.4, "EvolutionChamber", { isUpgrade: true, requires: ["EvolutionChamber"] }));
 // --- Drone (worker) --------------------------------------------------------
 add(ent("Drone", 50, 0, 12.1, "Larva", { supplyCost: 1, isWorker: true, moveSpeed: 2.8125 }));
 // --- Larva-produced army/utility units -------------------------------------
 // ⚠️ book values below (cost/buildTime/combat stats), see header.
 add(ent("Overlord", 100, 0, 17.9, "Larva", { supplyProvided: 8, moveSpeed: 0.8203, hp: 200, shields: 0 }));
-add(ent("Zergling", 25, 0, 17.1, "Larva", { supplyCost: 0.5, requires: ["SpawningPool"], moveSpeed: 4.13, dps: 10.0, hp: 35, shields: 0 }));
-add(ent("Roach", 75, 25, 20.7, "Larva", { supplyCost: 2, requires: ["RoachWarren"], moveSpeed: 2.25, dps: 14.6, hp: 145, shields: 0 }));
+// Zergling's 5-dmg hit has no weapon upgrade modeled this pass (Melee
+// Weapons is out of scope, see above) -- Carapace (armor) still applies.
+add(ent("Zergling", 25, 0, 17.1, "Larva", {
+    supplyCost: 0.5, requires: ["SpawningPool"], moveSpeed: 4.13, dps: 10.0, hp: 35, shields: 0,
+    upgrades: [{ name: "CarapaceLevel1", ehpMultiplier: 1.05 }],
+}));
+// Roach's 16-dmg hit -> 17/16 for MissileWeaponsLevel1.
+add(ent("Roach", 75, 25, 20.7, "Larva", {
+    supplyCost: 2, requires: ["RoachWarren"], moveSpeed: 2.25, dps: 14.6, hp: 145, shields: 0,
+    upgrades: [
+        { name: "MissileWeaponsLevel1", dpsMultiplier: 17 / 16 },
+        { name: "CarapaceLevel1", ehpMultiplier: 1.05 },
+    ],
+}));
 // Lair-tier (see header) — Liquipedia LotV: Hydralisk 100/50/2 supply, 24s
 // (Faster 17.1), 90 HP, 12 dmg/0.59s -> 20.4 dps. Mutalisk 100/100/2 supply,
 // 24s (Faster 17.1), 120 HP, 9 dmg (first bounce only, see header) /1.09s -> 8.3 dps.
-add(ent("Hydralisk", 100, 50, 17.1, "Larva", { supplyCost: 2, requires: ["HydraliskDen"], moveSpeed: 3.15, dps: 20.4, hp: 90, shields: 0 }));
+// Hydralisk's 12-dmg hit -> 13/12 for MissileWeaponsLevel1.
+add(ent("Hydralisk", 100, 50, 17.1, "Larva", {
+    supplyCost: 2, requires: ["HydraliskDen"], moveSpeed: 3.15, dps: 20.4, hp: 90, shields: 0,
+    upgrades: [
+        { name: "MissileWeaponsLevel1", dpsMultiplier: 13 / 12 },
+        { name: "CarapaceLevel1", ehpMultiplier: 1.05 },
+    ],
+}));
+// Mutalisk is air (Flyer Attack/Carapace, out of scope this pass) -- no upgrades entry.
 add(ent("Mutalisk", 100, 100, 17.1, "Larva", { supplyCost: 2, requires: ["Spire"], moveSpeed: 5.6, dps: 8.3, hp: 120, shields: 0 }));
+// --- Hive tier (Phase 3 roster expansion, 2026-07-06) ---------------------
+// Liquipedia LotV: Ultralisk 275/200/6 supply, 39s (Faster 27.9), 500 HP,
+// Kaiser Blades 35 dmg (splash 33%, not modeled)/0.61s -> 57.38 dps baseline.
+// Ultralisk is MELEE (Kaiser Blades) -- Melee Weapons out of scope (see
+// above, same as Zergling/Baneling), so only Carapace applies.
+add(ent("Ultralisk", 275, 200, 27.9, "Larva", {
+    supplyCost: 6, requires: ["UltraliskCavern"], moveSpeed: 4.13, dps: 57.38, hp: 500, shields: 0,
+    upgrades: [{ name: "CarapaceLevel1", ehpMultiplier: 1.05 }],
+}));
+// Infestor is a pure spellcaster (Fungal Growth/Neural Parasite/Microbial
+// Shroud are abilities, not modeled -- this project's usual convention) --
+// dps 0, contributes no fighting VALUE by this ranking signal, same
+// treatment as Observer/Medivac, despite real strategic value.
+add(ent("Infestor", 100, 150, 25.7, "Larva", { supplyCost: 2, requires: ["InfestationPit"], moveSpeed: 3.15, hp: 90, shields: 0 }));
 // --- Morph (from an existing unit, not larva) ------------------------------
-add(ent("Baneling", 25, 25, 10.0, "Zergling", { supplyCost: 0, morphFrom: "Zergling", requires: ["BanelingNest"], moveSpeed: 4.13, dps: 20.0, hp: 30, shields: 0 }));
+// Baneling: Melee Weapons out of scope (see above) -- Carapace still applies.
+add(ent("Baneling", 25, 25, 10.0, "Zergling", {
+    supplyCost: 0, morphFrom: "Zergling", requires: ["BanelingNest"], moveSpeed: 4.13, dps: 20.0, hp: 30, shields: 0,
+    upgrades: [{ name: "CarapaceLevel1", ehpMultiplier: 1.05 }],
+}));
+// Lurker: Liquipedia lists cost/time as DELTAS beyond an already-built
+// Hydralisk (morph itself: 50 min/100 gas/18s Normal -> 12.9s Faster/+1
+// supply; totals with Hydralisk's own 100/50/2 match the commonly-quoted
+// 150/150/3 combined). hp/dps below are the resulting unit's ABSOLUTE
+// stats (not deltas). Bonus vs Armored not modeled (usual convention).
+// Spines are ranged -- MissileWeaponsLevel1 applies (20-dmg hit -> 21/20);
+// Carapace applies too (still a Zerg ground unit once burrowed-attacking).
+add(ent("Lurker", 50, 100, 12.9, "Hydralisk", {
+    supplyCost: 1, morphFrom: "Hydralisk", requires: ["LurkerDen"], moveSpeed: 4.13, dps: 14.0, hp: 190, shields: 0,
+    upgrades: [
+        { name: "MissileWeaponsLevel1", dpsMultiplier: 21 / 20 },
+        { name: "CarapaceLevel1", ehpMultiplier: 1.05 },
+    ],
+}));
 // --- Hatchery-queue unit (NOT larva — trained like a Gateway unit) ---------
-add(ent("Queen", 150, 0, 25.7, "Hatchery", { supplyCost: 2, requires: ["SpawningPool"], moveSpeed: 1.31, dps: 11.2, hp: 175, shields: 0 }));
+add(ent("Queen", 150, 0, 25.7, "Hatchery", {
+    supplyCost: 2, requires: ["SpawningPool"], moveSpeed: 1.31, dps: 11.2, hp: 175, shields: 0,
+    upgrades: [{ name: "CarapaceLevel1", ehpMultiplier: 1.05 }],
+}));
 export const ZERG = {
     patch: "5.0.16",
     race: "Zerg",

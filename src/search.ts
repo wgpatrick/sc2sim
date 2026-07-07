@@ -53,20 +53,50 @@ export interface Vocabulary {
   units: string[]; // unit types in the target composition
   chronoTargets: string[]; // legal chrono:X names
   warp: boolean;
+  /** Combat upgrades (Charge/Blink/*WeaponsLevel1/*ArmorLevel1/CarapaceLevel1,
+   * see EntityData.upgrades) this race has, EXCLUDING WarpGateResearch
+   * (already handled separately via `warp`). Insertable as a bare action the
+   * same way any unit/structure is -- lets the GA discover WHEN to research
+   * them, the same way chrono TARGET selection already falls out of
+   * insertAction()/tweakChrono() for free. */
+  upgrades: string[];
+}
+
+/** Every isUpgrade entity for this race except WarpGateResearch (that one's
+ * already a first-class citizen via `warp`/hasWarpGate elsewhere). */
+function combatUpgradeNames(data: GameData): string[] {
+  return Object.values(data.entities)
+    .filter((e) => e.isUpgrade && e.name !== "WarpGateResearch")
+    .map((e) => e.name);
 }
 
 export function buildVocabulary(target: Composition, data: GameData, warp: boolean): Vocabulary {
+  const upgrades = combatUpgradeNames(data);
   // The townhall (Nexus/CommandCenter/Hatchery) is included so the GA can
   // discover taking a natural expansion -- previously hardcoded out (see git
   // history), which silently made "build a 2nd base" undiscoverable no
   // matter how much it would have helped a longer-horizon/safety objective.
-  const extra = [data.economy.startingTownhall, ...(warp ? ["CyberneticsCore"] : [])];
+  // Each upgrade's producer (Forge/TwilightCouncil/EngineeringBay/
+  // EvolutionChamber) is included the same way, so techClosure() pulls in
+  // that structure (and ITS prerequisite chain) whenever an upgrade might
+  // be worth researching -- otherwise "Charge" would be insertable but
+  // never actually buildable (no Twilight Council in the vocabulary).
+  const extra = [
+    data.economy.startingTownhall,
+    ...(warp ? ["CyberneticsCore"] : []),
+    ...upgrades.map((u) => data.entities[u].producer),
+  ];
   const structures = techClosure(target, data, extra);
   const units = Object.keys(target);
   // No Chrono, no chrono targets -- keeps tweakChrono() from ever inserting
   // a "chrono:X" action for a race that can't use it (see mutate() below).
-  const chronoTargets = data.economy.hasChrono ? [workerNameOf(data), ...structures, ...units, ...(warp ? ["WarpGateResearch"] : [])] : [];
-  return { structures, units, chronoTargets, warp };
+  // Upgrades are included directly (not just their producer structure) so
+  // the GA can chrono-boost the RESEARCH itself, same precedent as
+  // WarpGateResearch below.
+  const chronoTargets = data.economy.hasChrono
+    ? [workerNameOf(data), ...structures, ...units, ...upgrades, ...(warp ? ["WarpGateResearch"] : [])]
+    : [];
+  return { structures, units, chronoTargets, warp, upgrades };
 }
 
 // --- Random valid-ish seed individuals (from the template generator) ------
@@ -87,7 +117,7 @@ function randomParams(rng: Rng, strategies: Strategy[], start: number): BuildPar
 
 // --- Mutation operators: each returns a NEW array ---------------------------
 function insertAction(seq: Action[], rng: Rng, vocab: Vocabulary, data: GameData): Action[] {
-  const pool = [...vocab.structures, ...vocab.units, workerNameOf(data), data.economy.supplyStructure, data.economy.gasStructure];
+  const pool = [...vocab.structures, ...vocab.units, ...vocab.upgrades, workerNameOf(data), data.economy.supplyStructure, data.economy.gasStructure];
   const name = pick(rng, pool);
   const tag = rng() < 0.25 ? "@proxy" : "";
   const at = randInt(rng, 0, seq.length);

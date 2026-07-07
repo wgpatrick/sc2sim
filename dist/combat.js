@@ -3,9 +3,24 @@
  * `ehp = hp + shields`) -- real shields regenerate out of combat and
  * absorb before armor bonuses apply, neither of which matters for a single
  * uninterrupted exchange like this. Non-combat units (dps undefined/0,
- * e.g. workers, Observers, Medivacs) are excluded by the caller, not here. */
-export function toCombatUnit(name, ent) {
-    return { name, hp: (ent.hp ?? 0) + (ent.shields ?? 0), dps: ent.dps ?? 0 };
+ * e.g. workers, Observers, Medivacs) are excluded by the caller, not here.
+ * `researched` (a unit's StartedItem.researchedAtFinish) applies the same
+ * upgrade multipliers unitValue() does -- see EntityData.upgrades. */
+export function toCombatUnit(name, ent, researched) {
+    let dps = ent.dps ?? 0;
+    let hp = (ent.hp ?? 0) + (ent.shields ?? 0);
+    if (researched && ent.upgrades?.length) {
+        const have = researched instanceof Set ? researched : new Set(researched);
+        for (const u of ent.upgrades) {
+            if (!have.has(u.name))
+                continue;
+            if (u.dpsMultiplier)
+                dps *= u.dpsMultiplier;
+            if (u.ehpMultiplier)
+                hp *= u.ehpMultiplier;
+        }
+    }
+    return { name, hp, dps };
 }
 function applyDamage(units, damage) {
     units.sort((a, b) => a.hp - b.hp); // focus fire the weakest first
@@ -60,7 +75,7 @@ export function compositionAt(result, data, t) {
         const ent = data.entities[a.name];
         if (!ent || ent.isWorker || !ent.dps)
             continue;
-        units.push(toCombatUnit(a.name, ent));
+        units.push(toCombatUnit(a.name, ent, a.researchedAtFinish));
     }
     return units;
 }

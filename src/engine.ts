@@ -56,6 +56,22 @@ export interface EntityData {
   dps?: number;
   hp?: number;
   shields?: number;
+  /** Combat-affecting upgrades this unit benefits from, keyed by the
+   * upgrade's entity name (see data*.ts's Charge/Blink/*WeaponsLevel1/
+   * *ArmorLevel1/CarapaceLevel1 entries) -- applied by unitValue()/
+   * combat.ts's toCombatUnit() ONLY if that upgrade was researched by this
+   * unit's production-completion time (StartedItem.researchedAtFinish).
+   * Real weapon/armor upgrades change flat per-hit damage/armor, but this
+   * engine only tracks aggregate dps/hp (no per-hit granularity), so each
+   * multiplier below is a derived approximation from that unit's known real
+   * per-hit damage (see the data*.ts comment beside each entry for the
+   * arithmetic) -- same "book value, not exact" status as this file's other
+   * unverified combat stats. Charge/Blink have no literal weapon-file
+   * change in the real game (their value is pure positioning, which this
+   * engine doesn't model at all) -- their multipliers are an explicit,
+   * documented stand-in for that value, not a measured effect.
+   */
+  upgrades?: { name: string; dpsMultiplier?: number; ehpMultiplier?: number }[];
 }
 
 /**
@@ -64,13 +80,26 @@ export interface EntityData {
  * unit counts. sqrt(DPS * EHP) is the classic Lanchester-square-law
  * approximation of relative fighting power (geometric mean of offense and
  * defense) — it is NOT a combat resolver: it ignores range, splash, bonus
- * damage vs armor types, upgrades, and unit synergy/counters entirely.
- * Treat it as a rough ranking signal, not a win/loss prediction.
+ * damage vs armor types, and unit synergy/counters entirely. Upgrades ARE
+ * now factored in (see EntityData.upgrades) if `researched` is passed --
+ * pass a unit's StartedItem.researchedAtFinish so a unit only benefits from
+ * upgrades that were actually done by the time IT was produced, not every
+ * upgrade the build ever researches. Still a rough ranking signal, not a
+ * win/loss prediction.
  */
-export function unitValue(ent: EntityData): number {
+export function unitValue(ent: EntityData, researched?: Iterable<string>): number {
   if (!ent.dps) return 0;
-  const ehp = (ent.hp ?? 0) + (ent.shields ?? 0);
-  return Math.sqrt(ent.dps * ehp);
+  let dps = ent.dps;
+  let ehp = (ent.hp ?? 0) + (ent.shields ?? 0);
+  if (researched && ent.upgrades?.length) {
+    const have = researched instanceof Set ? researched : new Set(researched);
+    for (const u of ent.upgrades) {
+      if (!have.has(u.name)) continue;
+      if (u.dpsMultiplier) dps *= u.dpsMultiplier;
+      if (u.ehpMultiplier) ehp *= u.ehpMultiplier;
+    }
+  }
+  return Math.sqrt(dps * ehp);
 }
 
 /** This race's harvesting worker entity name (Probe/SCV/Drone), derived from
@@ -127,6 +156,10 @@ export interface EconomyConfig {
   /** Mining-efficiency multiplier. 1.0 = pro hand-mining micro; ~0.9 = a-move. */
   miningMicro: number;
   nexusStartEnergy: number;
+  /** Energy cap PER Nexus (real game: 200). The pool is one scalar summed
+   * across all townhalls, so the effective cap is nexusMaxEnergy *
+   * townhallCount -- see advanceBy(), and the Scouting Report finding this
+   * used to be a single flat 200 regardless of base count. */
   nexusMaxEnergy: number;
   nexusEnergyRegen: number;
   chronoCost: number;
@@ -241,6 +274,17 @@ export interface StartedItem {
   location: Location;
   warpedIn?: boolean; // produced via warp-in rather than a normal Gateway
   arrivalTime?: number; // when it reaches the enemy (units only)
+  /** Supply used at the moment this action was issued, BEFORE its own
+   * supplyCost is reserved -- matches the community build-order convention
+   * ("14 Pylon, 16 Gate") rather than a raw Faster-clock timestamp. */
+  supplyAtStart: number;
+  /** Upgrades (see EntityData.upgrades) already researched at the moment
+   * THIS item completed production -- set once, at completion, in
+   * advanceToNextEvent(). Passed to unitValue()/toCombatUnit() so a unit
+   * only benefits from upgrades that were actually done in time for it,
+   * not every upgrade the whole build eventually researches. Undefined
+   * until the item completes (irrelevant for anything still in progress). */
+  researchedAtFinish?: string[];
 }
 
 export interface Snapshot {
@@ -419,9 +463,29 @@ class State {
     return (this.eco.larvaCapPerTownhall ?? 3) * townhalls;
   }
 
-  /** Requirement met if the structure is complete OR the upgrade is researched. */
+  /** Requirement met if the structure is complete, the upgrade is
+   * researched, OR a currently-completed entity has since morphed PAST
+   * `name` in a morph chain (e.g. Hive morphFrom Lair morphFrom Hatchery --
+   * a Hive-tech base still has "Lair tech", so HydraliskDen/Spire/
+   * InfestationPit's `requires: ["Lair"]` must stay satisfiable even
+   * though "Lair" itself was decremented out of `completed` when it
+   * morphed into Hive, exactly like the real game. Discovered via the
+   * Phase 3 roster expansion (Hive was this engine's first case of
+   * something morphing PAST an entity other structures still require --
+   * Terran's CommandCenter->OrbitalCommand never hit this because nothing
+   * requires "CommandCenter" by name). Morph chains here are shallow
+   * (2-3 deep), so walking each completed entity's ancestry is cheap. */
   reqMet(name: string): boolean {
-    return this.count(name) >= 1 || this.researched.has(name);
+    if (this.count(name) >= 1 || this.researched.has(name)) return true;
+    for (const completedName in this.completed) {
+      if (this.completed[completedName] <= 0) continue;
+      let cur: EntityData | undefined = this.data.entities[completedName];
+      while (cur?.morphFrom) {
+        if (cur.morphFrom === name) return true;
+        cur = this.data.entities[cur.morphFrom];
+      }
+    }
+    return false;
   }
 
   get proxyPylonExists(): boolean {
@@ -478,7 +542,7 @@ function advanceBy(s: State, dt: number, snaps: Snapshot[]): void {
   if (dt <= 0) return;
   s.minerals += s.mineralRate * dt;
   s.gas += s.gasRate * dt;
-  s.energy = Math.min(s.eco.nexusMaxEnergy, s.energy + s.energyRate * dt);
+  s.energy = Math.min(s.eco.nexusMaxEnergy * s.townhallCount, s.energy + s.energyRate * dt);
   for (const type of Object.keys(s.eco.casters ?? {})) {
     const have = s.casterEnergy[type] ?? 0;
     s.casterEnergy[type] = Math.min(s.casterEnergyCap(type), have + s.casterEnergyRate(type) * dt);
@@ -514,6 +578,7 @@ function advanceToNextEvent(s: State, snaps: Snapshot[]): boolean {
       s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
       (s.completedLoc[p.name] ??= { home: 0, proxy: 0 })[p.location] += 1;
       bumpCasterEnergyOnComplete(s, p.name);
+      p.ref.researchedAtFinish = [...s.researched];
       continue;
     }
     s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
@@ -523,6 +588,7 @@ function advanceToNextEvent(s: State, snaps: Snapshot[]): boolean {
     (s.completedLoc[p.name] ??= { home: 0, proxy: 0 })[p.location] += 1;
     if (s.isWorker(p.name)) s.probesTotal += 1;
     bumpCasterEnergyOnComplete(s, p.name);
+    p.ref.researchedAtFinish = [...s.researched];
   }
   s.probeReleases = s.probeReleases.filter((r) => r > s.time + EPS);
   s.producerReleases = s.producerReleases.filter((r) => r.until > s.time + EPS);
@@ -719,6 +785,7 @@ function startEntity(
 ): void {
   s.minerals -= ent.minerals;
   s.gas -= ent.gas;
+  const supplyAtStart = s.supplyUsed;
   const loc = plan.unitLoc;
   let finishTime = s.time + ent.buildTime;
   let producerForItem = ""; // producer type recorded on the in-progress item
@@ -786,6 +853,7 @@ function startEntity(
     finishTime,
     location: loc,
     warpedIn: warpedIn || undefined,
+    supplyAtStart,
   };
   s.inProgress.push({
     name: ent.name,
@@ -967,7 +1035,7 @@ export function valueOverTime(res: SimResult, data: GameData, opts: { allowParti
   const points: ValuePoint[] = [];
   let cum = 0;
   for (const a of arrivals) {
-    cum += unitValue(data.entities[a.name]);
+    cum += unitValue(data.entities[a.name], a.researchedAtFinish);
     points.push({ t: a.arrivalTime!, value: cum, name: a.name });
   }
   return points;

@@ -118,6 +118,18 @@ add(ent("OrbitalCommand", 150, 0, 17.9, "CommandCenter", { supplyProvided: 13, i
 add(ent("BarracksTechLab", 50, 25, 12.9, "SCV", { isStructure: true, requires: ["Barracks"] }));
 add(ent("FactoryTechLab", 50, 25, 12.9, "SCV", { isStructure: true, requires: ["Factory"] }));
 add(ent("StarportTechLab", 50, 25, 12.9, "SCV", { isStructure: true, requires: ["Starport"] }));
+// Roster expansion (Phase 3, 2026-07-06) -- costs/times verified against
+// Liquipedia's LotV pages (Normal -> Faster / 1.4), not replay-verified.
+add(ent("GhostAcademy", 150, 50, 20.7, "SCV", { isStructure: true, requires: ["Barracks"] }));
+add(ent("Armory", 150, 50, 32.9, "SCV", { isStructure: true, requires: ["Factory"] }));
+add(ent("FusionCore", 150, 150, 32.9, "SCV", { isStructure: true, requires: ["Starport"] }));
+
+// --- Combat upgrades (Scouting Report Phase 2, 2026-07-06) ----------------
+// Book values (100/100, 113s Normal), same unverified status as this file's
+// baseline combat stats -- see data.ts's matching Protoss entries for the
+// full derivation-methodology note (EntityData.upgrades).
+add(ent("InfantryWeaponsLevel1", 100, 100, 80.7, "EngineeringBay", { isUpgrade: true, requires: ["EngineeringBay"] }));
+add(ent("InfantryArmorLevel1", 100, 100, 80.7, "EngineeringBay", { isUpgrade: true, requires: ["EngineeringBay"] }));
 
 // --- SCV (worker) ---------------------------------------------------------
 // alsoProducer: morphing to Orbital Command must not stop SCV production --
@@ -127,11 +139,43 @@ add(ent("SCV", 50, 0, 12.1, "CommandCenter", { supplyCost: 1, isWorker: true, mo
 
 // --- Barracks-tier (no add-on requirement) --------------------------------
 // ⚠️ book values, see header — not replay-verified individually.
-add(ent("Marine", 50, 0, 12.9, "Barracks", { supplyCost: 1, moveSpeed: 2.25, dps: 7.0, hp: 45, shields: 0 }));
-add(ent("Reaper", 50, 50, 32.1, "Barracks", { supplyCost: 1, moveSpeed: 3.9375, dps: 10.2, hp: 60, shields: 0 }));
+// upgrades: Marine's 6-dmg hit -> 7/6; Reaper fires 2 separate 4-dmg pistol
+// shots per attack, each gets +1 -> 10/8; Marauder's single 10-dmg hit -> 11/10
+// (see data.ts's Protoss entries for the full multiplier-derivation note).
+add(ent("Marine", 50, 0, 12.9, "Barracks", {
+  supplyCost: 1, moveSpeed: 2.25, dps: 7.0, hp: 45, shields: 0,
+  upgrades: [
+    { name: "InfantryWeaponsLevel1", dpsMultiplier: 7 / 6 },
+    { name: "InfantryArmorLevel1", ehpMultiplier: 1.05 },
+  ],
+}));
+add(ent("Reaper", 50, 50, 32.1, "Barracks", {
+  supplyCost: 1, moveSpeed: 3.9375, dps: 10.2, hp: 60, shields: 0,
+  upgrades: [
+    { name: "InfantryWeaponsLevel1", dpsMultiplier: 10 / 8 },
+    { name: "InfantryArmorLevel1", ehpMultiplier: 1.05 },
+  ],
+}));
 // Marauder: Barracks + Tech Lab. Liquipedia LotV: 100/25/2 supply, 21s (Faster 15.0),
 // 125 HP, 10 dmg/1.07s cooldown -> 9.3 dps baseline (unupgraded, vs unarmored).
-add(ent("Marauder", 100, 25, 15.0, "BarracksTechLab", { supplyCost: 2, moveSpeed: 3.15, dps: 9.3, hp: 125, shields: 0 }));
+add(ent("Marauder", 100, 25, 15.0, "BarracksTechLab", {
+  supplyCost: 2, moveSpeed: 3.15, dps: 9.3, hp: 125, shields: 0,
+  upgrades: [
+    { name: "InfantryWeaponsLevel1", dpsMultiplier: 11 / 10 },
+    { name: "InfantryArmorLevel1", ehpMultiplier: 1.05 },
+  ],
+}));
+// Ghost: Barracks + Tech Lab, ALSO requires Ghost Academy (a real dual
+// requirement -- both must exist). Liquipedia LotV: 150/125/2 supply, 29s
+// (Faster 20.7), 125 HP, 10 dmg/1.07s -> 9.3 dps baseline. Cloak/EMP/Snipe
+// are abilities, not modeled (this project's usual convention).
+add(ent("Ghost", 150, 125, 20.7, "BarracksTechLab", {
+  supplyCost: 2, moveSpeed: 3.94, requires: ["GhostAcademy"], dps: 9.3, hp: 125, shields: 0,
+  upgrades: [
+    { name: "InfantryWeaponsLevel1", dpsMultiplier: 11 / 10 },
+    { name: "InfantryArmorLevel1", ehpMultiplier: 1.05 },
+  ],
+}));
 
 // --- Factory-tier (no add-on requirement) ---------------------------------
 add(ent("Hellion", 100, 0, 21.4, "Factory", { supplyCost: 2, moveSpeed: 5.95, dps: 9.7, hp: 90, shields: 0 }));
@@ -139,6 +183,14 @@ add(ent("Cyclone", 150, 100, 32.1, "Factory", { supplyCost: 3, moveSpeed: 4.6875
 // Siege Tank: Factory + Tech Lab. Liquipedia LotV UNSIEGED stats (see header):
 // 150/125/3 supply, 32s (Faster 22.9), 175 HP, 15 dmg/0.74s -> 20.3 dps baseline.
 add(ent("SiegeTank", 150, 125, 22.9, "FactoryTechLab", { supplyCost: 3, moveSpeed: 3.15, dps: 20.3, hp: 175, shields: 0 }));
+// Thor: Factory + Tech Lab, requires Armory. Liquipedia LotV: 300/200/6
+// supply, 43s (Faster 30.7), 400 HP. Ground weapon (Thor's Hammer, 30 dmg
+// x2/0.91s -> 65.9 dps) used as the single representative dps figure --
+// its two separate anti-air weapons (Javelin/Punisher Cannons) aren't
+// modeled (this engine has one dps field per unit, no per-target-type
+// weapons). Vehicle Weapons/Armor upgrade line not modeled this pass (only
+// Infantry -- see above), so no `upgrades` entry.
+add(ent("Thor", 300, 200, 30.7, "FactoryTechLab", { supplyCost: 6, moveSpeed: 2.62, requires: ["Armory"], dps: 65.9, hp: 400, shields: 0 }));
 
 // --- Starport-tier (no add-on requirement) --------------------------------
 add(ent("Viking", 150, 75, 30.0, "Starport", { supplyCost: 2, moveSpeed: 3.375, dps: 14.0, hp: 135, shields: 0 }));
@@ -149,6 +201,13 @@ add(ent("Liberator", 150, 150, 42.9, "Starport", { supplyCost: 3, moveSpeed: 4.0
 // Banshee: Starport + Tech Lab. Liquipedia LotV: 150/100/3 supply, 43s (Faster 30.7),
 // 140 HP, 12 dmg x2 hits/0.89s -> 27 dps baseline.
 add(ent("Banshee", 150, 100, 30.7, "StarportTechLab", { supplyCost: 3, moveSpeed: 3.85, dps: 27, hp: 140, shields: 0 }));
+// Battlecruiser: Starport + Tech Lab, requires Fusion Core. Liquipedia LotV:
+// 400/300/6 supply, 64s (Faster 45.7), 550 HP. Ground weapon (ATS Laser
+// Battery, 8 dmg/0.16s -> 49.8 dps) used as the representative dps figure,
+// same "one dps field" simplification as Thor -- its separate air weapon
+// (ATA, 31.1 dps) isn't modeled. Yamato Cannon/Tactical Jump are abilities,
+// not modeled. Starship Weapons/Armor upgrade line not modeled this pass.
+add(ent("Battlecruiser", 400, 300, 45.7, "StarportTechLab", { supplyCost: 6, moveSpeed: 2.62, requires: ["FusionCore"], dps: 49.8, hp: 550, shields: 0 }));
 
 export const TERRAN: GameData = {
   patch: "5.0.16",

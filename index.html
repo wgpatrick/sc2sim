@@ -106,6 +106,30 @@
       .remove-unit-btn { flex: 0 0 auto; width: 34px; background: var(--panel); color: var(--muted); border: 1px solid var(--line); margin-top: 0; padding: 8px; }
       .compare-note { font-size: 13px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin-bottom: 14px; }
       .compare-note b { color: var(--accent); }
+
+      /* Glossary term: a jargon word with a hover definition, so a first-time
+         reader isn't stuck guessing what "chrono"/"value"/"danger score"
+         mean without leaving the page (see about.html for the longer version). */
+      .term { border-bottom: 1px dotted var(--muted); cursor: help; position: relative; }
+      .term:hover::after {
+        content: attr(data-tip);
+        position: absolute;
+        bottom: 125%;
+        left: 0;
+        z-index: 10;
+        width: max-content;
+        max-width: 260px;
+        background: var(--fg);
+        color: var(--bg);
+        font-size: 12px;
+        line-height: 1.4;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: normal;
+        padding: 6px 9px;
+        border-radius: 6px;
+        box-shadow: 0 4px 14px rgba(0,0,0,.25);
+      }
     </style>
   </head>
   <body>
@@ -179,7 +203,7 @@
       </div>
 
       <div class="panel" style="margin-top: 20px;">
-        <h1 style="font-size: 18px;">📈 Value frontier — the biggest army you can have, by time T</h1>
+        <h1 style="font-size: 18px;">📈 <span class="term" data-tip="A single number standing in for fighting power: sqrt(DPS × effective HP). A rough ranking signal for comparing builds, not a real combat prediction.">Value</span> frontier — the biggest army you can have, by time T</h1>
         <p class="sub" style="margin-bottom: 16px;">
           Given <i>only</i> the unit types you check below, this finds — for every point in time — the most
           raw fighting power (<a href="about.html#value"><code>value</code></a>) any searched build can
@@ -248,12 +272,12 @@
           </div>
           <div style="max-height: 300px; overflow: auto; margin-top: 14px;">
             <table id="timeline">
-              <thead><tr><th class="mono">Start</th><th>Action</th><th class="mono">Done</th><th class="mono">Arrives</th></tr></thead>
+              <thead><tr><th class="mono">Supply</th><th class="mono">Start</th><th>Action</th><th class="mono">Done</th><th class="mono">Arrives</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
           <details style="margin-top: 12px;">
-            <summary style="cursor:pointer; color: var(--muted); font-size: 13px;">Simulator log (chrono/MULE/inject casts, skips, warnings)</summary>
+            <summary style="cursor:pointer; color: var(--muted); font-size: 13px;">Simulator log (<span class="term" data-tip="Chrono Boost: a Protoss Nexus energy ability that speeds up one item in production by 50% for a limited window. Costs 50 energy, doesn't stack with itself.">chrono</span>/MULE/inject casts, skips, warnings)</summary>
             <pre id="simlog" style="max-height: 220px; overflow: auto; font-size: 12px; margin-top: 8px; white-space: pre-wrap;"></pre>
           </details>
         </div>
@@ -266,9 +290,10 @@
           same simulator, producing a value-over-time curve for what they really did — then compares it
           against <b>the build currently loaded in the panel above</b>. A build that's fast but leaves you
           with less value than a real opponent had at that moment is a build that loses to that opener,
-          regardless of how it ranks in isolation. These 3 sample games are trimmed to their opening 5
-          minutes and embedded directly (a UI convenience subset — <code>npm run opponent</code> draws on
-          the full 26-replay corpus). <a href="about.html#opponent">How this comparison works →</a>
+          regardless of how it ranks in isolation. Every replay in the corpus is here, trimmed to its
+          opening 5 minutes and embedded directly (full whole-game data remains the source of truth for
+          calibration — see the "Browse the replay corpus" panel below to explore them directly).
+          <a href="about.html#opponent">How this comparison works →</a>
         </p>
         <div class="compare-note" id="opp-comparing-note"></div>
         <div class="row">
@@ -284,6 +309,63 @@
           <span style="color:var(--accent)">■ my build (from the panel above)</span>
           <span style="color:var(--err)">■ real opponent</span>
         </div>
+      </div>
+
+      <div class="panel" style="margin-top: 20px;">
+        <h1 style="font-size: 18px;">⚔️ Race two builds</h1>
+        <p class="sub" style="margin-bottom: 16px;">
+          Drop two build orders in side by side and watch which one delivers more
+          <span class="term" data-tip="A single number standing in for fighting power: sqrt(DPS × effective HP). A rough ranking signal for comparing builds, not a real combat prediction.">value</span>
+          first, and when — the head-to-head view for settling "which opener is actually better" instead of
+          judging each build in isolation. Use the "&larr; load current build" button to pull in whatever's
+          loaded in the Simulator panel above, or paste/edit either side directly.
+        </p>
+        <div class="grid">
+          <div>
+            <label for="race-a-label">Build A label</label>
+            <input type="text" id="race-a-label" value="Build A" />
+            <label for="race-a-race" style="margin-top:10px;">Race</label>
+            <select id="race-a-race">
+              <option value="Protoss">Protoss</option>
+              <option value="Terran">Terran</option>
+              <option value="Zerg">Zerg</option>
+            </select>
+            <label for="race-a-order" style="margin-top:10px;">Build order</label>
+            <textarea id="race-a-order" style="min-height:160px;"></textarea>
+            <button id="race-a-load" style="width:auto; padding:8px 14px;">&larr; load current build</button>
+          </div>
+          <div>
+            <label for="race-b-label">Build B label</label>
+            <input type="text" id="race-b-label" value="Build B" />
+            <label for="race-b-race" style="margin-top:10px;">Race</label>
+            <select id="race-b-race">
+              <option value="Protoss">Protoss</option>
+              <option value="Terran">Terran</option>
+              <option value="Zerg">Zerg</option>
+            </select>
+            <label for="race-b-order" style="margin-top:10px;">Build order</label>
+            <textarea id="race-b-order" style="min-height:160px;"></textarea>
+            <button id="race-b-load" style="width:auto; padding:8px 14px;">&larr; load current build</button>
+          </div>
+        </div>
+        <button id="race-run" style="margin-top:14px;">Race &#9654;</button>
+        <div id="race-summary" class="summary" style="margin-top:16px"></div>
+        <canvas id="race-chart" width="900" height="300"></canvas>
+        <div class="legend">
+          <span id="race-legend-a" style="color:var(--accent)">■ Build A</span>
+          <span id="race-legend-b" style="color:var(--gas)">■ Build B</span>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 20px;">
+        <h1 style="font-size: 18px;">📼 Browse the replay corpus</h1>
+        <p class="sub" style="margin-bottom: 16px;">
+          Every real 5.0.16 ladder replay this project has collected (<span id="corpus-count"></span> games),
+          previously only used invisibly to fit the income model and power the Opponent panel above — actually
+          explorable here, one real opening per card. "Load into Simulator" replays that exact real build order
+          through the engine so you can compare it directly against anything else on this page.
+        </p>
+        <div id="corpus-list" class="bb-list"></div>
       </div>
 
       <p class="warn">
@@ -304,8 +386,10 @@
       import { optimize, valueFrontier, describeComposition } from "./dist/optimizer.js";
       import { searchRawSequences, arrivalScorer } from "./dist/search.js";
       import { threatCurveFromReplay, assessDanger, describeCurve } from "./dist/opponent.js";
+      import { sequenceFromReplay } from "./dist/replay.js";
       import { SAMPLE_REPLAYS } from "./dist/sample-replays.js";
       import { valueOverTime } from "./dist/engine.js";
+      import { benchmarkCaption } from "./dist/benchmarks.js";
 
       const $ = (id) => document.getElementById(id);
       const presetSel = $("preset"), orderTa = $("order"), descEl = $("desc"), raceSel = $("race");
@@ -441,7 +525,8 @@
           s.innerHTML =
             `Last action at <b>${fmt(res.finishTime)}</b> — ` +
             `supply ${Math.round(f.supplyUsed)}/${Math.round(f.supplyCap)}, ` +
-            `${f.probes} probes, ${Math.round(f.minerals)} min, ${Math.round(f.gas)} gas`;
+            `${f.probes} probes, ${Math.round(f.minerals)} min, ${Math.round(f.gas)} gas` +
+            `<br><span style="color:var(--muted); font-size:12px;">${benchmarkCaption(raceSel.value, res.finishTime)}</span>`;
         }
 
         const tb = $("timeline").querySelector("tbody");
@@ -451,6 +536,7 @@
           const loc = a.location === "proxy" ? ' <span class="tag chrono">proxy</span>' : "";
           const arrive = a.arrivalTime !== undefined ? fmt(a.arrivalTime) : "—";
           tr.innerHTML =
+            `<td class="mono">${Math.round(a.supplyAtStart)}</td>` +
             `<td class="mono">${fmt(a.startTime)}</td>` +
             `<td><span class="tag ${a.kind}">${a.kind}</span> ${a.name}${loc}</td>` +
             `<td class="mono">${fmt(a.finishTime)}</td>` +
@@ -821,8 +907,12 @@
         o.value = i; o.textContent = `${s.label}`; oppPick.appendChild(o);
       });
 
-      function drawOpponentChart(mine, theirs) {
-        const cv = $("opp-chart"), ctx = cv.getContext("2d");
+      // Shared by the Opponent panel (mine vs. a real replay's curve) and the
+      // "Race two builds" panel (Build A vs. Build B) -- both are "two
+      // value-over-time step curves on one chart", just with different
+      // canvases and a caller-supplied second color.
+      function drawTwoCurveChart(cv, mine, theirs, secondColor) {
+        const ctx = cv.getContext("2d");
         const W = cv.width, H = cv.height, pad = 34;
         ctx.clearRect(0, 0, W, H);
         const all = [...mine, ...theirs];
@@ -861,7 +951,7 @@
           ctx.stroke();
         };
         drawStep(mine, css.getPropertyValue("--accent"));
-        drawStep(theirs, css.getPropertyValue("--err"));
+        drawStep(theirs, css.getPropertyValue(secondColor));
       }
 
       // Shown above the Compare button so it's never ambiguous which build
@@ -893,10 +983,95 @@
 
         out.innerHTML =
           `<b>${describeCurve(curve)}</b><br>` +
-          `worst deficit vs this opponent: <b>${danger.worstDeficit.toFixed(1)}</b> value at <b>${fmt(danger.worstDeficitTime)}</b> ` +
+          `<span class="term" data-tip="How far behind this build ever falls versus the opponent's real value curve, at the single worst moment. Positive = behind at that moment; negative or zero = ahead the whole way.">danger score</span>` +
+          ` vs this opponent: <b>${danger.worstDeficit.toFixed(1)}</b> value at <b>${fmt(danger.worstDeficitTime)}</b> ` +
           `<span style="color:var(--muted)">(positive = behind the real opponent at that moment; negative = my build was ahead the whole way)</span>`;
-        drawOpponentChart(mine, curve.points);
+        drawTwoCurveChart($("opp-chart"), mine, curve.points, "--err");
       });
+
+      // ---- Race two builds panel ----
+      // Prefilled with a macro-vs-rush pair from the Protoss presets so the
+      // panel is immediately useful before anyone edits anything.
+      $("race-a-order").value = BUILDS[0].order.join("\n");
+      $("race-b-order").value = BUILDS[3].order.join("\n");
+
+      function wireRaceLoadButton(side) {
+        $(`race-${side}-load`).addEventListener("click", () => {
+          if (!lastSimResult || !lastSimResult.ok) return;
+          $(`race-${side}-race`).value = lastSimRace;
+          $(`race-${side}-order`).value = orderTa.value;
+          $(`race-${side}-label`).value = descEl.textContent?.slice(0, 60) || `Build ${side.toUpperCase()}`;
+        });
+      }
+      wireRaceLoadButton("a");
+      wireRaceLoadButton("b");
+
+      $("race-run").addEventListener("click", () => {
+        const out = $("race-summary");
+        const readSide = (side) => {
+          const race = $(`race-${side}-race`).value;
+          const order = $(`race-${side}-order`).value.split("\n").map((l) => l.trim()).filter(Boolean);
+          const label = $(`race-${side}-label`).value || `Build ${side.toUpperCase()}`;
+          const result = simulate(RACE_DATA[race], order, MAPS.standard);
+          return { race, order, label, result };
+        };
+        const a = readSide("a"), b = readSide("b");
+        if (!a.result.ok || !b.result.ok) {
+          out.innerHTML =
+            (!a.result.ok ? `<span class="err">Build A invalid: ${a.result.error}</span><br>` : "") +
+            (!b.result.ok ? `<span class="err">Build B invalid: ${b.result.error}</span>` : "");
+          return;
+        }
+        const va = valueOverTime(a.result, RACE_DATA[a.race]);
+        const vb = valueOverTime(b.result, RACE_DATA[b.race]);
+        const finalA = va[va.length - 1]?.value ?? 0;
+        const finalB = vb[vb.length - 1]?.value ?? 0;
+        const leader = finalA === finalB ? null : finalA > finalB ? "A" : "B";
+        $("race-legend-a").textContent = `■ ${a.label}`;
+        $("race-legend-b").textContent = `■ ${b.label}`;
+        out.innerHTML =
+          `<b>${a.label}</b> (${a.race}): finishes ${fmt(a.result.finishTime)}, ${finalA.toFixed(1)} value delivered<br>` +
+          `<b>${b.label}</b> (${b.race}): finishes ${fmt(b.result.finishTime)}, ${finalB.toFixed(1)} value delivered<br>` +
+          (leader
+            ? `<span style="color:var(--accent)">${leader === "A" ? a.label : b.label} is ahead by ${Math.abs(finalA - finalB).toFixed(1)} value at the end of this window.</span>`
+            : `<span style="color:var(--muted)">Dead even at the end of this window.</span>`);
+        drawTwoCurveChart($("race-chart"), va, vb, "--gas");
+      });
+
+      // ---- Browse the replay corpus panel ----
+      $("corpus-count").textContent = SAMPLE_REPLAYS.length;
+      (function renderCorpus() {
+        const list = $("corpus-list");
+        list.innerHTML = "";
+        SAMPLE_REPLAYS.forEach((s, i) => {
+          const data = RACE_DATA[s.race];
+          const seq = sequenceFromReplay(s.replay, data, 300);
+          const previewLen = 6;
+          const preview = seq.slice(0, previewLen).join(", ") + (seq.length > previewLen ? `, … (${seq.length - previewLen} more)` : "");
+          const won = s.replay.player.result === "Win";
+          const card = document.createElement("div");
+          card.className = "bb-card";
+          card.innerHTML =
+            `<div class="bb-head">` +
+            `<span class="tag ${won ? "structure" : "chrono"}">${s.replay.player.result}</span>` +
+            `<span class="bb-label">${s.label}</span>` +
+            `<span class="tag">${s.race}</span>` +
+            `<span class="bb-time">${fmt(s.replay.length)} game</span>` +
+            `</div>` +
+            `<div class="bb-order-preview" style="margin-top:2px;">${s.replay.map} · patch ${s.replay.patch} · ${seq.length} actions in the opening 5:00</div>` +
+            `<details><summary class="bb-order-preview">${preview}</summary>` +
+            `<div class="bb-order-preview" style="margin-top:4px;">${seq.join(", ")}</div></details>` +
+            `<button>Load into Simulator ↑</button>`;
+          card.querySelector("button").addEventListener("click", () => {
+            if (raceSel.value !== s.race) {
+              raceSel.value = s.race;
+              raceSel.dispatchEvent(new Event("change"));
+            }
+            loadBuildIntoSimulator(seq, `Real replay: ${s.label} (${s.replay.player.result})`);
+          });
+          list.appendChild(card);
+        });
+      })();
 
       // ---- Best builds panel ----
       // Curated sets of common targets per race, not the full unit
@@ -962,7 +1137,7 @@
       // specific composition.
       const BEST_BUILDS_OPTS = { populationSize: 60, generations: 30 };
 
-      function renderBestBuildCards(container, results, showBaseCount) {
+      function renderBestBuildCards(container, results, showBaseCount, race) {
         container.innerHTML = "";
         if (!results.length) {
           container.innerHTML = '<span class="err">No valid builds found.</span>';
@@ -985,6 +1160,7 @@
             badge +
             `<span class="bb-time">${fmt(r.score)}</span>` +
             `</div>` +
+            `<div class="bb-order-preview" style="margin-top:2px;">${benchmarkCaption(race, r.score)}</div>` +
             `<details><summary class="bb-order-preview">${preview}</summary>` +
             `<div class="bb-order-preview" style="margin-top:4px;">${r.order.join(", ")}</div></details>` +
             `<button>Load into simulator ↑</button>`;
@@ -1020,8 +1196,8 @@
           return { label, score: g.score, order: g.best, expands: g.best.some((a) => a.startsWith(expandStructure)) };
         }).filter((r) => isFinite(r.score));
 
-        renderBestBuildCards(rushEl, rushResults, false);
-        renderBestBuildCards(macroEl, macroResults, true);
+        renderBestBuildCards(rushEl, rushResults, false, race);
+        renderBestBuildCards(macroEl, macroResults, true, race);
         btn.disabled = false;
       }
       $("bb-recompute").addEventListener("click", computeBestBuilds);

@@ -625,35 +625,64 @@ positioning, range, splash, armor types, or upgrades on either side yet.
       the main Simulator chart gained y-axis value labels (it previously had
       none at all -- only the Frontier chart did) and a hover tooltip
       showing exact values + the most recent action.
-20. ⏭️ **Roadmap from the "Scouting Report" audit** (2026-07-06) -- a
+20. **Roadmap from the "Scouting Report" audit** (2026-07-06) -- a
     from-scratch review through a pro's, a ladder player's, and a YouTube
     fan's eyes (published as a Claude Artifact), re-verified against the
-    code before being turned into this sequence:
-    - **Phase 1, quick wins**: fix per-Nexus Chrono energy (cap should scale
-      as `townhallCount * nexusMaxEnergy`, not a flat 200 regardless of base
-      count -- same bug class as the townhall-counting fix in item 19);
-      supply-count build-order notation ("14 Pylon, 16 Gate") alongside the
-      raw timestamps; rough benchmark context ("pros hit this around X")
-      next to arrival times.
-    - **Phase 2, upgrades** (the single biggest gap: exactly 1 upgrade
-      exists anywhere in the codebase today, `WarpGateResearch`) -- add
-      Charge, Blink, and one weapon/armor tier per race; wire them into
-      `unitValue()`/`combat.ts` so a unit's effective stats depend on which
-      upgrades were researched by the time it was produced, not a static
-      baseline forever; add them to `search.ts`'s vocabulary so the GA can
+    code before being turned into this sequence. Phases 1-3 done this
+    session; 4-5 remain:
+    - ✅ **Phase 1, quick wins**: fixed per-Nexus Chrono energy (the cap now
+      scales as `townhallCount * nexusMaxEnergy` instead of a flat 200
+      regardless of base count -- same bug class as the townhall-counting
+      fix in item 19, pinned by a new regression test); supply-count
+      build-order notation ("14 Pylon, 16 Gate") alongside the raw
+      timestamps; rough benchmark context ("pros hit this around X") next
+      to arrival times, DERIVED from the real replay corpus via a new
+      `tools/calibrate_benchmarks.mjs` (not hand-guessed -- see
+      `src/benchmarks.ts`); hover-tooltip glossary for chrono/value/danger score.
+    - ✅ **Phase 2, upgrades** (the single biggest gap: exactly 1 upgrade
+      existed anywhere in the codebase, `WarpGateResearch`) -- added Charge,
+      Blink, and one weapon+armor tier per race (`EntityData.upgrades`,
+      applied by `unitValue()`/`combat.ts`'s `toCombatUnit()` based on which
+      upgrades were researched by the time a specific unit completed
+      production -- `StartedItem.researchedAtFinish` -- not a static
+      baseline forever, and not every upgrade the whole build eventually
+      researches). Wired into `search.ts`'s vocabulary so the GA can
       discover *when* to research them, the same way `chrono:X` already
-      works. Scoped to 1 tier + 2 signature abilities first, not the full
-      ~27-upgrade matrix.
-    - **Phase 3, roster expansion**, ordered by real-ladder frequency:
+      works. Scoped to 1 tier + 2 signature abilities first (Forge/
+      EngineeringBay/EvolutionChamber tier-1 weapon+armor, plus Protoss's
+      Charge/Blink), not the full ~27-upgrade matrix; Air/Vehicle/Starship
+      and Melee-vs-Missile-split upgrade lines documented as out of scope.
+    - ✅ **Phase 3, roster expansion**, ordered by real-ladder frequency, all
+      stats sourced from Liquipedia's LotV pages (Normal -> Faster / 1.4):
       Protoss Templar Archives (High Templar/Dark Templar/Archon) + Robotics
-      Bay (Colossus/Disruptor); Zerg Hive tier (Infestor/Ultralisk/Lurker);
-      Terran Ghost/Thor/Battlecruiser. Carrier/Tempest/Mothership/Viper/
-      Brood Lord/Nydus deferred as rarer/later-game.
-    - **Phase 4, accuracy**: real per-map distance data for a handful of
+      Bay (Colossus/Disruptor); Zerg Hive tier (Infestation Pit/Ultralisk
+      Cavern/Lurker Den -> Infestor/Ultralisk/Lurker); Terran Ghost/Thor/
+      Battlecruiser (Ghost Academy/Armory/Fusion Core). Carrier/Tempest/
+      Mothership/Viper/Brood Lord/Nydus deferred as rarer/later-game.
+      Archon's real 2-Templar merge doesn't fit this engine's 1-input
+      `morphFrom` model -- approximated as morphing from a single High
+      Templar at the *delta* cost beyond one already-built HT, documented
+      as a limitation rather than silently modeled wrong. Along the way,
+      found and fixed a real engine bug this phase exposed: `Hive` morphs
+      from `Lair` (decrementing it from `completed`), which was silently
+      making every `requires: ["Lair"]` structure (HydraliskDen, Spire,
+      InfestationPit) permanently unbuildable the instant a base hit Hive
+      tier -- `State.reqMet()` now walks morph ancestry so a Hive-tech base
+      still counts as having "Lair tech", matching the real game.
+    - ⏭️ **Phase 4, accuracy**: real per-map distance data for a handful of
       named ladder maps, replacing the 3 abstract presets.
-    - **Phase 5, engagement**: a Build A vs. Build B side-by-side race view;
-      surfacing the 26 already-collected real replays as something browsable
-      instead of only used invisibly to fit constants.
+    - ✅ **Phase 5, engagement**: a new "⚔️ Race two builds" panel runs any
+      two build orders (independent race/label per side, a "load current
+      build" shortcut, prefilled with a macro-vs-rush pair) through the same
+      `valueOverTime()` used elsewhere and draws both step curves on one
+      chart (`drawTwoCurveChart()`, factored out of the Opponent panel's
+      chart so both share one implementation). Also: the replay corpus is
+      now actually 26 games' worth of "browsable" instead of a 3-game UI
+      subset -- `tools/generate_sample_replays.py` regenerates
+      `src/sample-replays.ts` from EVERY `replays/parsed/*.json` (not a
+      hand-picked few), and a new "📼 Browse the replay corpus" panel lists
+      all of them with their real build order expandable and loadable
+      straight into the Simulator via `sequenceFromReplay()`.
 
 ## References
 

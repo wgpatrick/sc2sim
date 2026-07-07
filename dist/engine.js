@@ -16,14 +16,30 @@
  * unit counts. sqrt(DPS * EHP) is the classic Lanchester-square-law
  * approximation of relative fighting power (geometric mean of offense and
  * defense) — it is NOT a combat resolver: it ignores range, splash, bonus
- * damage vs armor types, upgrades, and unit synergy/counters entirely.
- * Treat it as a rough ranking signal, not a win/loss prediction.
+ * damage vs armor types, and unit synergy/counters entirely. Upgrades ARE
+ * now factored in (see EntityData.upgrades) if `researched` is passed --
+ * pass a unit's StartedItem.researchedAtFinish so a unit only benefits from
+ * upgrades that were actually done by the time IT was produced, not every
+ * upgrade the build ever researches. Still a rough ranking signal, not a
+ * win/loss prediction.
  */
-export function unitValue(ent) {
+export function unitValue(ent, researched) {
     if (!ent.dps)
         return 0;
-    const ehp = (ent.hp ?? 0) + (ent.shields ?? 0);
-    return Math.sqrt(ent.dps * ehp);
+    let dps = ent.dps;
+    let ehp = (ent.hp ?? 0) + (ent.shields ?? 0);
+    if (researched && ent.upgrades?.length) {
+        const have = researched instanceof Set ? researched : new Set(researched);
+        for (const u of ent.upgrades) {
+            if (!have.has(u.name))
+                continue;
+            if (u.dpsMultiplier)
+                dps *= u.dpsMultiplier;
+            if (u.ehpMultiplier)
+                ehp *= u.ehpMultiplier;
+        }
+    }
+    return Math.sqrt(dps * ehp);
 }
 /** This race's harvesting worker entity name (Probe/SCV/Drone), derived from
  * `isWorker` rather than hardcoded -- see optimizer.ts/search.ts, which used
@@ -194,9 +210,32 @@ class State {
         }
         return (this.eco.larvaCapPerTownhall ?? 3) * townhalls;
     }
-    /** Requirement met if the structure is complete OR the upgrade is researched. */
+    /** Requirement met if the structure is complete, the upgrade is
+     * researched, OR a currently-completed entity has since morphed PAST
+     * `name` in a morph chain (e.g. Hive morphFrom Lair morphFrom Hatchery --
+     * a Hive-tech base still has "Lair tech", so HydraliskDen/Spire/
+     * InfestationPit's `requires: ["Lair"]` must stay satisfiable even
+     * though "Lair" itself was decremented out of `completed` when it
+     * morphed into Hive, exactly like the real game. Discovered via the
+     * Phase 3 roster expansion (Hive was this engine's first case of
+     * something morphing PAST an entity other structures still require --
+     * Terran's CommandCenter->OrbitalCommand never hit this because nothing
+     * requires "CommandCenter" by name). Morph chains here are shallow
+     * (2-3 deep), so walking each completed entity's ancestry is cheap. */
     reqMet(name) {
-        return this.count(name) >= 1 || this.researched.has(name);
+        if (this.count(name) >= 1 || this.researched.has(name))
+            return true;
+        for (const completedName in this.completed) {
+            if (this.completed[completedName] <= 0)
+                continue;
+            let cur = this.data.entities[completedName];
+            while (cur?.morphFrom) {
+                if (cur.morphFrom === name)
+                    return true;
+                cur = this.data.entities[cur.morphFrom];
+            }
+        }
+        return false;
     }
     get proxyPylonExists() {
         return (this.completedLoc["Pylon"]?.proxy ?? 0) >= 1;
@@ -252,7 +291,7 @@ function advanceBy(s, dt, snaps) {
         return;
     s.minerals += s.mineralRate * dt;
     s.gas += s.gasRate * dt;
-    s.energy = Math.min(s.eco.nexusMaxEnergy, s.energy + s.energyRate * dt);
+    s.energy = Math.min(s.eco.nexusMaxEnergy * s.townhallCount, s.energy + s.energyRate * dt);
     for (const type of Object.keys(s.eco.casters ?? {})) {
         const have = s.casterEnergy[type] ?? 0;
         s.casterEnergy[type] = Math.min(s.casterEnergyCap(type), have + s.casterEnergyRate(type) * dt);
@@ -289,6 +328,7 @@ function advanceToNextEvent(s, snaps) {
             s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
             ((_c = s.completedLoc)[_d = p.name] ?? (_c[_d] = { home: 0, proxy: 0 }))[p.location] += 1;
             bumpCasterEnergyOnComplete(s, p.name);
+            p.ref.researchedAtFinish = [...s.researched];
             continue;
         }
         s.completed[p.name] = (s.completed[p.name] ?? 0) + 1;
@@ -299,6 +339,7 @@ function advanceToNextEvent(s, snaps) {
         if (s.isWorker(p.name))
             s.probesTotal += 1;
         bumpCasterEnergyOnComplete(s, p.name);
+        p.ref.researchedAtFinish = [...s.researched];
     }
     s.probeReleases = s.probeReleases.filter((r) => r > s.time + EPS);
     s.producerReleases = s.producerReleases.filter((r) => r.until > s.time + EPS);
@@ -471,6 +512,7 @@ function computeArrivalTimes(actions, data, map) {
 function startEntity(s, ent, plan, map, actions, log) {
     s.minerals -= ent.minerals;
     s.gas -= ent.gas;
+    const supplyAtStart = s.supplyUsed;
     const loc = plan.unitLoc;
     let finishTime = s.time + ent.buildTime;
     let producerForItem = ""; // producer type recorded on the in-progress item
@@ -537,6 +579,7 @@ function startEntity(s, ent, plan, map, actions, log) {
         finishTime,
         location: loc,
         warpedIn: warpedIn || undefined,
+        supplyAtStart,
     };
     s.inProgress.push({
         name: ent.name,
@@ -701,7 +744,7 @@ export function valueOverTime(res, data, opts = {}) {
     const points = [];
     let cum = 0;
     for (const a of arrivals) {
-        cum += unitValue(data.entities[a.name]);
+        cum += unitValue(data.entities[a.name], a.researchedAtFinish);
         points.push({ t: a.arrivalTime, value: cum, name: a.name });
     }
     return points;

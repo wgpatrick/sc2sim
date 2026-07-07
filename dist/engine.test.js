@@ -10,7 +10,8 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { simulate, compositionArrivalTime } from "./engine.js";
+import { simulate, compositionArrivalTime, unitValue, valueOverTime } from "./engine.js";
+import { toCombatUnit } from "./combat.js";
 import { PROTOSS } from "./data.js";
 import { TERRAN } from "./data-terran.js";
 import { ZERG } from "./data-zerg.js";
@@ -97,6 +98,18 @@ test("a second townhall is buildable and counted (expansions are structurally wi
     // townhall is a legal, simulatable action at all (search.ts's GA vocabulary
     // used to hardcode it out entirely -- see the 2026-07-05 fix).
 });
+test("Chrono energy cap scales per Nexus, not a flat 200 total (regression: Scouting Report audit)", () => {
+    // Before the fix, advanceBy() capped `s.energy` at a flat `nexusMaxEnergy`
+    // (200) no matter how many Nexuses were completed. With 2 Nexuses banking
+    // energy long enough, the pool should be able to exceed that old flat cap
+    // (up to 400 combined) since each Nexus caps and regens independently.
+    const order = ["Pylon", "Nexus", ...Array(20).fill("Probe")];
+    const r = simulate(PROTOSS, order, map);
+    assert.ok(r.ok, r.error ?? "");
+    assert.equal(r.final.townhalls, 2);
+    assert.ok(r.final.energy > PROTOSS.economy.nexusMaxEnergy, `2-Nexus energy (${r.final.energy}) should exceed the single-Nexus cap of ${PROTOSS.economy.nexusMaxEnergy}`);
+    assert.ok(r.final.energy <= PROTOSS.economy.nexusMaxEnergy * 2, `2-Nexus energy (${r.final.energy}) should still be capped at 2x a single Nexus`);
+});
 test("assessDanger returns 0 (not -Infinity) when both value curves are empty", () => {
     // An empty order list "succeeds" trivially with no actions -- valueOverTime is empty.
     const empty = simulate(PROTOSS, [], map);
@@ -145,4 +158,92 @@ test("Zealot warp-in delivers at the proxy distance, not the full home-to-enemy 
     const proxyTravel = warpZealot.arrivalTime - warpZealot.finishTime;
     const homeTravel = homeZealot.arrivalTime - homeZealot.finishTime;
     assert.ok(proxyTravel < homeTravel, `proxy travel (${proxyTravel.toFixed(1)}s) should be less than home travel (${homeTravel.toFixed(1)}s)`);
+});
+test("unitValue()/toCombatUnit() only apply an upgrade multiplier when it's in the researched set (regression: Scouting Report Phase 2)", () => {
+    const zealot = PROTOSS.entities.Zealot;
+    const base = unitValue(zealot);
+    const withWeapons = unitValue(zealot, ["GroundWeaponsLevel1"]);
+    const withEverything = unitValue(zealot, ["GroundWeaponsLevel1", "GroundArmorLevel1", "Charge"]);
+    assert.ok(withWeapons > base, "GroundWeaponsLevel1 should raise Zealot value");
+    assert.ok(withEverything > withWeapons, "stacking all 3 Zealot upgrades should raise value further");
+    // An unrelated upgrade name (not in Zealot's upgrades list) must be a no-op.
+    assert.equal(unitValue(zealot, ["InfantryWeaponsLevel1"]), base);
+    const combatBase = toCombatUnit("Zealot", zealot);
+    const combatUpgraded = toCombatUnit("Zealot", zealot, ["GroundWeaponsLevel1", "GroundArmorLevel1", "Charge"]);
+    assert.ok(combatUpgraded.dps > combatBase.dps);
+    assert.ok(combatUpgraded.hp > combatBase.hp);
+});
+test("valueOverTime only credits a unit with upgrades researched by ITS OWN completion time, not ones the build researches later", () => {
+    // 1st Zealot completes at 103.7s, long before Charge exists at all.
+    // 2nd Zealot completes at 212.8s, after Charge finishes at 209.3s -- it
+    // alone should get Charge's dpsMultiplier (1.15).
+    const order = [
+        "Pylon", "Gateway", "CyberneticsCore", "Assimilator", "Zealot", "Probe", "Probe",
+        "TwilightCouncil", "Charge", "Pylon", "Probe", "Probe", "Zealot", "Probe", "Probe", "Probe",
+    ];
+    const r = simulate(PROTOSS, order, map);
+    assert.ok(r.ok, r.error ?? "");
+    const zealots = r.actions.filter((a) => a.name === "Zealot");
+    assert.equal(zealots.length, 2);
+    assert.deepEqual(zealots[0].researchedAtFinish, [], "1st Zealot completed well before Charge existed");
+    assert.deepEqual(zealots[1].researchedAtFinish, ["Charge"], "2nd Zealot completed after Charge finished");
+    const points = valueOverTime(r, PROTOSS);
+    const zealotPoints = points.filter((p) => p.name === "Zealot");
+    assert.equal(zealotPoints.length, 2);
+    const firstZealotValue = zealotPoints[0].value;
+    const secondZealotMarginalValue = zealotPoints[1].value - firstZealotValue;
+    assert.ok(secondZealotMarginalValue > firstZealotValue, `Charge-boosted 2nd Zealot (${secondZealotMarginalValue.toFixed(1)}) should be worth strictly more than the un-upgraded 1st Zealot (${firstZealotValue.toFixed(1)})`);
+});
+test("Phase 3 roster: Protoss Templar Archives/Robotics Bay tech is fully buildable, including the Archon 2-Templar merge", () => {
+    const order = [
+        "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Assimilator", "Probe", "Gateway", "CyberneticsCore",
+        "Probe", "Probe", "TwilightCouncil", "Pylon", "Probe", "TemplarArchives", "Probe", "Assimilator", "Probe",
+        "HighTemplar", "HighTemplar", "Archon",
+    ];
+    const r = simulate(PROTOSS, order, map);
+    assert.ok(r.ok, r.error ?? "");
+    const archon = r.actions.find((a) => a.name === "Archon");
+    assert.ok(archon, "expected the Archon merge to complete");
+    assert.equal(r.final.energy >= 0, true);
+    const robo = simulate(PROTOSS, [
+        "Probe", "Probe", "Probe", "Probe", "Pylon", "Probe", "Assimilator", "Probe", "Gateway", "CyberneticsCore",
+        "Probe", "Probe", "RoboticsFacility", "Pylon", "Probe", "Assimilator", "Probe", "RoboticsBay", "Probe",
+        "Colossus", "Disruptor",
+    ], map);
+    assert.ok(robo.ok, robo.error ?? "");
+    assert.ok(robo.actions.find((a) => a.name === "Colossus"));
+    assert.ok(robo.actions.find((a) => a.name === "Disruptor"));
+});
+test("Phase 3 roster: Zerg Hive tier is fully buildable (regression: Hive morphing past Lair must not lock out Lair-tech structures)", () => {
+    const order = [
+        "Drone", "Drone", "Overlord", "Drone", "Drone", "SpawningPool", "Drone", "Extractor", "Drone", "Drone",
+        "Overlord", "Lair", "Drone", "InfestationPit", "Drone", "Hive", "Drone", "UltraliskCavern", "Drone", "HydraliskDen", "Drone", "LurkerDen",
+        "Overlord", "Drone", "Drone", "Drone", "Overlord", "Drone", "Drone", "Overlord",
+        "Ultralisk", "Hydralisk", "Lurker", "Infestor",
+    ];
+    const r = simulate(ZERG, order, map);
+    assert.ok(r.ok, r.error ?? "");
+    for (const name of ["Ultralisk", "Lurker", "Infestor"]) {
+        assert.ok(r.actions.find((a) => a.name === name), `expected ${name} to complete`);
+    }
+    // The regression this test pins: HydraliskDen/LurkerDen both require "Lair"
+    // by name, but Lair itself was consumed when it morphed into Hive earlier
+    // in this same order -- reqMet() must still recognize Hive as satisfying
+    // a "Lair" requirement (see State.reqMet's morph-ancestry walk).
+    assert.ok(r.actions.find((a) => a.name === "HydraliskDen"));
+    assert.ok(r.actions.find((a) => a.name === "LurkerDen"));
+});
+test("Phase 3 roster: Terran Ghost/Thor/Battlecruiser are fully buildable (dual tech-building + tech-structure requirements)", () => {
+    const order = [
+        "SCV", "SCV", "SCV", "SupplyDepot", "SCV", "Barracks", "SCV", "SCV", "Refinery", "SCV",
+        "GhostAcademy", "BarracksTechLab", "SCV", "SupplyDepot", "SCV", "Factory", "SCV", "SCV",
+        "Armory", "FactoryTechLab", "SCV", "Starport", "SCV", "SupplyDepot", "SCV", "SupplyDepot",
+        "FusionCore", "StarportTechLab", "SCV", "SCV",
+        "Ghost", "Thor", "Battlecruiser",
+    ];
+    const r = simulate(TERRAN, order, map);
+    assert.ok(r.ok, r.error ?? "");
+    for (const name of ["Ghost", "Thor", "Battlecruiser"]) {
+        assert.ok(r.actions.find((a) => a.name === name), `expected ${name} to complete`);
+    }
 });

@@ -16,18 +16,40 @@ function mulberry32(seed) {
 }
 const randInt = (rng, lo, hi) => lo + Math.floor(rng() * (hi - lo + 1));
 const pick = (rng, xs) => xs[Math.floor(rng() * xs.length)];
+/** Every isUpgrade entity for this race except WarpGateResearch (that one's
+ * already a first-class citizen via `warp`/hasWarpGate elsewhere). */
+function combatUpgradeNames(data) {
+    return Object.values(data.entities)
+        .filter((e) => e.isUpgrade && e.name !== "WarpGateResearch")
+        .map((e) => e.name);
+}
 export function buildVocabulary(target, data, warp) {
+    const upgrades = combatUpgradeNames(data);
     // The townhall (Nexus/CommandCenter/Hatchery) is included so the GA can
     // discover taking a natural expansion -- previously hardcoded out (see git
     // history), which silently made "build a 2nd base" undiscoverable no
     // matter how much it would have helped a longer-horizon/safety objective.
-    const extra = [data.economy.startingTownhall, ...(warp ? ["CyberneticsCore"] : [])];
+    // Each upgrade's producer (Forge/TwilightCouncil/EngineeringBay/
+    // EvolutionChamber) is included the same way, so techClosure() pulls in
+    // that structure (and ITS prerequisite chain) whenever an upgrade might
+    // be worth researching -- otherwise "Charge" would be insertable but
+    // never actually buildable (no Twilight Council in the vocabulary).
+    const extra = [
+        data.economy.startingTownhall,
+        ...(warp ? ["CyberneticsCore"] : []),
+        ...upgrades.map((u) => data.entities[u].producer),
+    ];
     const structures = techClosure(target, data, extra);
     const units = Object.keys(target);
     // No Chrono, no chrono targets -- keeps tweakChrono() from ever inserting
     // a "chrono:X" action for a race that can't use it (see mutate() below).
-    const chronoTargets = data.economy.hasChrono ? [workerNameOf(data), ...structures, ...units, ...(warp ? ["WarpGateResearch"] : [])] : [];
-    return { structures, units, chronoTargets, warp };
+    // Upgrades are included directly (not just their producer structure) so
+    // the GA can chrono-boost the RESEARCH itself, same precedent as
+    // WarpGateResearch below.
+    const chronoTargets = data.economy.hasChrono
+        ? [workerNameOf(data), ...structures, ...units, ...upgrades, ...(warp ? ["WarpGateResearch"] : [])]
+        : [];
+    return { structures, units, chronoTargets, warp, upgrades };
 }
 // --- Random valid-ish seed individuals (from the template generator) ------
 function randomParams(rng, strategies, start) {
@@ -46,7 +68,7 @@ function randomParams(rng, strategies, start) {
 }
 // --- Mutation operators: each returns a NEW array ---------------------------
 function insertAction(seq, rng, vocab, data) {
-    const pool = [...vocab.structures, ...vocab.units, workerNameOf(data), data.economy.supplyStructure, data.economy.gasStructure];
+    const pool = [...vocab.structures, ...vocab.units, ...vocab.upgrades, workerNameOf(data), data.economy.supplyStructure, data.economy.gasStructure];
     const name = pick(rng, pool);
     const tag = rng() < 0.25 ? "@proxy" : "";
     const at = randInt(rng, 0, seq.length);

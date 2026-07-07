@@ -66,6 +66,12 @@ add(ent("Forge", 150, 0, 32.1, "Probe", { isStructure: true, requires: ["Pylon"]
 add(ent("TwilightCouncil", 150, 100, 35.7, "Probe", { isStructure: true, requires: ["CyberneticsCore"] }));
 add(ent("Stargate", 150, 150, 42.9, "Probe", { isStructure: true, requires: ["CyberneticsCore"] }));
 add(ent("RoboticsFacility", 150, 100, 46.4, "Probe", { isStructure: true, requires: ["CyberneticsCore"] }));
+// Roster expansion (Scouting Report Phase 3, 2026-07-06) -- costs/times
+// verified against Liquipedia's LotV pages (converted Normal -> Faster / 1.4,
+// same convention as every other structure above), not replay-verified.
+add(ent("TemplarArchives", 150, 200, 25.7, "Probe", { isStructure: true, requires: ["TwilightCouncil"] }));
+add(ent("DarkShrine", 150, 150, 50.7, "Probe", { isStructure: true, requires: ["TwilightCouncil"] }));
+add(ent("RoboticsBay", 150, 150, 32.9, "Probe", { isStructure: true, requires: ["RoboticsFacility"] }));
 
 // --- Warp Gate tech ------------------------------------------------------
 // Warp Gate research is at the Cybernetics Core (the 5.0.16 PTR briefly moved it
@@ -75,6 +81,27 @@ add(ent("RoboticsFacility", 150, 100, 46.4, "Probe", { isStructure: true, requir
 // the army at the front instead of walking it across the map.
 add(ent("WarpGateResearch", 50, 50, 100, "CyberneticsCore", { isUpgrade: true, requires: ["CyberneticsCore"] }));
 add(ent("WarpGate", 25, 25, 7, "Gateway", { isStructure: true, morphFrom: "Gateway", requires: ["WarpGateResearch"] }));
+
+// --- Combat upgrades (Scouting Report Phase 2, 2026-07-06) ---------------
+// Costs/times are well-known LotV-stable book values (100/100, 113s Normal
+// for Forge tiers; 100/100 & 150/150 for Charge/Blink), same "book value,
+// not independently verified" status as this file's baseline combat stats.
+// See EntityData.upgrades for how the dps/ehp multipliers below are derived
+// and applied -- this model only has aggregate dps/hp, not per-hit damage,
+// so each multiplier is computed from that unit's known real per-hit
+// damage (shown beside each entry) rather than measured directly.
+add(ent("GroundWeaponsLevel1", 100, 100, 80.7, "Forge", { isUpgrade: true, requires: ["Forge"] }));
+add(ent("GroundArmorLevel1", 100, 100, 80.7, "Forge", { isUpgrade: true, requires: ["Forge"] }));
+// Charge has no literal weapon-file change in the real game -- its value is
+// entirely positioning (closing gaps, staying on top of kiting targets),
+// which this engine doesn't model. The dpsMultiplier below is an explicit,
+// documented stand-in for "less time spent not-attacking," not a measured
+// combat-log effect.
+add(ent("Charge", 100, 100, 35.7, "TwilightCouncil", { isUpgrade: true, requires: ["TwilightCouncil"] }));
+// Same caveat as Charge: Blink's real value is disengaging bad trades, which
+// this engine's combat resolver has no concept of. The ehpMultiplier below
+// stands in for "fewer Stalkers actually die because they blinked out."
+add(ent("Blink", 150, 150, 71.4, "TwilightCouncil", { isUpgrade: true, requires: ["TwilightCouncil"] }));
 
 // --- Nexus-produced -----------------------------------------------------
 add(ent("Probe", 50, 0, 12.1, "Nexus", { supplyCost: 1, isWorker: true, moveSpeed: 2.8125 }));
@@ -87,20 +114,115 @@ add(ent("Probe", 50, 0, 12.1, "Nexus", { supplyCost: 1, isWorker: true, moveSpee
 // verified against 5.0.16 game data the way cost/buildTime are. Combat
 // abilities (Blink, Guardian Shield, Pulsar Beam ramp, ...) are not
 // modeled at all yet; dps is the raw autoattack only.
-add(ent("Zealot", 100, 0, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.25, warpCooldown: 20, dps: 18.6, hp: 100, shields: 50 }));
-add(ent("Stalker", 125, 50, 27.1, "Gateway", { supplyCost: 2, moveSpeed: 2.9531, warpCooldown: 20, requires: ["CyberneticsCore"], dps: 9.7, hp: 100, shields: 80 }));
-add(ent("Adept", 100, 25, 33.0, "Gateway", { supplyCost: 2, moveSpeed: 2.5, warpCooldown: 26, requires: ["CyberneticsCore"], dps: 6.2, hp: 70, shields: 70 }));
-add(ent("Sentry", 50, 100, 23.3, "Gateway", { supplyCost: 2, moveSpeed: 2.5, warpCooldown: 20.3, requires: ["CyberneticsCore"], dps: 8.4, hp: 40, shields: 40 }));
+// upgrades: dpsMultiplier for GroundWeaponsLevel1 is (baseDmg+1)/baseDmg per
+// hit instance (Zealot's dual 8+8 blades each get +1: 18/16; Stalker's single
+// 13-dmg hit: 14/13; Adept's 10-dmg hit: 11/10; Sentry's 6-dmg hit: 7/6).
+// ehpMultiplier for GroundArmorLevel1 is a flat +5% stand-in for "+1 armor"
+// (this model has no per-hit granularity to convert armor exactly).
+add(ent("Zealot", 100, 0, 27.1, "Gateway", {
+  supplyCost: 2, moveSpeed: 2.25, warpCooldown: 20, dps: 18.6, hp: 100, shields: 50,
+  upgrades: [
+    { name: "GroundWeaponsLevel1", dpsMultiplier: 18 / 16 },
+    { name: "GroundArmorLevel1", ehpMultiplier: 1.05 },
+    { name: "Charge", dpsMultiplier: 1.15 },
+  ],
+}));
+add(ent("Stalker", 125, 50, 27.1, "Gateway", {
+  supplyCost: 2, moveSpeed: 2.9531, warpCooldown: 20, requires: ["CyberneticsCore"], dps: 9.7, hp: 100, shields: 80,
+  upgrades: [
+    { name: "GroundWeaponsLevel1", dpsMultiplier: 14 / 13 },
+    { name: "GroundArmorLevel1", ehpMultiplier: 1.05 },
+    { name: "Blink", ehpMultiplier: 1.10 },
+  ],
+}));
+add(ent("Adept", 100, 25, 33.0, "Gateway", {
+  supplyCost: 2, moveSpeed: 2.5, warpCooldown: 26, requires: ["CyberneticsCore"], dps: 6.2, hp: 70, shields: 70,
+  upgrades: [
+    { name: "GroundWeaponsLevel1", dpsMultiplier: 11 / 10 },
+    { name: "GroundArmorLevel1", ehpMultiplier: 1.05 },
+  ],
+}));
+add(ent("Sentry", 50, 100, 23.3, "Gateway", {
+  supplyCost: 2, moveSpeed: 2.5, warpCooldown: 20.3, requires: ["CyberneticsCore"], dps: 8.4, hp: 40, shields: 40,
+  upgrades: [
+    { name: "GroundWeaponsLevel1", dpsMultiplier: 7 / 6 },
+    { name: "GroundArmorLevel1", ehpMultiplier: 1.05 },
+  ],
+}));
+
+// --- Templar Archives / Dark Shrine units (Phase 3 roster expansion) -----
+// High Templar's Psionic Storm and Feedback are NOT modeled (this project's
+// established "no special abilities" convention, same as Sentry's Force
+// Field) -- dps below is its raw Psi Blast autoattack only, which real
+// players rarely rely on. Dark Templar's permanent cloak (its actual
+// gameplay value) is likewise unrepresentable here; dps is its autoattack.
+add(ent("HighTemplar", 50, 150, 30.7, "Gateway", {
+  supplyCost: 2, moveSpeed: 2.82, warpCooldown: 23.7, requires: ["TemplarArchives"], dps: 3.2, hp: 40, shields: 40,
+  upgrades: [
+    { name: "GroundWeaponsLevel1", dpsMultiplier: 5 / 4 },
+    { name: "GroundArmorLevel1", ehpMultiplier: 1.05 },
+  ],
+}));
+add(ent("DarkTemplar", 125, 125, 30.7, "Gateway", {
+  supplyCost: 2, moveSpeed: 3.94, warpCooldown: 23.7, requires: ["DarkShrine"], dps: 37.2, hp: 40, shields: 80,
+  upgrades: [
+    { name: "GroundWeaponsLevel1", dpsMultiplier: 46 / 45 },
+    { name: "GroundArmorLevel1", ehpMultiplier: 1.05 },
+  ],
+}));
+// Archon: a real merge of TWO Templars in the field, not built at any
+// building -- this engine's morphFrom only supports consuming ONE unit of
+// the source type, so this models the cheapest real path (2 High Templar,
+// 100/300 combined) as morphFrom "HighTemplar" with the Archon's OWN cost
+// set to the DELTA beyond one already-built High Templar (50/150, since the
+// 1st HT's 50/150 was already paid when it was trained) -- a build order
+// still writes "HighTemplar, HighTemplar, Archon" and totals the correct
+// 100/300 combined cost. Documented limitation: the engine only decrements
+// ONE HighTemplar on this morph (see State's morph-completion branch), so
+// nothing stops a build from merging after just 1 High Templar instead of 2 --
+// not silently wrong, just an engine-model ceiling shared with every other
+// morphFrom relationship here. Real merge/Dark Templar combos (250/250 or
+// 175/275) aren't representable at all under a single morphFrom source.
+add(ent("Archon", 50, 150, 6.1, "HighTemplar", {
+  supplyCost: 2, moveSpeed: 3.94, morphFrom: "HighTemplar", dps: 20.0, hp: 10, shields: 350,
+  upgrades: [
+    { name: "GroundWeaponsLevel1", dpsMultiplier: 26 / 25 },
+    { name: "GroundArmorLevel1", ehpMultiplier: 1.05 },
+  ],
+}));
 
 // --- Stargate units -----------------------------------------------------
+// No Air Weapons/Armor upgrade modeled yet (out of scope this pass, see
+// README roadmap) -- Stargate units get no upgrades entry.
 add(ent("Oracle", 150, 150, 37.1, "Stargate", { supplyCost: 3, moveSpeed: 4.0, dps: 16.7, hp: 100, shields: 60 }));
 add(ent("VoidRay", 250, 150, 43.0, "Stargate", { supplyCost: 4, moveSpeed: 2.75, dps: 16.8, hp: 150, shields: 100 }));
 
 // --- Robotics units -----------------------------------------------------
-add(ent("Immortal", 250, 100, 39.3, "RoboticsFacility", { supplyCost: 4, moveSpeed: 2.25, dps: 19.2, hp: 200, shields: 100 }));
+// Immortal's attack fires two 20-dmg hits per cycle; +1 applies to each: 42/40.
+add(ent("Immortal", 250, 100, 39.3, "RoboticsFacility", {
+  supplyCost: 4, moveSpeed: 2.25, dps: 19.2, hp: 200, shields: 100,
+  upgrades: [
+    { name: "GroundWeaponsLevel1", dpsMultiplier: 42 / 40 },
+    { name: "GroundArmorLevel1", ehpMultiplier: 1.05 },
+  ],
+}));
 // Observer has no weapon (pure scout/detector) — dps 0, contributes no
 // fighting VALUE by design, even though it has real strategic value.
 add(ent("Observer", 25, 75, 17.9, "RoboticsFacility", { supplyCost: 1, moveSpeed: 2.0156, hp: 40, shields: 20 }));
+// Colossus's Thermal Lance is actually upgraded by Protoss AIR Weapons (a
+// real-game quirk despite Colossus being ground-only) -- out of scope this
+// pass (no Air Weapons upgrade modeled, see Stargate units above), so only
+// Ground Armor applies here, not a weapon multiplier. Splash/bonus-vs-light
+// not modeled (this project's usual simplification).
+add(ent("Colossus", 300, 200, 38.6, "RoboticsFacility", {
+  supplyCost: 6, moveSpeed: 3.15, requires: ["RoboticsBay"], dps: 18.7, hp: 250, shields: 100,
+  upgrades: [{ name: "GroundArmorLevel1", ehpMultiplier: 1.05 }],
+}));
+// Disruptor has no autoattack (Purification Nova is an activated ability,
+// this project's usual "no special abilities" convention) -- dps 0,
+// contributes no fighting VALUE by this ranking signal, same treatment as
+// Observer/Medivac, even though its real combat value is entirely ability-based.
+add(ent("Disruptor", 150, 150, 25.7, "RoboticsFacility", { supplyCost: 4, moveSpeed: 3.15, requires: ["RoboticsBay"], hp: 100, shields: 100 }));
 
 export const PROTOSS: GameData = {
   patch: "5.0.16",
